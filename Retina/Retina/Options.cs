@@ -13,10 +13,15 @@ namespace Retina
 
         public Modes Mode { get; set; }
 
+        // Flags for Split mode
+        public bool OmitEmpty { get; set; }
+
         public Options()
         {
             RegexOptions = RegexOptions.None;
             Mode = Modes.Match;
+
+            OmitEmpty = false;
         }
     }
 }

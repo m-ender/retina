@@ -63,7 +63,8 @@ namespace Retina
                 break;
             case Modes.Split:
                 foreach (var part in regex.Split(input))
-                    Console.WriteLine(part);
+                    if (!(options.OmitEmpty && part == ""))
+                        Console.WriteLine(part);
                 break;
             case Modes.Replace:
                 Console.Write(regex.Replace(input,replacement));
@@ -117,6 +118,11 @@ namespace Retina
                     break;
                 case 'S':
                     options.Mode = Modes.Split;
+                    break;
+
+                // Mode-specific options
+                case '_':
+                    options.OmitEmpty = true;
                     break;
 
                 default:
