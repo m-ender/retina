@@ -12,26 +12,24 @@ namespace Retina
     {
         static void Main(string[] args)
         {
-            switch (args.Count())
-            {
-            case 1:
-                PerformMatch(args[0]);
-                break;
-            case 2:
-                PerformReplacement(args[0], args[1]);
-                break;
-            default:
+            if (args.Count() < 1)
                 Console.WriteLine("Usage: Retina.exe pattern.rgx [replacement.rgx]");
-                break;
+            else
+            {
+
+                string pattern = File.ReadAllText(args[0]);
+                string replacement = null;
+                if (args.Count() >= 2)
+                    replacement = File.ReadAllText(args[1]);
+
+                Process(pattern, replacement);
             }
         }
 
-        private static void PerformMatch(string patternFile)
+        private static void Process(string pattern, string replacement)
         {
             TextReader instrm = new StreamReader(Console.OpenStandardInput());
             string input = instrm.ReadToEnd();
-
-            string pattern = File.ReadAllText(patternFile);
 
             var lines = new List<string>(pattern.Split(new [] {'`'}));
 
@@ -41,7 +39,7 @@ namespace Retina
                 string optionString = lines[0];
                 lines.RemoveAt(0);
 
-                options = ParseOptions(optionString);
+                options = ParseOptions(optionString, replacement != null);
             }
 
             Regex regex = new Regex(String.Join("`", lines), options.RegexOptions);
@@ -67,17 +65,15 @@ namespace Retina
                 foreach (var part in regex.Split(input))
                     Console.WriteLine(part);
                 break;
+            case Modes.Replace:
+                Console.Write(regex.Replace(input,replacement));
+                break;
             default:
                 throw new NotImplementedException();
             }
         }
 
-        private static void PerformReplacement(string patternFile, string replacementFile)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static Options ParseOptions(string optionString)
+        private static Options ParseOptions(string optionString, bool replaceMode)
         {
 
             var options = new Options();
@@ -127,6 +123,9 @@ namespace Retina
                     break;
                 }
             }
+
+            if (replaceMode)
+                options.Mode = Modes.Replace;
 
             return options;
         }
