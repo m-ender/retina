@@ -46,6 +46,7 @@ namespace Retina
 
             Regex regex = new Regex(String.Join("`", lines), options.RegexOptions);
 
+            string line;
             switch (options.Mode)
             {
             case Modes.Match:
@@ -55,12 +56,16 @@ namespace Retina
             case Modes.Grep:
             case Modes.AntiGrep:
                 var stringReader = new StringReader(input);
-                string line;
+                
                 while ((line = stringReader.ReadLine()) != null)
                 {
                     if (regex.IsMatch(line) ^ (options.Mode == Modes.AntiGrep))
                         Console.WriteLine(line);
                 }
+                break;
+            case Modes.Split:
+                foreach (var part in regex.Split(input))
+                    Console.WriteLine(part);
                 break;
             default:
                 throw new NotImplementedException();
