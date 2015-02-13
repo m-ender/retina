@@ -13,8 +13,11 @@ namespace Retina
 
         public Modes Mode { get; set; }
 
-        // Flags for Split mode
+        // Options for Split mode
         public bool OmitEmpty { get; set; }
+
+        // Options for Replace mode
+        public bool Loop { get; set; }
 
         public Options()
         {
@@ -22,6 +25,8 @@ namespace Retina
             Mode = Modes.Match;
 
             OmitEmpty = false;
+
+            Loop = false;
         }
     }
 }

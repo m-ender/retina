@@ -67,7 +67,19 @@ namespace Retina
                         Console.WriteLine(part);
                 break;
             case Modes.Replace:
-                Console.Write(regex.Replace(input,replacement));
+                if (!options.Loop)
+                    Console.Write(regex.Replace(input, replacement));
+                else
+                {
+                    string lastInput;
+                    do
+                    {
+                        lastInput = input;
+                        input = regex.Replace(input, replacement);
+                    } while (lastInput != input);
+
+                    Console.Write(input);
+                }
                 break;
             default:
                 throw new NotImplementedException();
@@ -123,6 +135,9 @@ namespace Retina
                 // Mode-specific options
                 case '_':
                     options.OmitEmpty = true;
+                    break;
+                case '+':
+                    options.Loop = true;
                     break;
 
                 default:
