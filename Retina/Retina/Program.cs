@@ -76,9 +76,12 @@ namespace Retina
                     {
                         lastInput = input;
                         input = regex.Replace(input, replacement);
+                        if (options.Trace && lastInput != input)
+                            Console.WriteLine(input);
                     } while (lastInput != input);
 
-                    Console.Write(input);
+                    if (!options.Trace)
+                        Console.Write(input);
                 }
                 break;
             default:
@@ -139,7 +142,9 @@ namespace Retina
                 case '+':
                     options.Loop = true;
                     break;
-
+                case '?':
+                    options.Trace = true;
+                    break;
                 default:
                     break;
                 }

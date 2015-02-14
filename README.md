@@ -19,7 +19,7 @@ Retina takes one or two filenames as command-line arguments and has several diff
 Regardless of how many source files are supplied, the first one will be the *pattern file*. First and foremost, this will contain the regex to be used. However, if the file contains at least one backtick (`` ` ``), the code before the first backtick will be used to configure the exact operation mode of Retina - let's call this the *configuration string*. As an example, the pattern file
 
     _Ss`a.
-    
+
 configures Retina with `_Ss` (more on that later) and defines the regex as `a.`. Any further backticks are simply part of the regex. If you want to use backticks in your regex, but do not want to configure Retina, just start your pattern file with a single backtick (which translates to an empty configuration).
 
 If *only* the pattern file is supplied, there are several different operation modes available, the default being a matching mode.
@@ -87,8 +87,9 @@ AntiGrep mode is almost the same, except that it prints all lines which *didn't*
 Replace mode does what it says on the tin: it replaces all matches of the regex in the input with the replacement string, and prints the result. However, Replace mode comes with one nifty option:
 
 - `+`: Repeatedly apply the regex replacement until the regex doesn't match any more. This option makes Retina [Turing-complete](http://en.wikipedia.org/wiki/Turing_completeness) (see below for details).
+- `?`: Only in conjunction with `+`, print all the intermediate results of the loop, each on its own line.
 
-Replace mode will probably get at least two more options in the future: limiting the number of replacements done per iteration (e.g. replace only the first match), and in conjunction with `+`, printing all intermediate results.
+Replace mode will probably get at least one more option in the future: limiting the number of replacements done per iteration (e.g. replace only the first match).
 
 ## Retina is Turing-complete
 
@@ -101,9 +102,9 @@ Pattern file:
 Replacement file:
 
     $2$3
-    
+
 With this Retina code in place, an arbitrary tag system can be supplied via STDIN, as long as its alphabet consists only of alphanumerical characters and underscores (this limitation could easily be removed). The input must consist of the initial word, as well as the set of production rules available for the tag system. For instance, [the first example system given on Wikipedia](http://en.wikipedia.org/wiki/Tag_system#Example:_A_simple_2-tag_illustration), would be written as
 
     baa|a>ccbaH,b>cca,c>cc
-    
+
 Note that the pattern is hardcoded to 2-tag systems, although it would also be possible to generalise this to `n`-tag systems, where `n` could be encoded in unary in the input string.

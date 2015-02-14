@@ -18,6 +18,7 @@ namespace Retina
 
         // Options for Replace mode
         public bool Loop { get; set; }
+        public bool Trace { get; set; }
 
         public Options()
         {
@@ -27,6 +28,8 @@ namespace Retina
             OmitEmpty = false;
 
             Loop = false;
+            Trace = false;
         }
+
     }
 }
