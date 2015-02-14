@@ -33,14 +33,14 @@ namespace Retina
 
             var lines = new List<string>(pattern.Split(new [] {'`'}));
 
-            var options = new Options();
+            
+            string optionString = "";
             if (lines.Count() > 1)
             {
-                string optionString = lines[0];
+                optionString = lines[0];
                 lines.RemoveAt(0);
-
-                options = ParseOptions(optionString, replacement != null);
             }
+            Options options = ParseOptions(optionString, replacement != null);
 
             Regex regex = new Regex(String.Join("`", lines), options.RegexOptions);
 
