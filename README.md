@@ -4,7 +4,7 @@
 
 Retina is a command-line tool, which lets you run regular expressions (loaded from files) on anything given to it via standard input. This lets you essentially treat regular expressions as a programming language, where the programs have a rather rigid, but configurable I/O framework (with Retina being the language's interpreter). Under the hood, it uses .NET's regex engine, which means that both the .NET flavour and the ECMAScript flavour are available.
 
-"Retina" is also definitely an acronym, but I haven't quite settled on its meaning yet. ;)
+"Retina" is also totally an acronym, but I haven't quite settled on its meaning yet. ;)
 
 ## Running Retina
 
@@ -32,7 +32,7 @@ If a second file is supplied, Retina always operates in Replace mode (which can 
 
 Currently, the configuration string simply is an unordered bunch of characters, which switches between different options, modes and flags. This may get more complicated in the future. If multiple conflicting options are used, the latter option will override the former.
 
-Some characters are available in all modes, some only in specific ones. Mode-specific options are mentioned below when the individual modes are discussed.
+Some characters are available in all modes, some only in specific ones. Mode-specific options are denoted by non-alphanumeric characters and are mentioned below when the individual modes are discussed.
 
 #### Regex Modifiers
 
