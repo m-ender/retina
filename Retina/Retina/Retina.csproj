@@ -50,6 +50,8 @@
     <None Include="App.config" />
     <None Include="Examples\2TagSystem.rgx" />
     <None Include="Examples\2TagSystem.rpl" />
+    <None Include="Examples\Rule110.rgx" />
+    <None Include="Examples\Rule110.rpl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

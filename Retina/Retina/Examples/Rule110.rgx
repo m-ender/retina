@@ -1,0 +1,19 @@
+﻿?+x ` # Simulates Rule 110 with spaces for zeros and X's for ones,
+      # printing each step of the simulation.
+      # The input must end in a space.
+      # If you want to print the initial condition in the trace,
+      # terminate the input with a newline character.
+      # Note that Rule 110 is not likely to terminate for most inputs
+      # so have your fingers ready on Ctrl+C.
+
+# The first alternative removes an optional trailing newline (and 
+# anything after it). The other lines simply encode Rule 110.
+(?>(.*))[\s\S]+     |
+(?<=X)X(?=X.*([ ])) |
+(?<=X)(X)(?=[ ])    |
+(?<=X)[ ](?=(X))    |
+(?<=X)([ ])(?=[ ])  |
+(?<=[ ])(X)(?=X)    |
+(?<=[ ])(X)(?=[ ])  |
+(?<=[ ])[ ](?=(X))  |
+(?<=[ ])([ ])(?=[ ])
