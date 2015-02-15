@@ -59,7 +59,7 @@ Some characters are available in all modes, some only in specific ones. Mode-spe
 
 #### Mode Selection
 
-When only the pattern file is supplied, Retina will usually operate in Match mode, but the following upper-case latters in the configuration string can select other modes:
+When only the pattern file is supplied, Retina will usually operate in Match mode, but the following upper-case letters in the configuration string can select other modes:
 
 - `S`: Split mode.
 - `G`: Grep mode.
