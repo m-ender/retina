@@ -12,7 +12,16 @@ There is an up-to-date Windows binary of Retina in the root directory of the rep
 
 ## How does it work?
 
-Retina takes one or two filenames as command-line arguments and has several different modes of operation. In any case, the input to the program will be read from the standard input stream.
+Retina takes one or two filenames (*pattern* and optionally *replacement*) as command-line arguments and has several different modes of operation. Instead of filenames, you can also supply the pattern and/or replacement directly on the command line, by using the common `-e` flag. So all of the following are valid invocations:
+
+    Retina ./pattern.rgx
+    Retina -e "foo.*"
+    Retina ./pattern.rgx ./replacement.rpl
+    Retina ./pattern.rgx -e "bar"
+    Retina -e "foo.*" ./replacement.rpl
+    Retina -e "foo.*" -e "bar"
+
+In any case, the input to the program will be read from the standard input stream.
 
 ### The Pattern File
 
