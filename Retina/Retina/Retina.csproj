@@ -52,8 +52,6 @@
     <None Include="Examples\2TagSystem.rpl" />
     <None Include="Examples\Rule110.rgx" />
     <None Include="Examples\Rule110.rpl" />
-    <None Include="Examples\temp.rgx" />
-    <None Include="Examples\temp.rpl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
