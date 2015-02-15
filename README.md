@@ -73,8 +73,9 @@ As outlined above, Retina currently supports 5 different operation modes: Match,
 
 This is the default mode. It takes the regex with its modifiers and applies it to the input. By default the number of matches will be printed.
 
-Match mode currently supports only one option:
+Match mode currently supports the following options:
 
+- `!`: Print each match, separated by newlines. (Instead of the total match count.)
 - `&`: Consider overlapping matches. Normally, the regex engine will start looking for the next match after the *end* of the previous match. With this mode, Retina will instead look for the next match after the *beginning* of the previous match. Note that this will still not take into account overlapping matches which start at the same position (but end at different positions.)
 
 Ultimately, this mode will probably receive the most elaborate configuration scheme, in order print capturing groups or other information about the match.

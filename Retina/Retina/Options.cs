@@ -15,6 +15,7 @@ namespace Retina
 
         // Options for Match mode
         public bool Overlapping { get; set; }
+        public bool PrintMatches { get; set; }
 
         // Options for Split mode
         public bool OmitEmpty { get; set; }
@@ -27,6 +28,9 @@ namespace Retina
         {
             RegexOptions = RegexOptions.None;
             Mode = Modes.Match;
+
+            Overlapping = false;
+            PrintMatches = false;
 
             OmitEmpty = false;
 

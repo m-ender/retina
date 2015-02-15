@@ -73,7 +73,16 @@ namespace Retina
                 if (!options.Overlapping)
                 {
                     MatchCollection matches = regex.Matches(input);
-                    Console.WriteLine(matches.Count);
+
+                    if (options.PrintMatches)
+                    {
+                        foreach (Match match in matches)
+                            Console.WriteLine(match.Value);
+                    }
+                    else
+                    {
+                        Console.WriteLine(matches.Count);
+                    }
                 }
                 else
                 {
@@ -88,7 +97,15 @@ namespace Retina
                         start = match.Index+1;
                     }
 
-                    Console.WriteLine(matches.Count);
+                    if (options.PrintMatches)
+                    {
+                        foreach (Match match in matches)
+                            Console.WriteLine(match.Value);
+                    }
+                    else
+                    {
+                        Console.WriteLine(matches.Count);
+                    }
                 }
                 break;
             case Modes.Grep:
@@ -176,6 +193,9 @@ namespace Retina
                     break;
 
                 // Mode-specific options
+                case '!':
+                    options.PrintMatches = true;
+                    break;
                 case '&':
                     options.Overlapping = true;
                     break;
