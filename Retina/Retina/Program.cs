@@ -13,14 +13,36 @@ namespace Retina
         static void Main(string[] args)
         {
             if (args.Count() < 1)
-                Console.WriteLine("Usage: Retina.exe pattern.rgx [replacement.rgx]");
+                Console.WriteLine("Usage: Retina.exe pattern.rgx [replacement.rgx]\n"+
+                                  "Instead of a file names you can also use '-e pattern' or '-e replacement'.");
             else
             {
+                int index = 0;
+                string pattern;
+                if (args[index] == "-e")
+                {
+                    ++index;
+                    pattern = args[index++];
+                }
+                else
+                {
+                    pattern = File.ReadAllText(args[index++]);
+                }
 
-                string pattern = File.ReadAllText(args[0]);
                 string replacement = null;
-                if (args.Count() >= 2)
-                    replacement = File.ReadAllText(args[1]);
+
+                if (args.Count() > index)
+                {
+                    if (args[index] == "-e")
+                    {
+                        ++index;
+                        replacement = args[index++];
+                    }
+                    else
+                    {
+                        replacement = File.ReadAllText(args[index++]);
+                    }
+                }
 
                 Process(pattern, replacement);
             }
