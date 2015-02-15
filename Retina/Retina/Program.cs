@@ -48,8 +48,26 @@ namespace Retina
             switch (options.Mode)
             {
             case Modes.Match:
-                MatchCollection matches = regex.Matches(input);
-                Console.WriteLine(matches.Count);
+                if (!options.Overlapping)
+                {
+                    MatchCollection matches = regex.Matches(input);
+                    Console.WriteLine(matches.Count);
+                }
+                else
+                {
+                    var matches = new List<Match>();
+                    int start = 0;
+                    
+                    while (start < input.Length)
+                    {
+                        Match match = regex.Match(input, start);
+                        if (!match.Success) break;
+                        matches.Add(match);
+                        start = match.Index+1;
+                    }
+
+                    Console.WriteLine(matches.Count);
+                }
                 break;
             case Modes.Grep:
             case Modes.AntiGrep:
@@ -136,6 +154,9 @@ namespace Retina
                     break;
 
                 // Mode-specific options
+                case '&':
+                    options.Overlapping = true;
+                    break;
                 case '_':
                     options.OmitEmpty = true;
                     break;

@@ -13,6 +13,9 @@ namespace Retina
 
         public Modes Mode { get; set; }
 
+        // Options for Match mode
+        public bool Overlapping { get; set; }
+
         // Options for Split mode
         public bool OmitEmpty { get; set; }
 
