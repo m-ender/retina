@@ -119,7 +119,8 @@ namespace Retina
                 }
                 break;
             case Modes.Split:
-                foreach (var part in regex.Split(input))
+                var split = options.Max == -1 ? regex.Split(input) : regex.Split(input, options.Max);
+                foreach (var part in split)
                     if (!(options.OmitEmpty && part == ""))
                         Console.WriteLine(part);
                 break;
@@ -150,6 +151,7 @@ namespace Retina
         {
 
             var options = new Options();
+            var prev = '\0';
 
             foreach (char c in optionString)
             {
@@ -209,8 +211,13 @@ namespace Retina
                     options.Trace = true;
                     break;
                 default:
+                    if (Char.IsDigit(c) && !Char.IsDigit(prev))
+                        options.Max = Int32.Parse(c.ToString());
+                    else if (Char.IsDigit(c) && Char.IsDigit(prev))
+                        options.Max = options.Max * 10 + Int32.Parse(c.ToString());
                     break;
                 }
+                prev = c;
             }
 
             if (replaceMode)

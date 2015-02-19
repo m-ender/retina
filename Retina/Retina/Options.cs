@@ -19,6 +19,7 @@ namespace Retina
 
         // Options for Split mode
         public bool OmitEmpty { get; set; }
+        public int Max { get; set; }
 
         // Options for Replace mode
         public bool Loop { get; set; }
@@ -33,6 +34,7 @@ namespace Retina
             PrintMatches = false;
 
             OmitEmpty = false;
+            Max = -1;
 
             Loop = false;
             Trace = false;
