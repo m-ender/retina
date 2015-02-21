@@ -38,5 +38,74 @@ namespace Retina
             Trace = false;
         }
 
+        public Options(string optionString, bool replaceMode)
+            : this()
+        {
+            foreach (char c in optionString)
+            {
+                switch (c)
+                {
+                // Parse RegexOptions
+                case 'c':
+                    RegexOptions |= RegexOptions.CultureInvariant;
+                    break;
+                case 'e':
+                    RegexOptions |= RegexOptions.ECMAScript;
+                    break;
+                case 'i':
+                    RegexOptions |= RegexOptions.IgnoreCase;
+                    break;
+                case 'm':
+                    RegexOptions |= RegexOptions.Multiline;
+                    break;
+                case 'n':
+                    RegexOptions |= RegexOptions.ExplicitCapture;
+                    break;
+                case 'r':
+                    RegexOptions |= RegexOptions.RightToLeft;
+                    break;
+                case 's':
+                    RegexOptions |= RegexOptions.Singleline;
+                    break;
+                case 'x':
+                    RegexOptions |= RegexOptions.IgnorePatternWhitespace;
+                    break;
+
+                // Parse Mode
+                case 'G':
+                    Mode = Modes.Grep;
+                    break;
+                case 'A':
+                    Mode = Modes.AntiGrep;
+                    break;
+                case 'S':
+                    Mode = Modes.Split;
+                    break;
+
+                // Mode-specific options
+                case '!':
+                    PrintMatches = true;
+                    break;
+                case '&':
+                    Overlapping = true;
+                    break;
+                case '_':
+                    OmitEmpty = true;
+                    break;
+                case '+':
+                    Loop = true;
+                    break;
+                case '?':
+                    Trace = true;
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            if (replaceMode)
+                Mode = Modes.Replace;
+        }
+
     }
 }
