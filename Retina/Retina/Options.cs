@@ -38,7 +38,7 @@ namespace Retina
             Trace = false;
         }
 
-        public Options(string optionString, bool replaceMode)
+        public Options(string optionString, bool replaceMode = false)
             : this()
         {
             foreach (char c in optionString)

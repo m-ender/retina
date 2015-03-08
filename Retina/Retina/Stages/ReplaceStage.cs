@@ -18,24 +18,28 @@ namespace Retina.Stages
 
         public override string Execute(string input)
         {
+            string result = input;
             if (!Options.Loop)
-                Console.Write(Pattern.Replace(input, Replacement));
+            {
+                result = Pattern.Replace(input, Replacement);
+                Console.WriteLine(result);
+            }
             else
             {
-                string lastInput;
+                string lastResult;
                 do
                 {
-                    lastInput = input;
-                    input = Pattern.Replace(input, Replacement);
-                    if (Options.Trace && lastInput != input)
-                        Console.WriteLine(input);
-                } while (lastInput != input);
+                    lastResult = result;
+                    result = Pattern.Replace(result, Replacement);
+                    if (Options.Trace && lastResult != result)
+                        Console.WriteLine(result);
+                } while (lastResult != result);
 
                 if (!Options.Trace)
-                    Console.Write(input);
+                    Console.WriteLine(result);
             }
 
-            return input;
+            return result;
         }
     }
 }
