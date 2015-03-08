@@ -19,7 +19,7 @@ namespace Retina.Stages
 
             while ((line = stringReader.ReadLine()) != null)
             {
-                if (Pattern.IsMatch(line) ^ (Options.Mode == Modes.AntiGrep))
+                if (!Options.Silent && Pattern.IsMatch(line) ^ (Options.Mode == Modes.AntiGrep))
                     Console.WriteLine(line);
             }
 

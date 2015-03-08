@@ -14,7 +14,7 @@ namespace Retina.Stages
         public override string Execute(string input)
         {
             foreach (var part in Pattern.Split(input))
-                if (!(Options.OmitEmpty && part == ""))
+                if (!Options.Silent && !(Options.OmitEmpty && part == ""))
                     Console.WriteLine(part);
 
             return "";

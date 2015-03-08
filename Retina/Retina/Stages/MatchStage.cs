@@ -33,14 +33,17 @@ namespace Retina.Stages
                 }
             }
 
-            if (Options.PrintMatches)
+            if (!Options.Silent)
             {
-                foreach (Match match in matches)
-                    Console.WriteLine(match.Value);
-            }
-            else
-            {
-                Console.WriteLine(matches.Count);
+                if (Options.PrintMatches)
+                {
+                    foreach (Match match in matches)
+                        Console.WriteLine(match.Value);
+                }
+                else
+                {
+                    Console.WriteLine(matches.Count);
+                }
             }
 
             return "";

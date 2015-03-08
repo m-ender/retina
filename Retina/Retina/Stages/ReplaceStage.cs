@@ -22,7 +22,8 @@ namespace Retina.Stages
             if (!Options.Loop)
             {
                 result = Pattern.Replace(input, Replacement);
-                Console.WriteLine(result);
+                if (!Options.Silent)
+                    Console.WriteLine(result);
             }
             else
             {
@@ -31,11 +32,11 @@ namespace Retina.Stages
                 {
                     lastResult = result;
                     result = Pattern.Replace(result, Replacement);
-                    if (Options.Trace && lastResult != result)
+                    if (!Options.Silent && Options.Trace && lastResult != result)
                         Console.WriteLine(result);
                 } while (lastResult != result);
 
-                if (!Options.Trace)
+                if (!Options.Silent && !Options.Trace)
                     Console.WriteLine(result);
             }
 

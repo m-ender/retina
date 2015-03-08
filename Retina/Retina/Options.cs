@@ -13,6 +13,9 @@ namespace Retina
 
         public Modes Mode { get; set; }
 
+        // General options
+        public bool Silent { get; set; }
+
         // Options for Match mode
         public bool Overlapping { get; set; }
         public bool PrintMatches { get; set; }
@@ -28,6 +31,8 @@ namespace Retina
         {
             RegexOptions = RegexOptions.None;
             Mode = Modes.Match;
+
+            Silent = false;
 
             Overlapping = false;
             PrintMatches = false;
@@ -80,6 +85,11 @@ namespace Retina
                     break;
                 case 'S':
                     Mode = Modes.Split;
+                    break;
+
+                // General options
+                case ';':
+                    Silent = true;
                     break;
 
                 // Mode-specific options
