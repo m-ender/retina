@@ -4,7 +4,7 @@
 
 Retina is a command-line tool, which lets you run regular expressions (loaded from files) on anything given to it via standard input. This lets you essentially treat regular expressions as a programming language, where the programs have a rather rigid, but configurable I/O framework (with Retina being the language's interpreter). Under the hood, it uses .NET's regex engine, which means that both the .NET flavour and the ECMAScript flavour are available.
 
-"Retina" is also totally an acronym, but I haven't quite settled on its meaning yet. ;)
+"Retina" might be retconned into an acronym at some point, but I haven't quite settled on its meaning yet. ;)
 
 ## Running Retina
 
@@ -12,7 +12,7 @@ There is an up-to-date Windows binary of Retina in the root directory of the rep
 
 ## How does it work?
 
-Retina takes one or two filenames (*pattern* and optionally *replacement*) as command-line arguments and has several different modes of operation. Instead of filenames, you can also supply the pattern and/or replacement directly on the command line, by using the common `-e` flag. So all of the following are valid invocations:
+Retina either takes one or an even number of filenames as command-line arguments and has several different modes of operation. If you supply a single file, this is the *pattern*. If you supply an even number of files, these are treated as pairs of *pattern* and *replacement*. Instead of filenames, you can also supply the pattern and/or replacement directly on the command line, by using the common `-e` flag. So all of the following are valid invocations:
 
     Retina ./pattern.rgx
     Retina -e "foo.*"
@@ -20,12 +20,14 @@ Retina takes one or two filenames (*pattern* and optionally *replacement*) as co
     Retina ./pattern.rgx -e "bar"
     Retina -e "foo.*" ./replacement.rpl
     Retina -e "foo.*" -e "bar"
+    Retina ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx ./replacement2.rpl
+    Retina ./pattern1.rgx -e "bar" -e "foo*" ./replacement2.rpl
 
 In any case, the input to the program will be read from the standard input stream.
 
 ### The Pattern File
 
-Regardless of how many source files are supplied, the first one will be the *pattern file*. First and foremost, this will contain the regex to be used. However, if the file contains at least one backtick (`` ` ``), the code before the first backtick will be used to configure the exact operation mode of Retina - let's call this the *configuration string*. As an example, the pattern file
+Regardless of how many source files are supplied, the first one (and then every other file) will be the *pattern file*. First and foremost, this will contain the regex to be used. However, if the file contains at least one backtick (`` ` ``), the code before the first backtick will be used to configure the exact operation mode of Retina - let's call this the *configuration string*. As an example, the pattern file
 
     _Ss`a.
 
@@ -35,7 +37,7 @@ If *only* the pattern file is supplied, there are several different operation mo
 
 ### The Replacement File
 
-If a second file is supplied, Retina always operates in Replace mode (which can also be configured). The second source file is then used to define the replacement string. You can use all the usual references to capture groups like `$n`.
+If an even number of files is supplied, Retina always operates in Replace mode (which can also be configured). In this case the files are first grouped into pairs, where each pair constitutes one replacement stage, which modifies the input and passes it on to the next stage. The first source file in each pair is then still a *pattern*, but the second file in each pair is used to define the replacement string. You can use all the usual references to capturing groups like `$n`.
 
 ### The Configuration String
 
@@ -56,7 +58,6 @@ Some characters are available in all modes, some only in specific ones. Mode-spe
 - `s`: Activates `Singleline` mode, which makes `.` match newline characters.
 - `x`: Activates free-spacing mode, in which all whitespace in the pattern is ignored (unless escaped), and single-line comments can be written with `#`.
 
-
 #### Mode Selection
 
 When only the pattern file is supplied, Retina will usually operate in Match mode, but the following upper-case letters in the configuration string can select other modes:
@@ -64,6 +65,12 @@ When only the pattern file is supplied, Retina will usually operate in Match mod
 - `S`: Split mode.
 - `G`: Grep mode.
 - `A`: AntiGrep mode.
+
+#### General Options
+
+Currently there is only one option which applies to all modes:
+
+- `;`: Silent mode, suppresses all output. Currently, this is only useful for multi-stage Replace mode, where you might not be interested in the results of intermediate stages. I'm planning to make the other modes available for multi-stage processing, too, in the future, and hence these modes can also suppress output.
 
 ## Operation Modes
 
