@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,42 +10,33 @@ namespace Retina
 {
     class Options
     {
+        [DefaultValue(RegexOptions.None)]
         public RegexOptions RegexOptions { get; set; }
 
+        [DefaultValue(Modes.Match)]
         public Modes Mode { get; set; }
 
         // General options
+        [DefaultValue(false)]
         public bool Silent { get; set; }
 
         // Options for Match mode
+        [DefaultValue(false)]
         public bool Overlapping { get; set; }
+        [DefaultValue(false)]
         public bool PrintMatches { get; set; }
 
         // Options for Split mode
+        [DefaultValue(false)]
         public bool OmitEmpty { get; set; }
 
         // Options for Replace mode
+        [DefaultValue(false)]
         public bool Loop { get; set; }
+        [DefaultValue(false)]
         public bool Trace { get; set; }
 
-        public Options()
-        {
-            RegexOptions = RegexOptions.None;
-            Mode = Modes.Match;
-
-            Silent = false;
-
-            Overlapping = false;
-            PrintMatches = false;
-
-            OmitEmpty = false;
-
-            Loop = false;
-            Trace = false;
-        }
-
         public Options(string optionString, bool replaceMode = false)
-            : this()
         {
             foreach (char c in optionString)
             {
