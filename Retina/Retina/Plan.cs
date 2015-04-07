@@ -90,15 +90,22 @@ namespace Retina
         {
             var result = new List<string>();
 
-            int i = 0;
-            while (i < args.Length)
+            if (args[0] == "-s")
             {
-                if (args[i] == "-e")
-                    result.Add(args[++i]);
-                else
-                    result.Add(File.ReadAllText(args[i]));
+                result.AddRange(File.ReadAllText(args[1]).Split(new[] { '\n' }));
+            }
+            else
+            {
+                int i = 0;
+                while (i < args.Length)
+                {
+                    if (args[i] == "-e")
+                        result.Add(args[++i]);
+                    else
+                        result.Add(File.ReadAllText(args[i]));
 
-                ++i;
+                    ++i;
+                }
             }
 
             return result;
