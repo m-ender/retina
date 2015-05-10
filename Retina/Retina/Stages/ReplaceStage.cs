@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    class ReplaceStage : Stage
+    class ReplaceStage : RegexStage
     {
         public string Replacement { get; set; }
 

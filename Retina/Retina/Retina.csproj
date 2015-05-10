@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Stages\RegexStage.cs" />
+    <Compile Include="Stages\LoopStage.cs" />
     <Compile Include="Stages\GrepStage.cs" />
     <Compile Include="Stages\MatchStage.cs" />
     <Compile Include="Modes.cs" />

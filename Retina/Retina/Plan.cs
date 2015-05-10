@@ -15,7 +15,8 @@ namespace Retina
 
         public Plan (string[] args)
 	    {
-            Stages = new List<Stage>();
+            var stageTree = new Stack<List<Stage>>();
+            stageTree.Push(new List<Stage>());
 
             if (args.Count() < 1)
                 Console.WriteLine("Usage: Retina.exe pattern.rgx [replacement.rpl]\n" +
@@ -49,7 +50,7 @@ namespace Retina
                         throw new NotImplementedException();
                     }
 
-                    Stages.Add(stage);
+                    stageTree.Peek().Add(stage);
                 }
                 else if (sources.Count % 2 == 0)
                 {
@@ -61,12 +62,30 @@ namespace Retina
                         Options options;
                         Regex regex;
                         ParsePattern(pattern, true, i == sources.Count-2, out options, out regex);
+                        for (int j = 0; j < options.OpenLoops; ++j)
+                            stageTree.Push(new List<Stage>());
 
-                        Stages.Add(new ReplaceStage(options, regex, replacement));
+                        stageTree.Peek().Add(new ReplaceStage(options, regex, replacement));
+
+                        for (int j = 0; j < options.CloseLoops; ++j)
+                        {
+                            var loopBody = stageTree.Pop();
+                            if (stageTree.Count == 0)
+                                stageTree.Push(new List<Stage>());
+
+                            stageTree.Peek().Add(new LoopStage(loopBody));
+                        }
                     }
                 }
                 else
                     throw new ArgumentException("Retina must be called with a single argument or an even number of arguments.");
+
+                while (stageTree.Count > 1)
+                {
+                    var loopBody = stageTree.Pop();
+                    stageTree.Peek().Add(new LoopStage(loopBody));
+                }
+                Stages = stageTree.Pop();
             }
 	    }
 

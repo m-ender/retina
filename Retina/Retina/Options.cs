@@ -36,6 +36,12 @@ namespace Retina
         [DefaultValue(false)]
         public bool Trace { get; set; }
 
+        // Options for control flow
+        [DefaultValue(0)]
+        public int OpenLoops { get; set; }
+        [DefaultValue(0)]
+        public int CloseLoops { get; set; }
+
         public Options(string optionString, bool replaceMode = false, bool last = false)
         {
             Silent = !last;
@@ -87,6 +93,12 @@ namespace Retina
                     break;
                 case ':':
                     Silent = false;
+                    break;
+                case '(':
+                    ++OpenLoops;
+                    break;
+                case ')':
+                    ++CloseLoops;
                     break;
 
                 // Mode-specific options
