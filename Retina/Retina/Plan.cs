@@ -30,7 +30,7 @@ namespace Retina
 
                     Options options;
                     Regex regex;
-                    ParsePattern(pattern, false, out options, out regex);
+                    ParsePattern(pattern, false, true, out options, out regex);
 
                     Stage stage = null;
                     switch (options.Mode)
@@ -60,7 +60,7 @@ namespace Retina
 
                         Options options;
                         Regex regex;
-                        ParsePattern(pattern, true, out options, out regex);
+                        ParsePattern(pattern, true, i == sources.Count-2, out options, out regex);
 
                         Stages.Add(new ReplaceStage(options, regex, replacement));
                     }
@@ -70,7 +70,7 @@ namespace Retina
             }
 	    }
 
-        private static void ParsePattern(string pattern, bool replaceMode, out Options options, out Regex regex)
+        private static void ParsePattern(string pattern, bool replaceMode, bool last, out Options options, out Regex regex)
         {
             string optionString = "";
 
@@ -81,7 +81,7 @@ namespace Retina
                 optionString = parts[0];
                 parts.RemoveAt(0);
             }
-            options = new Options(optionString, replaceMode);
+            options = new Options(optionString, replaceMode, last);
 
             regex = new Regex(String.Join("`", parts), options.RegexOptions);
         }

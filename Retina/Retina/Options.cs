@@ -17,7 +17,7 @@ namespace Retina
         public Modes Mode { get; set; }
 
         // General options
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool Silent { get; set; }
 
         // Options for Match mode
@@ -36,8 +36,10 @@ namespace Retina
         [DefaultValue(false)]
         public bool Trace { get; set; }
 
-        public Options(string optionString, bool replaceMode = false)
+        public Options(string optionString, bool replaceMode = false, bool last = false)
         {
+            Silent = !last;
+
             foreach (char c in optionString)
             {
                 switch (c)
@@ -82,6 +84,9 @@ namespace Retina
                 // General options
                 case ';':
                     Silent = true;
+                    break;
+                case ':':
+                    Silent = false;
                     break;
 
                 // Mode-specific options
