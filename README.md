@@ -2,9 +2,7 @@
 
 ## What is Retina?
 
-Retina is a command-line tool, which lets you run regular expressions (loaded from files) on anything given to it via standard input. This lets you essentially treat regular expressions as a programming language, where the programs have a rather rigid, but configurable I/O framework (with Retina being the language's interpreter). Under the hood, it uses .NET's regex engine, which means that both the .NET flavour and the ECMAScript flavour are available.
-
-"Retina" might be retconned into an acronym at some point, but I haven't quite settled on its meaning yet. ;)
+Retina is a regex-based programming language. It's main feature is taking some text via standard input and repeatedly applying regex operations to it (e.g. matching, splitting, and most of all replacing). Under the hood, it uses .NET's regex engine, which means that both the .NET flavour and the ECMAScript flavour are available.
 
 ## Running Retina
 
@@ -22,6 +20,8 @@ Retina either takes one or an even number of filenames as command-line arguments
     Retina -e "foo.*" -e "bar"
     Retina ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx ./replacement2.rpl
     Retina ./pattern1.rgx -e "bar" -e "foo*" ./replacement2.rpl
+
+Alternatively, you can use the `-s` flag and read all patterns and replacements from a single newline-separated file.
 
 In any case, the input to the program will be read from the standard input stream.
 
@@ -68,9 +68,11 @@ When only the pattern file is supplied, Retina will usually operate in Match mod
 
 #### General Options
 
-Currently there is only one option which applies to all modes:
+The following options apply to all modes (but may be a bit useless in some of them):
 
-- `;`: Silent mode, suppresses all output. Currently, this is only useful for multi-stage Replace mode, where you might not be interested in the results of intermediate stages. I'm planning to make the other modes available for multi-stage processing, too, in the future, and hence these modes can also suppress output.
+- `;`: Silent mode, suppresses all output. This is mostly available for legacy reasons. All but the last stage are silent by default.
+- `:`: Turns off silent mode. Use this if you want to output the results of intermediate stages.
+- `(` and `)`: `(` opens a loop and `)` closes a loop. All stages between `(` and `)` (inclusive) will be repeated in a loop until an iteration doesn't change the result. Note that `(` and `)` may appear in the same stage, looping only that stage. Also, the order of `(` and `)` within a single stage is irrelevant - they are always treated as if all `(` appear before all `)`. Furthermore, an unmatched `)` assumes a `(` in the first stage, and an unmatched `(` assumes a `)` in the last stage. Loops can be nested.
 
 ## Operation Modes
 
@@ -105,7 +107,7 @@ AntiGrep mode is almost the same, except that it prints all lines which *didn't*
 
 ### Replace Mode
 
-Replace mode does what it says on the tin: it replaces all matches of the regex in the input with the replacement string, and prints the result. However, Replace mode comes with one nifty option:
+Replace mode does what it says on the tin: it replaces all matches of the regex in the input with the replacement string, and prints the result. However, Replace mode comes with very important options:
 
 - `+`: Repeatedly apply the regex replacement until the regex doesn't match any more. This option makes Retina [Turing-complete](http://en.wikipedia.org/wiki/Turing_completeness) (see below for details).
 - `?`: Only in conjunction with `+`, print all the intermediate results of the loop, each on its own line.
