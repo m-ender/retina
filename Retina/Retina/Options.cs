@@ -25,8 +25,6 @@ namespace Retina
         public bool OmitEmpty { get; set; }
 
         // Options for Replace mode
-        public bool Loop { get; set; }
-        public bool Trace { get; set; }
 
         // Options for control flow
         public int OpenLoops { get; set; }
@@ -109,10 +107,8 @@ namespace Retina
                     OmitEmpty = true;
                     break;
                 case '+':
-                    Loop = true;
-                    break;
-                case '?':
-                    Trace = true;
+                    ++OpenLoops;
+                    ++CloseLoops;
                     break;
                 default:
                     break;

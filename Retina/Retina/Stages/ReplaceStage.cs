@@ -19,26 +19,9 @@ namespace Retina.Stages
         public override string Execute(string input)
         {
             string result = input;
-            if (!Options.Loop)
-            {
-                result = Pattern.Replace(input, Replacement);
-                if (!Options.Silent)
-                    Console.WriteLine(result);
-            }
-            else
-            {
-                string lastResult;
-                do
-                {
-                    lastResult = result;
-                    result = Pattern.Replace(result, Replacement);
-                    if (!Options.Silent && Options.Trace && lastResult != result)
-                        Console.WriteLine(result);
-                } while (lastResult != result);
-
-                if (!Options.Silent && !Options.Trace)
-                    Console.WriteLine(result);
-            }
+            result = Pattern.Replace(input, Replacement);
+            if (!Options.Silent)
+                Console.WriteLine(result);
 
             return result;
         }
