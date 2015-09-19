@@ -27,19 +27,27 @@ namespace Retina
             {
                 List<string> sources = ReadSources(args);
 
-                if (sources.Count == 1)
+                int i = 0;
+                while (i < sources.Count)
                 {
-                    string pattern = sources[0];
+                    string pattern = sources[i++];
 
                     Options options;
                     Regex regex;
-                    ParsePattern(pattern, false, true, out options, out regex);
+                    ParsePattern(pattern, i < sources.Count, false, out options, out regex);
+
+                    for (int j = 0; j < options.OpenLoops; ++j)
+                        stageTree.Push(new List<Stage>());
 
                     Stage stage = null;
                     switch (options.Mode)
                     {
                     case Modes.Match:
                         stage = new MatchStage(options, regex);
+                        break;
+                    case Modes.Replace:
+                        string replacement = i < sources.Count ? sources[i++] : "";
+                        stage = new ReplaceStage(options, regex, replacement);
                         break;
                     case Modes.Split:
                         stage = new SplitStage(options, regex);
@@ -53,34 +61,16 @@ namespace Retina
                     }
 
                     stageTree.Peek().Add(stage);
-                }
-                else if (sources.Count % 2 == 0)
-                {
-                    for (int i = 0; i < sources.Count; i += 2)
-                    {
-                        string pattern = sources[i];
-                        string replacement = sources[i + 1];
 
-                        Options options;
-                        Regex regex;
-                        ParsePattern(pattern, true, i == sources.Count-2, out options, out regex);
-                        for (int j = 0; j < options.OpenLoops; ++j)
+                    for (int j = 0; j < options.CloseLoops; ++j)
+                    {
+                        var loopBody = stageTree.Pop();
+                        if (stageTree.Count == 0)
                             stageTree.Push(new List<Stage>());
 
-                        stageTree.Peek().Add(new ReplaceStage(options, regex, replacement));
-
-                        for (int j = 0; j < options.CloseLoops; ++j)
-                        {
-                            var loopBody = stageTree.Pop();
-                            if (stageTree.Count == 0)
-                                stageTree.Push(new List<Stage>());
-
-                            stageTree.Peek().Add(new LoopStage(loopBody));
-                        }
+                        stageTree.Peek().Add(new LoopStage(loopBody));
                     }
                 }
-                else
-                    throw new ArgumentException("Retina must be called with a single argument or an even number of arguments.");
 
                 while (stageTree.Count > 1)
                 {
@@ -102,7 +92,7 @@ namespace Retina
                 optionString = parts[0];
                 parts.RemoveAt(0);
             }
-            options = new Options(optionString, replaceMode, last);
+            options = new Options(optionString, replaceMode ? Modes.Replace : Modes.Match, last);
 
             regex = new Regex(String.Join("`", parts), options.RegexOptions);
         }

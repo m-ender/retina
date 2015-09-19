@@ -32,8 +32,9 @@ namespace Retina
         public int OpenLoops { get; set; }
         public int CloseLoops { get; set; }
 
-        public Options(string optionString, bool replaceMode = false, bool last = false)
+        public Options(string optionString, Modes defaultMode, bool last = false)
         {
+            Mode = defaultMode;
             Silent = !last;
 
             foreach (char c in optionString)
@@ -67,6 +68,12 @@ namespace Retina
                     break;
 
                 // Parse Mode
+                case 'M':
+                    Mode = Modes.Match;
+                    break;
+                case 'R':
+                    Mode = Modes.Replace;
+                    break;
                 case 'G':
                     Mode = Modes.Grep;
                     break;
@@ -111,9 +118,6 @@ namespace Retina
                     break;
                 }
             }
-
-            if (replaceMode)
-                Mode = Modes.Replace;
         }
 
     }
