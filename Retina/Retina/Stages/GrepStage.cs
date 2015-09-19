@@ -17,13 +17,25 @@ namespace Retina.Stages
             string line;
             var stringReader = new StringReader(input);
 
+            var builder = new StringBuilder();
+
+            bool first = true;
             while ((line = stringReader.ReadLine()) != null)
             {
-                if (!Options.Silent && Pattern.IsMatch(line) ^ (Options.Mode == Modes.AntiGrep))
-                    Console.WriteLine(line);
+                if (Pattern.IsMatch(line) ^ (Options.Mode == Modes.AntiGrep))
+                {
+                    if (!first) builder.Append("\n");
+                    first = false;
+                    builder.Append(line);
+                }
             }
 
-            return "";
+            string result = builder.ToString();
+
+            if (!Options.Silent)
+                Console.WriteLine(result);
+
+            return result;
         }
     }
 }

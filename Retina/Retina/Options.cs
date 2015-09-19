@@ -10,36 +10,26 @@ namespace Retina
 {
     class Options
     {
-        [DefaultValue(RegexOptions.None)]
         public RegexOptions RegexOptions { get; set; }
 
-        [DefaultValue(Modes.Match)]
         public Modes Mode { get; set; }
 
         // General options
-        [DefaultValue(true)]
         public bool Silent { get; set; }
 
         // Options for Match mode
-        [DefaultValue(false)]
         public bool Overlapping { get; set; }
-        [DefaultValue(false)]
         public bool PrintMatches { get; set; }
 
         // Options for Split mode
-        [DefaultValue(false)]
         public bool OmitEmpty { get; set; }
 
         // Options for Replace mode
-        [DefaultValue(false)]
         public bool Loop { get; set; }
-        [DefaultValue(false)]
         public bool Trace { get; set; }
 
         // Options for control flow
-        [DefaultValue(0)]
         public int OpenLoops { get; set; }
-        [DefaultValue(0)]
         public int CloseLoops { get; set; }
 
         public Options(string optionString, bool replaceMode = false, bool last = false)

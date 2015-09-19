@@ -13,11 +13,26 @@ namespace Retina.Stages
 
         public override string Execute(string input)
         {
-            foreach (var part in Pattern.Split(input))
-                if (!Options.Silent && !(Options.OmitEmpty && part == ""))
-                    Console.WriteLine(part);
+            var builder = new StringBuilder();
 
-            return "";
+            bool first = true;
+
+            foreach (var part in Pattern.Split(input))
+            {
+                if (!(Options.OmitEmpty && part == ""))
+                {
+                    if (!first) builder.Append("\n");
+                    first = false;
+                    builder.Append(part);
+                }
+            }
+
+            string result = builder.ToString();
+
+            if (!Options.Silent)
+                Console.WriteLine(result);
+
+            return result;
         }
     }
 }

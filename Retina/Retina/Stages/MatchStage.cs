@@ -33,20 +33,29 @@ namespace Retina.Stages
                 }
             }
 
-            if (!Options.Silent)
+            var builder = new StringBuilder();
+
+            if (Options.PrintMatches)
             {
-                if (Options.PrintMatches)
+                bool first = true;
+                foreach (Match match in matches)
                 {
-                    foreach (Match match in matches)
-                        Console.WriteLine(match.Value);
-                }
-                else
-                {
-                    Console.WriteLine(matches.Count);
+                    if (!first) builder.Append("\n");
+                    first = false;
+                    builder.Append(match.Value);
                 }
             }
+            else
+            {
+                builder.Append(matches.Count);
+            }
 
-            return "";
+            string result = builder.ToString();
+
+            if (!Options.Silent)
+                Console.WriteLine(result);
+
+            return result;
         }
     }
 }
