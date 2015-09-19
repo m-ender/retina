@@ -11,8 +11,10 @@ namespace Retina.Stages
     {
         public List<Stage> Stages { get; set; }
 
-        public LoopStage(List<Stage> stages)
+        public LoopStage(List<Stage> stages, bool? silent = null)
         {
+            if (silent != null)
+                Silent = silent;
             Stages = stages;
         }
 
@@ -26,6 +28,9 @@ namespace Retina.Stages
                 foreach (var stage in Stages)
                     result = stage.Execute(result);
             } while (lastResult != result);
+
+            if (!(Silent ?? true))
+                Console.WriteLine(result);
 
             return result;
         }

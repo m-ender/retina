@@ -20,7 +20,7 @@ namespace Retina.Stages
         {
             string result = input;
             result = Pattern.Replace(input, Replacement);
-            if (!Options.Silent)
+            if (!(Silent ?? true))
                 Console.WriteLine(result);
 
             return result;

@@ -16,6 +16,8 @@ namespace Retina.Stages
         {
             Options = options;
             Pattern = pattern;
+
+            Silent = Options.Silent;
         }
     }
 }

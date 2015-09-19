@@ -29,7 +29,7 @@ namespace Retina.Stages
 
             string result = builder.ToString();
 
-            if (!Options.Silent)
+            if (!(Silent ?? true))
                 Console.WriteLine(result);
 
             return result;

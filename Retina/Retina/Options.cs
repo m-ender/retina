@@ -15,7 +15,7 @@ namespace Retina
         public Modes Mode { get; set; }
 
         // General options
-        public bool Silent { get; set; }
+        public bool? Silent { get; set; }
 
         // Options for Match mode
         public bool Overlapping { get; set; }
@@ -28,12 +28,12 @@ namespace Retina
 
         // Options for control flow
         public int OpenLoops { get; set; }
-        public int CloseLoops { get; set; }
+        public List<bool?> CloseLoops { get; set; }
 
-        public Options(string optionString, Modes defaultMode, bool last = false)
+        public Options(string optionString, Modes defaultMode)
         {
             Mode = defaultMode;
-            Silent = !last;
+            CloseLoops = new List<bool?>();
 
             foreach (char c in optionString)
             {
@@ -84,16 +84,22 @@ namespace Retina
 
                 // General options
                 case ';':
-                    Silent = true;
+                    if (CloseLoops.Count == 0)
+                        Silent = true;
+                    else
+                        CloseLoops[CloseLoops.Count - 1] = true;
                     break;
                 case ':':
-                    Silent = false;
+                    if (CloseLoops.Count == 0)
+                        Silent = false;
+                    else
+                        CloseLoops[CloseLoops.Count - 1] = false;
                     break;
                 case '(':
                     ++OpenLoops;
                     break;
                 case ')':
-                    ++CloseLoops;
+                    CloseLoops.Add(null);
                     break;
 
                 // Mode-specific options
@@ -107,8 +113,9 @@ namespace Retina
                     OmitEmpty = true;
                     break;
                 case '+':
+                    // Short-hand for ()
                     ++OpenLoops;
-                    ++CloseLoops;
+                    CloseLoops.Add(null);
                     break;
                 default:
                     break;

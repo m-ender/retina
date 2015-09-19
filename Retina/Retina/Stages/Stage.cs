@@ -9,6 +9,8 @@ namespace Retina.Stages
 {
     abstract class Stage
     {
+        public bool? Silent { get; set; }
+
         public Stage() { }
 
         abstract public string Execute(string input);

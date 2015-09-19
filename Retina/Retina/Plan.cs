@@ -62,13 +62,12 @@ namespace Retina
 
                     stageTree.Peek().Add(stage);
 
-                    for (int j = 0; j < options.CloseLoops; ++j)
+                    for (int j = 0; j < options.CloseLoops.Count; ++j)
                     {
                         var loopBody = stageTree.Pop();
                         if (stageTree.Count == 0)
                             stageTree.Push(new List<Stage>());
-
-                        stageTree.Peek().Add(new LoopStage(loopBody));
+                        stageTree.Peek().Add(new LoopStage(loopBody, options.CloseLoops[j]));
                     }
                 }
 
@@ -78,6 +77,9 @@ namespace Retina
                     stageTree.Peek().Add(new LoopStage(loopBody));
                 }
                 Stages = stageTree.Pop();
+
+                if (Stages.Last().Silent == null)
+                    Stages.Last().Silent = false;
             }
 	    }
 
@@ -92,7 +94,7 @@ namespace Retina
                 optionString = parts[0];
                 parts.RemoveAt(0);
             }
-            options = new Options(optionString, replaceMode ? Modes.Replace : Modes.Match, last);
+            options = new Options(optionString, replaceMode ? Modes.Replace : Modes.Match);
 
             regex = new Regex(String.Join("`", parts), options.RegexOptions);
         }
