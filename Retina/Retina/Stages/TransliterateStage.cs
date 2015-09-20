@@ -27,7 +27,7 @@ namespace Retina.Stages
             From = from.ToString();
             To = to.ToString();
 
-            Pattern = new Regex(source.Length == 0 ? @"[\s\S]" : source.ToString());
+            Pattern = new Regex(source.Length == 0 ? @"[\s\S]+" : source.ToString());
         }
 
         private void ParseCharacterSet(StringBuilder setBuilder, StringBuilder source)

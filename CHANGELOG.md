@@ -1,3 +1,7 @@
+# 0.6.1
+
+- Add new stage type: Transliterate.
+
 # 0.6.0
 
 - Stage types can now be mixed, which (among other things) allows applying a 
