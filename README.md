@@ -83,7 +83,7 @@ The following options apply to all modes:
 
 ## Operation Modes
 
-As outlined above, Retina currently supports 5 different operation modes: Match, Split, Grep, AntiGrep, Replace.
+As outlined above, Retina currently supports 6 different operation modes: Match, Replace, Split, Grep, AntiGrep, Transliterate.
 
 ### Match Mode
 
