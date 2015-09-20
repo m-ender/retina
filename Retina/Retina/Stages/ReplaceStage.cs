@@ -11,7 +11,7 @@ namespace Retina.Stages
     {
         public string Replacement { get; set; }
 
-        public ReplaceStage(Options options, Regex pattern, string replacement) : base(options, pattern)
+        public ReplaceStage(Options options, string pattern, string replacement) : base(options, pattern)
         {
             Replacement = replacement;
         }

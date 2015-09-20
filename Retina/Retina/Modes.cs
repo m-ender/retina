@@ -12,6 +12,7 @@ namespace Retina
         Grep,
         AntiGrep,
         Split,
-        Replace
+        Replace,
+        Transliterate
     }
 }

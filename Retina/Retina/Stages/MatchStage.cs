@@ -9,7 +9,7 @@ namespace Retina.Stages
 {
     class MatchStage : RegexStage
     {
-        public MatchStage(Options options, Regex pattern) : base(options, pattern) { }
+        public MatchStage(Options options, string pattern) : base(options, pattern) { }
 
         protected override StringBuilder Process(string input)
         {

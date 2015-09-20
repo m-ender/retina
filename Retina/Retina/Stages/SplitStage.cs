@@ -9,7 +9,7 @@ namespace Retina.Stages
 {
     class SplitStage : RegexStage
     {
-        public SplitStage(Options options, Regex pattern) : base(options, pattern) { }
+        public SplitStage(Options options, string pattern) : base(options, pattern) { }
 
         protected override StringBuilder Process(string input)
         {

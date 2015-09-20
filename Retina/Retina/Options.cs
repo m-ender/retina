@@ -81,6 +81,9 @@ namespace Retina
                 case 'S':
                     Mode = Modes.Split;
                     break;
+                case 'T':
+                    Mode = Modes.Transliterate;
+                    break;
 
                 // General options
                 case ';':

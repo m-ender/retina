@@ -10,7 +10,7 @@ namespace Retina.Stages
 {
     class GrepStage : RegexStage
     {
-        public GrepStage(Options options, Regex pattern) : base(options, pattern) { }
+        public GrepStage(Options options, string pattern) : base(options, pattern) { }
 
         protected override StringBuilder Process(string input)
         {

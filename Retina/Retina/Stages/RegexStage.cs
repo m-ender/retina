@@ -12,12 +12,15 @@ namespace Retina.Stages
         public Options Options { get; set; }
         public Regex Pattern { get; set; }
 
-        public RegexStage(Options options, Regex pattern)
+        protected RegexStage(Options options)
         {
             Options = options;
-            Pattern = pattern;
-
             Silent = Options.Silent;
+        }
+
+        public RegexStage(Options options, string pattern) : this(options)
+        {
+            Pattern = new Regex(pattern, options.RegexOptions);
         }
     }
 }

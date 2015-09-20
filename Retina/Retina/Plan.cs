@@ -33,7 +33,7 @@ namespace Retina
                     string pattern = sources[i++];
 
                     Options options;
-                    Regex regex;
+                    string regex;
                     ParsePattern(pattern, i < sources.Count, false, out options, out regex);
 
                     for (int j = 0; j < options.OpenLoops; ++j)
@@ -55,6 +55,9 @@ namespace Retina
                     case Modes.Grep:
                     case Modes.AntiGrep:
                         stage = new GrepStage(options, regex);
+                        break;
+                    case Modes.Transliterate:
+                        stage = new TransliterateStage(options, regex);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -83,7 +86,7 @@ namespace Retina
             }
 	    }
 
-        private static void ParsePattern(string pattern, bool replaceMode, bool last, out Options options, out Regex regex)
+        private static void ParsePattern(string pattern, bool replaceMode, bool last, out Options options, out string regex)
         {
             string optionString = "";
 
@@ -96,7 +99,7 @@ namespace Retina
             }
             options = new Options(optionString, replaceMode ? Modes.Replace : Modes.Match);
 
-            regex = new Regex(String.Join("`", parts), options.RegexOptions);
+            regex = String.Join("`", parts);
         }
 
         private List<string> ReadSources(string[] args)
