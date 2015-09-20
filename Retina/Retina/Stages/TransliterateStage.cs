@@ -110,15 +110,23 @@ namespace Retina.Stages
             var builder = new StringBuilder();
 
             int n = To.Length;
+            int i = 0;
 
-            foreach (char c in input)
+            foreach (Match m in Pattern.Matches(input))
             {
-                int i = From.IndexOf(c);
-                if (i < 0)
-                    builder.Append(c);
-                else if (n > 0)
-                    builder.Append(To[Math.Min(n - 1, i)]);
+                builder.Append(input.Substring(i, m.Index-i));
+                foreach (char c in m.Value)
+                {
+                    int j = From.IndexOf(c);
+                    if (j < 0)
+                        builder.Append(c);
+                    else if (n > 0)
+                        builder.Append(To[Math.Min(n - 1, j)]);
+                }
+                i = m.Index + m.Length;
             }
+
+            builder.Append(input.Substring(i));
 
             return builder;
         }
