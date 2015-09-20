@@ -1,4 +1,4 @@
-﻿?+x ` # Simulates Rule 110 with spaces for zeros and X's for ones,
+﻿:+x ` # Simulates Rule 110 with spaces for zeros and X's for ones,
       # printing each step of the simulation.
       # The input must end in a space.
       # If you want to print the initial condition in the trace,
