@@ -4,13 +4,17 @@
 
 Retina is a regex-based programming language. It's main feature is taking some text via standard input and repeatedly applying regex operations to it (e.g. matching, splitting, and most of all replacing). Under the hood, it uses .NET's regex engine, which means that both the .NET flavour and the ECMAScript flavour are available.
 
+Retina was mainly developed for [Code golf](https://en.wikipedia.org/wiki/Code_golf) which may explain its very terse configuration syntax and some weird design decisions.
+
 ## Running Retina
 
-There is an up-to-date Windows binary of Retina in the root directory of the repository. Alternatively, you can build it yourself from the C# sources. I have not yet tested Retina with Mono, and would be very interested in feedback on whether that works.
+There is an up-to-date Windows binary of Retina in the root directory of the repository. Alternatively, you can build it yourself from the C# sources. I do not regularly test Retina with Mono, but previous versions have worked without problems.
 
 ## How does it work?
 
-Retina either takes one or an even number of filenames as command-line arguments and has several different modes of operation. If you supply a single file, this is the *pattern*. If you supply an even number of files, these are treated as pairs of *pattern* and *replacement*. Instead of filenames, you can also supply the pattern and/or replacement directly on the command line, by using the common `-e` flag. So all of the following are valid invocations:
+Each program is grouped into *stages*. A stage consists of one or two parts depending on its type (or *mode*). Each stage transforms its input (string) to an output string which is passed to the next stage. The first stage reads from the standard input stream. Each stage may optionally print its result to the standard output stream in addition to passing it on. By default, only the very last stage prints its result. Stages can also be grouped into loops.
+
+The Retina interpreter takes the files for the stages' parts as command-line arguments. Instead of filenames, you can also supply the parts directly on the command line, by using the `-e` flag. So all of the following are valid invocations:
 
     Retina ./pattern.rgx
     Retina -e "foo.*"
@@ -18,30 +22,30 @@ Retina either takes one or an even number of filenames as command-line arguments
     Retina ./pattern.rgx -e "bar"
     Retina -e "foo.*" ./replacement.rpl
     Retina -e "foo.*" -e "bar"
-    Retina ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx ./replacement2.rpl
-    Retina ./pattern1.rgx -e "bar" -e "foo*" ./replacement2.rpl
+    Retina ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx
+    Retina ./pattern1.rgx -e "bar" -e "foo*"
 
-Alternatively, you can use the `-s` flag and read all patterns and replacements from a single newline-separated file.
+Because this can get cumbersome from programs with many stages, you can also use the `-s` flag and read all parts from a single newline-separated file. In this case, the recommended file extension is `.ret`:
 
-In any case, the input to the program will be read from the standard input stream.
+    Retina -s ./program.ret
 
-### The Pattern File
+### The Pattern
 
-Regardless of how many source files are supplied, the first one (and then every other file) will be the *pattern file*. First and foremost, this will contain the regex to be used. However, if the file contains at least one backtick (`` ` ``), the code before the first backtick will be used to configure the exact operation mode of Retina - let's call this the *configuration string*. As an example, the pattern file
+Regardless of whether a stage consists of one or two parts, the first one will be the *pattern*. First and foremost, this will contain the regex to be used. However, if the file contains at least one backtick (`` ` ``), the code before the first backtick will be used to configure the stage - let's call this the *configuration string*. As an example, the pattern file
 
     _Ss`a.
 
 configures Retina with `_Ss` (more on that later) and defines the regex as `a.`. Any further backticks are simply part of the regex. If you want to use backticks in your regex, but do not want to configure Retina, just start your pattern file with a single backtick (which translates to an empty configuration).
 
-If *only* the pattern file is supplied, there are several different operation modes available, the default being a matching mode.
+Most types of stages only use a single file.
 
-### The Replacement File
+### The Replacement
 
-If an even number of files is supplied, Retina always operates in Replace mode (which can also be configured). In this case the files are first grouped into pairs, where each pair constitutes one replacement stage, which modifies the input and passes it on to the next stage. The first source file in each pair is then still a *pattern*, but the second file in each pair is used to define the replacement string. You can use all the usual references to capturing groups like `$n`.
+If the stage operates in Replace mode, it consists of two parts, where the first is a pattern as described above, and the second is the replacement string. You can use all the usual references to capturing groups like `$n`. If no replacement part is supplied (but Replace mode is enforced), the replacement string is assumed to be the empty string.
 
 ### The Configuration String
 
-Currently, the configuration string simply is an unordered bunch of characters, which switches between different options, modes and flags. This may get more complicated in the future. If multiple conflicting options are used, the latter option will override the former.
+Currently, the configuration string simply is a (mostly) unordered bunch of characters, which switches between different options, modes and flags. This may get more complicated in the future. If multiple conflicting options are used, the latter option will override the former.
 
 Some characters are available in all modes, some only in specific ones. Mode-specific options are denoted by non-alphanumeric characters and are mentioned below when the individual modes are discussed.
 
@@ -60,19 +64,21 @@ Some characters are available in all modes, some only in specific ones. Mode-spe
 
 #### Mode Selection
 
-When only the pattern file is supplied, Retina will usually operate in Match mode, but the following upper-case letters in the configuration string can select other modes:
+The default mode for a stage depends on whether there are any further parts in the program after the current *pattern*: if this pattern is the last part of the program, the stage defaults to Match mode. Otherwise it defaults to Replace mode. The following upper-case letters in the configuration string can override these defaults:
 
+- `M`: Match mode.
+- `R`: Replace mode
 - `S`: Split mode.
 - `G`: Grep mode.
 - `A`: AntiGrep mode.
 
 #### General Options
 
-The following options apply to all modes (but may be a bit useless in some of them):
+The following options apply to all modes:
 
-- `;`: Silent mode, suppresses all output. This is mostly available for legacy reasons. All but the last stage are silent by default.
-- `:`: Turns off silent mode. Use this if you want to output the results of intermediate stages.
-- `(` and `)`: `(` opens a loop and `)` closes a loop. All stages between `(` and `)` (inclusive) will be repeated in a loop until an iteration doesn't change the result. Note that `(` and `)` may appear in the same stage, looping only that stage. Also, the order of `(` and `)` within a single stage is irrelevant - they are always treated as if all `(` appear before all `)`. Furthermore, an unmatched `)` assumes a `(` in the first stage, and an unmatched `(` assumes a `)` in the last stage. Loops can be nested.
+- `(` and `)`: `(` opens a loop and `)` closes a loop. All stages between `(` and `)` (inclusive) will be repeated in a loop until an iteration doesn't change the result. Note that `(` and `)` may appear in the same stage, looping only that stage. Also, the order of `(` and `)` within a single stage is irrelevant - they are always treated as if all `(` appear before all `)`. Furthermore, an unmatched `)` assumes a `(` in the first stage, and an unmatched `(` assumes a `)` in the last stage. Loops can be nested. These options makes Retina [Turing-complete](http://en.wikipedia.org/wiki/Turing_completeness) (see below for details).
+- `+`: Short-hand for `()`.
+- `;` and `:`: Turn Silent mode off and on, respectively (this determines whether the result of a stage or loop is printed to the standard output stream). Every stage *and* every loop has a separate silent flag. All but the last outermost loop are silent by default. If a loop has been closed with `)` or `+` in the current configuration string *before* the `;` or `:`, the silent mode of that (last closed) loop is affected. Otherwise, the stage's own silent mode is affected. This means that `(:)` defines a stage which is looped and prints its result on each iteratio, but `()+` is a stage which is looped but only prints the result once the loop terminates. This is currently the only case where the order of options in the configuration string is not arbitrary.
 
 ## Operation Modes
 
@@ -80,18 +86,18 @@ As outlined above, Retina currently supports 5 different operation modes: Match,
 
 ### Match Mode
 
-This is the default mode. It takes the regex with its modifiers and applies it to the input. By default the number of matches will be printed.
+This mode takes the regex with its modifiers and applies it to the input. By default, the result is the number of matches.
 
 Match mode currently supports the following options:
 
-- `!`: Print each match, separated by newlines. (Instead of the total match count.)
+- `!`: Instead of the number of matches, the result is a newline-separated list of all matches.
 - `&`: Consider overlapping matches. Normally, the regex engine will start looking for the next match after the *end* of the previous match. With this mode, Retina will instead look for the next match after the *beginning* of the previous match. Note that this will still not take into account overlapping matches which start at the same position (but end at different positions.)
 
-Ultimately, this mode will probably receive the most elaborate configuration scheme, in order print capturing groups or other information about the match.
+Ultimately, this mode will probably receive the most elaborate configuration scheme, in order to print capturing groups or other information about the match.
 
 ### Split Mode
 
-This passes the regex on `Regex.Split`, and prints each string in the result on its own line. This means that you can use capturing groups to include parts of the matches in the output.
+This passes the regex on to `Regex.Split`. The result of `Regex.Split` separated by newlines is the result of this stage. This means that you can use capturing groups to include parts of the matches in the output.
 
 Split mode comes with one additional option:
 
@@ -101,18 +107,13 @@ I might add more configuration options in order to control the output format or 
 
 ### Grep and AntiGrep Mode
 
-Grep mode makes Retina assume [grep's](http://en.wikipedia.org/wiki/Grep) basic mode of operation: the input is split into individual lines, the regex is matched against each line, and Retina prints all lines that yielded a match.
+Grep mode makes Retina assume [grep's](http://en.wikipedia.org/wiki/Grep) basic mode of operation: the input is split into individual lines, the regex is matched against each line, and the result consists of all lines that yielded a match.
 
 AntiGrep mode is almost the same, except that it prints all lines which *didn't* yield a match.
 
 ### Replace Mode
 
-Replace mode does what it says on the tin: it replaces all matches of the regex in the input with the replacement string, and prints the result. However, Replace mode comes with very important options:
-
-- `+`: Repeatedly apply the regex replacement until the regex doesn't match any more. This option makes Retina [Turing-complete](http://en.wikipedia.org/wiki/Turing_completeness) (see below for details).
-- `?`: Only in conjunction with `+`, print all the intermediate results of the loop, each on its own line.
-
-Replace mode will probably get at least one more option in the future: limiting the number of replacements done per iteration (e.g. replace only the first match).
+Replace mode does what it says on the tin: it replaces all matches of the regex in the input with the replacement string, and returns the result. Replace mode currently doesn't have any dedicated options, but will probably get at least one more option in the future: limiting the number of replacements done per iteration (e.g. replace only the first match).
 
 ## Retina is Turing-complete
 
