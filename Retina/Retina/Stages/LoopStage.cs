@@ -18,7 +18,7 @@ namespace Retina.Stages
             Stages = stages;
         }
 
-        public override string Execute(string input)
+        protected override StringBuilder Process(string input)
         {
             string result = input;
             string lastResult;
@@ -29,10 +29,7 @@ namespace Retina.Stages
                     result = stage.Execute(result);
             } while (lastResult != result);
 
-            if (!(Silent ?? true))
-                Console.WriteLine(result);
-
-            return result;
+            return new StringBuilder(result);
         }
     }
 }

@@ -16,14 +16,9 @@ namespace Retina.Stages
             Replacement = replacement;
         }
 
-        public override string Execute(string input)
+        protected override StringBuilder Process(string input)
         {
-            string result = input;
-            result = Pattern.Replace(input, Replacement);
-            if (!(Silent ?? true))
-                Console.WriteLine(result);
-
-            return result;
+            return new StringBuilder(Pattern.Replace(input, Replacement));
         }
     }
 }

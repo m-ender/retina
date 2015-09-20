@@ -11,7 +11,7 @@ namespace Retina.Stages
     {
         public SplitStage(Options options, Regex pattern) : base(options, pattern) { }
 
-        public override string Execute(string input)
+        protected override StringBuilder Process(string input)
         {
             var builder = new StringBuilder();
 
@@ -27,12 +27,7 @@ namespace Retina.Stages
                 }
             }
 
-            string result = builder.ToString();
-
-            if (!(Silent ?? true))
-                Console.WriteLine(result);
-
-            return result;
+            return builder;
         }
     }
 }

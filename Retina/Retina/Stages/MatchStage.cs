@@ -11,7 +11,7 @@ namespace Retina.Stages
     {
         public MatchStage(Options options, Regex pattern) : base(options, pattern) { }
 
-        public override string Execute(string input)
+        protected override StringBuilder Process(string input)
         {
             IList<Match> matches;
 
@@ -50,12 +50,7 @@ namespace Retina.Stages
                 builder.Append(matches.Count);
             }
 
-            string result = builder.ToString();
-
-            if (!(Silent ?? true))
-                Console.WriteLine(result);
-
-            return result;
+            return builder;
         }
     }
 }

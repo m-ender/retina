@@ -12,7 +12,7 @@ namespace Retina.Stages
     {
         public GrepStage(Options options, Regex pattern) : base(options, pattern) { }
 
-        public override string Execute(string input)
+        protected override StringBuilder Process(string input)
         {
             string line;
             var stringReader = new StringReader(input);
@@ -30,12 +30,7 @@ namespace Retina.Stages
                 }
             }
 
-            string result = builder.ToString();
-
-            if (!(Silent ?? true))
-                Console.WriteLine(result);
-
-            return result;
+            return builder;
         }
     }
 }

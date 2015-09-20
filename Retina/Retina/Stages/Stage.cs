@@ -13,6 +13,18 @@ namespace Retina.Stages
 
         public Stage() { }
 
-        abstract public string Execute(string input);
+        public string Execute(string input)
+        {
+            StringBuilder builder = Process(input);
+
+            string result = builder.ToString();
+
+            if (!(Silent ?? true))
+                Console.WriteLine(result);
+
+            return result;
+        }
+
+        abstract protected StringBuilder Process(string input);
     }
 }
