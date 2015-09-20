@@ -63,20 +63,19 @@ namespace Retina.Stages
                         case 't': setBuilder.Append('\t'); break;
                         case 'v': setBuilder.Append('\v'); break;
 
-                        // Character class escapes
-                        case 'd':
-                            setBuilder.Append("0123456789");
-                            rangePossible = false;
-                            break;
-                        case 'w':
-                            setBuilder.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-                            rangePossible = false;
-                            break;
-
                         // Any other character is treated as a literal.
                         default: setBuilder.Append(c); break;
                         }
                     }
+                    break;
+                // Character classes
+                case 'd': 
+                    setBuilder.Append("0123456789");
+                    rangePossible = false;
+                    break;
+                case 'w':
+                    setBuilder.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+                    rangePossible = false;
                     break;
                 case '-':
                     if (rangePossible && source.Length > 0)

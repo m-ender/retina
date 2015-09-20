@@ -128,14 +128,16 @@ Here, `config` is just the regular configuration string, which needs to contain 
 
 First, both `from` and `to` are expanded to lists of characters, using the following rules (reading left to right):
 
-- The following escape sequences are known (only for convenience - you can also embed the characters directly in the source code): `\a` (bell, 0x07), `\b` (backspace, 0x08), `\f` (form feed, `0x0C`), `\n` (line feed, `0x0A`), `\r` (carriage return, `0x0D`), `\t` (tab, `0x09`), `\v` (vertical tab, `0x0B`). If these are encountered, they are added to the character list. There are also two character classes, `\d` (equivalent to `0-9`) and `\w` (equivalent to `_\dA-Za-z`).
+- The following escape sequences are known (only for convenience - you can also embed the characters directly in the source code): `\a` (bell, 0x07), `\b` (backspace, 0x08), `\f` (form feed, `0x0C`), `\n` (line feed, `0x0A`), `\r` (carriage return, `0x0D`), `\t` (tab, `0x09`), `\v` (vertical tab, `0x0B`). If these are encountered, they are added to the character list.
 - If a `\` is encountered which is not followed by one of these characters, the next character itself is added to the list (this let's you add, e.g., `` ` `` to the list). If there is a single `\` left at the end of the stage, it is also added to the list literally.
 - If a `-` is encountered before the end of the stage and a single character was added to the list just before this, it denotes a range of characters. Ranges can be ascending or descending (they can also be degenerate, e.g. `a-a`). Note that the `-` also acts as an escape for the next character, which means that ``A-` `` is a range and does *not* end the current part. However, the above special escape sequences are not known, so they cannot be used at the right end of a range: `a-\n` would add a range from `a` to `\` and the single character `n`. However `\n-a` would be a range from the line feed (0x0A) to `a`.
+- `d` is equivalent to `0-9`.
+- `w` is equivalent to `_0-9A-Za-z`.
 - In any case not covered above, the encountered character is just added to the list literally.
 
 If the expanded `to` list is shorter than the `from` list, it will be padded to the same length by repeating its last character. That is, the following specifications are equivalent:
 
-    T`\d`abc
+    T`d`abc
     T`0123456789`abcccccccc
 
 After this preprocessing has been done, the regex is applied to the input string. Parts which aren't matched are left unchanged, but in the matches, every character found in `from` is replaced by the character at the same position in `to`. Characters not found in `from` are left unchanged as well. If `to` is empty, the characters in `from` are removed from the matches instead.
@@ -143,7 +145,7 @@ After this preprocessing has been done, the regex is applied to the input string
 This mode allows simple character transformations which would otherwise require listing every character separately. Some examples:
 
     Tx`A-Za-z`a-zA-Z  # Swap the case of all ASCII letters in the input.
-    Tx`\w`_\dA-Za-Z   # Same, but a character shorter.
+    Tx`w`_dA-Za-Z     # Same, but three characters shorter.
     Tx`a-z`A-Z`\b.    # Capitalise the first letter of each word.
     Tx`A-Z`N-ZA-M     # ROT-13.
     Tx`A-Z`Z-A        # Atbash cypher.
