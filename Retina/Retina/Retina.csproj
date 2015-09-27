@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Replace\Literal.cs" />
+    <Compile Include="Replace\Token.cs" />
     <Compile Include="Stages\TransliterateStage.cs" />
     <Compile Include="Stages\RegexStage.cs" />
     <Compile Include="Stages\LoopStage.cs" />
