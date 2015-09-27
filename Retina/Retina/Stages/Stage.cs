@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    abstract class Stage
+    public abstract class Stage
     {
         public bool? Silent { get; set; }
 
