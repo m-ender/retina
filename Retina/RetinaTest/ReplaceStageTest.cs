@@ -87,6 +87,7 @@ namespace RetinaTest
             AssertReplacement("(.)(.)", "${0}1$&", RegexOptions.None, "abcd", "ab1abcd1cd");
             AssertReplacement("(.)(.)", "$01$&", RegexOptions.None, "abcd", "aabccd");
             AssertReplacement("(?=(.))", "$0$&$1", RegexOptions.None, "abc", "aabbcc");
+            AssertReplacement("(.)(.)", "$0$00$000${0}${00}${000}", RegexOptions.None, "abcd", "ababababababcdcdcdcdcdcd");
         }
 
         [TestMethod]
@@ -111,6 +112,17 @@ namespace RetinaTest
         {
             AssertReplacement(".", "$_", RegexOptions.None, "abcd", "abcdabcdabcdabcd");
             AssertReplacement("", "$_", RegexOptions.None, "abcd", "abcdaabcdbabcdcabcddabcd");
+        }
+
+        [TestMethod]
+        public void TestInvalidSyntax()
+        {
+            AssertReplacement("(.)(.)", "${", RegexOptions.None, "abcd", "${${");
+            AssertReplacement("(.)(.)", "$}", RegexOptions.None, "abcd", "$}$}");
+            AssertReplacement("(.)(.)", "${}", RegexOptions.None, "abcd", "${}${}");
+            AssertReplacement("(.)(.)", "${$}", RegexOptions.None, "abcd", "${$}${$}");
+            AssertReplacement("(.)(.)", "${{1}}", RegexOptions.None, "abcd", "${{1}}${{1}}");
+            AssertReplacement("(?<a>.)(.)", "$a", RegexOptions.None, "abcd", "$a$a");
         }
 
         private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
