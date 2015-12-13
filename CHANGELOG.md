@@ -1,5 +1,6 @@
 ## 0.7.0
 
+- **Important change:** Single-file mode is now the default, so there is no more `-s` flag. Instead, the previous default behaviour can be recovered with the new `-m` flag.
 - #11: Replace mode has been rewritten from scratch to avoid using `Regex.Replace`. This will allow many new features for the replacement syntax in the future.
 - #22: Add `$n` as an escape sequence for linefeeds to replacement syntax.
 - #29: Fixed a bug with the overlapping matches option `&`.
