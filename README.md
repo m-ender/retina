@@ -145,7 +145,7 @@ After this preprocessing has been done, the regex is applied to the input string
 This mode allows simple character transformations which would otherwise require listing every character separately. Some examples:
 
     Tx`A-Za-z`a-zA-Z  # Swap the case of all ASCII letters in the input.
-    Tx`w`_dA-Za-Z     # Same, but three characters shorter.
+    Tx`w`_da-zA-Z     # Same, but three characters shorter.
     Tx`a-z`A-Z`\b.    # Capitalise the first letter of each word.
     Tx`A-Z`N-ZA-M     # ROT-13.
     Tx`A-Z`Z-A        # Atbash cypher.
