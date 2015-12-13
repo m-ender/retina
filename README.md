@@ -100,6 +100,10 @@ Ultimately, this mode will probably receive the most elaborate configuration sch
 
 Replace mode does what it says on the tin: it replaces all matches of the regex in the input with the replacement string, and returns the result. Replace mode currently doesn't have any dedicated options, but will probably get at least one more option in the future: limiting the number of replacements done per iteration (e.g. replace only the first match).
 
+Replace mode does not use .NET's built-in `Regex.Replace`, but a custom implementation instead. All of the substitution elements `$...` that are valid in .NET also work in Replace mode. However, Retina understands the following additional substitution elements:
+
+- `$n`: Is an escape sequence for a linefeed character (0x0A), much like `\n` inside a regex.
+
 ### Split Mode
 
 This passes the regex on to `Regex.Split`. The result of `Regex.Split` separated by newlines is the result of this stage. This means that you can use capturing groups to include parts of the matches in the output.

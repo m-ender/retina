@@ -126,6 +126,13 @@ namespace RetinaTest
             AssertReplacement("(?<a>.)(.)", "$a", RegexOptions.None, "abcd", "$a$a");
         }
 
+        [TestMethod]
+        public void TestLinefeedEscape()
+        {
+            AssertReplacement("(.)(?<n>.)", "n$n${n}", RegexOptions.None, "abcd", "n\nbn\nd");
+            AssertReplacement("(.)(.)", "n$n${n}", RegexOptions.None, "abcd", "n\n${n}n\n${n}");
+        }
+
         private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
         {
             var options = new Options("", Modes.Replace);

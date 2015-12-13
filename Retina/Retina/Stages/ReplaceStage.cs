@@ -45,9 +45,11 @@ namespace Retina.Stages
     )}
   ))
 |
-  [$](?<literal>[$])   # $$ is an escape sequence for a single $.
+  [$](?<literal>[$])       # $$ is an escape sequence for a single $.
+| # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
+  (?<linefeed>[$]n)        # $n is an escape sequence for a linefeed character.
 |
-  (?<literal>[$])      # If none of the above special elements matched, we treat the $ as a literal, too.
+  (?<literal>[$])          # If none of the above special elements matched, we treat the $ as a literal, too.
 )", RegexOptions.IgnorePatternWhitespace);
 
             MatchCollection tokens = tokenizer.Matches(replacement);
@@ -86,6 +88,8 @@ namespace Retina.Stages
                             Tokens.Add(new Literal(raw));
                     }
                 }
+                else if (t.Groups["linefeed"].Success)
+                    Tokens.Add(new Literal("\n"));
                 else
                     throw new Exception("This shouldn't happen...");
             }
