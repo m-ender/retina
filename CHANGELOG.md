@@ -1,10 +1,12 @@
 ## 0.7.0
 
 - **Important change:** Single-file mode is now the default, so there is no more `-s` flag. Instead, the previous default behaviour can be recovered with the new `-m` flag.
+- Retina now supports ISO 8859-1 encoded source files (in fact, it will assume ISO 8859-1 if the file is neither valid UTF-8 nor UTF-32).
 - #11: Replace mode has been rewritten from scratch to avoid using `Regex.Replace`. This will allow many new features for the replacement syntax in the future.
 - #22: Add `$n` as an escape sequence for linefeeds to replacement syntax.
 - #29: Fixed a bug with the overlapping matches option `&`.
 - #30: Don't block for input if invoked from the console. Input needs to be piped into the program now.
+- #37: In single-file mode, pilcrows (`¶`) are replaced with linefeeds unless the `-P` flag is used.
 
 ## 0.6.1
 
