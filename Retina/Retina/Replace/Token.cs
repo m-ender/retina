@@ -9,6 +9,6 @@ namespace Retina.Replace
 {
     public abstract class Token
     {
-        abstract public string Process(Match match);
+        abstract public string Process(string input, Match match);
     }
 }

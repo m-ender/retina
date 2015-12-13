@@ -122,6 +122,7 @@ namespace RetinaTest
             AssertReplacement("(.)(.)", "${}", RegexOptions.None, "abcd", "${}${}");
             AssertReplacement("(.)(.)", "${$}", RegexOptions.None, "abcd", "${$}${$}");
             AssertReplacement("(.)(.)", "${{1}}", RegexOptions.None, "abcd", "${{1}}${{1}}");
+            AssertReplacement("(.)(.)", "${$1}", RegexOptions.None, "abcd", "${a}${c}");
             AssertReplacement("(?<a>.)(.)", "$a", RegexOptions.None, "abcd", "$a$a");
         }
 

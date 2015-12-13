@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 
 namespace Retina.Replace
 {
-    public class Literal : Token
+    public class NamedGroup : Token
     {
-        public string Value { get; set; }
+        public string Name { get; set; }
 
-        public Literal(string value)
-        {
-            Value = value;
+        public NamedGroup(string name) {
+            Name = name;
         }
 
         public override string Process(string input, Match match)
         {
-            return Value;
+            return match.Groups[Name].Value;
         }
     }
 }
