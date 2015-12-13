@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retina", "Retina\Retina.csproj", "{0393246A-EC36-4DD7-98D5-BBA94FCAA646}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetinaTest", "RetinaTest\RetinaTest.csproj", "{A30138C6-4D5F-4A29-9576-A666A64E6B47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +16,10 @@ Global
 		{0393246A-EC36-4DD7-98D5-BBA94FCAA646}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0393246A-EC36-4DD7-98D5-BBA94FCAA646}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0393246A-EC36-4DD7-98D5-BBA94FCAA646}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A30138C6-4D5F-4A29-9576-A666A64E6B47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A30138C6-4D5F-4A29-9576-A666A64E6B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A30138C6-4D5F-4A29-9576-A666A64E6B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A30138C6-4D5F-4A29-9576-A666A64E6B47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

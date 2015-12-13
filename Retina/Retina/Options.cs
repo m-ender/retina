@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Retina
 {
-    class Options
+    public class Options
     {
         public RegexOptions RegexOptions { get; set; }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Retina
 {
-    enum Modes
+    public enum Modes
     {
         Match,
         Grep,

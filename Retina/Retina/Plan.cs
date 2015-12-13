@@ -131,8 +131,16 @@ namespace Retina
         {
             if (Stages.Count > 0)
             {
-                TextReader instrm = new StreamReader(Console.OpenStandardInput());
-                string input = instrm.ReadToEnd();
+                string input = "";
+                try
+                {
+                    bool tmp = Console.KeyAvailable;
+                }
+                catch (InvalidOperationException)
+                {
+                    TextReader instrm = new StreamReader(Console.OpenStandardInput());
+                    input = instrm.ReadToEnd();
+                }
                 string result = input;
                 foreach (var stage in Stages)
                     result = stage.Execute(result);

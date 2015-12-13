@@ -22,14 +22,30 @@ namespace Retina.Stages
             else
             {
                 matches = new List<Match>();
-                int start = 0;
 
-                while (start < input.Length)
+                if (!Pattern.Options.HasFlag(RegexOptions.RightToLeft))
                 {
-                    Match match = Pattern.Match(input, start);
-                    if (!match.Success) break;
-                    matches.Add(match);
-                    start = match.Index + 1;
+                    int start = 0;
+
+                    while (start <= input.Length)
+                    {
+                        Match match = Pattern.Match(input, start);
+                        if (!match.Success) break;
+                        matches.Add(match);
+                        start = match.Index + 1;
+                    }
+                }
+                else
+                {
+                    int start = input.Length;
+
+                    while (start >= 0)
+                    {
+                        Match match = Pattern.Match(input, start);
+                        if (!match.Success) break;
+                        matches.Add(match);
+                        start = match.Index + match.Length - 1;
+                    }
                 }
             }
 

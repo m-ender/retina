@@ -41,6 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Replace\NumberedGroup.cs" />
+    <Compile Include="Replace\NamedGroup.cs" />
+    <Compile Include="Replace\LastGroup.cs" />
+    <Compile Include="Replace\Suffix.cs" />
+    <Compile Include="Replace\Prefix.cs" />
+    <Compile Include="Replace\EntireMatch.cs" />
+    <Compile Include="Replace\EntireInput.cs" />
+    <Compile Include="Replace\Literal.cs" />
+    <Compile Include="Replace\Token.cs" />
     <Compile Include="Stages\TransliterateStage.cs" />
     <Compile Include="Stages\RegexStage.cs" />
     <Compile Include="Stages\LoopStage.cs" />
