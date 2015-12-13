@@ -16,11 +16,7 @@ Each program is grouped into *stages*. A stage consists of one or two parts depe
 
 By default, Retina reads a single source file, where each line is a separate "part" (so each stage is one or two lines):
 
-    Retina ./program.ret
-
-**Important:** Retina expects the file to use Unix-style line endings (a single linefeed character, 0x0A). If the file uses Windows-style line endings (`\r\n`, carriage return 0x0D followed by linefeed), the carriage returns will be contained at the ends of the parts.
-
-Note that this means that no part can contain a linefeed character. However, escape sequences exist (`\n` or `$n` depending on whether you're in a regex or a substitution). If you actually want to use multiple lines for each parts (e.g. to split a complicated regex over multiple lines in free-spacing mode), you can use the `-m` flag. In this case, each part is either given as a separate file, or directly on the command line, by using the `-e` flag. So all of the following are valid invocations:
+    Retina ./program.ret However, escape sequences exist (`\n` or `$n` depending on whether you're in a regex or a substitution). If you actually want to use multiple lines for each parts (e.g. to split a complicated regex over multiple lines in free-spacing mode), you can use the `-m` flag. In this case, each part is either given as a separate file, or directly on the command line, by using the `-e` flag. So all of the following are valid invocations:
 
     Retina -m ./pattern.rgx
     Retina -m -e "foo.*"
@@ -30,6 +26,13 @@ Note that this means that no part can contain a linefeed character. However, esc
     Retina -m -e "foo.*" -e "bar"
     Retina -m ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx
     Retina -m ./pattern1.rgx -e "bar" -e "foo*"
+
+Whenever Retina reads a file, it will try to open the file as either UTF-8 or UTF-32. When neither of those is valid, it will open the file as ISO 8859-1 instead. This gives a way to use an encoding where each byte is a single character without having to specify the encoding manually.
+
+### Some notes about single-file programs
+
+- Since linefeeds separate parts, no part can contain a literal linefeed character. However, Retina will replace all pilcrows (`¶`) with linefeeds *after* the file has been split into parts. When using ISO 8859-1 encoding, this gives a single-byte way to include linefeeds in the source code. In the unlikely event that you actually need pilcrows in your code *and* want to use single-line mode, this substitution can be deactivated with the `-P` flag.
+- Retina expects the file to use Unix-style line endings (a single linefeed character, 0x0A). If the file uses Windows-style line endings (`\r\n`, carriage return 0x0D followed by linefeed), the carriage returns will be contained at the ends of the parts.
 
 ### The Pattern
 
