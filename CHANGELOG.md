@@ -1,3 +1,7 @@
+## 0.7.1
+
+- Hotfix release: Mono could no longer read input from a pipe, which is fixed now.
+
 ## 0.7.0
 
 - **Important change:** Single-file mode is now the default, so there is no more `-s` flag. Instead, the previous default behaviour can be recovered with the new `-m` flag.
