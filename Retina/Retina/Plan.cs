@@ -157,18 +157,13 @@ namespace Retina
             if (Stages.Count > 0)
             {
                 string input = "";
-                try
-                {
-                    bool tmp = Console.KeyAvailable;
-                }
-                catch (InvalidOperationException)
+                if (Console.IsInputRedirected)
                 {
                     TextReader instrm = new StreamReader(Console.OpenStandardInput());
                     input = instrm.ReadToEnd();
                 }
-                string result = input;
                 foreach (var stage in Stages)
-                    result = stage.Execute(result);
+                    input = stage.Execute(input);
             }
         }
     }
