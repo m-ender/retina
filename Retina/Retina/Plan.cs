@@ -19,10 +19,11 @@ namespace Retina
             stageTree.Push(new List<Stage>());
 
             if (args.Count() < 1)
-                Console.WriteLine("Usage: Retina.exe pattern.rgx [replacement.rpl [pattern2.rgx replacement2.rpl [...]]]\n" +
-                                  "Instead of file name you can also use '-e pattern' or '-e replacement'.\n" +
-                                  "The code can also be read from a single file with the '-s' flag, in which case patterns\n" +
-                                  "  and replacements are separated by newlines.");
+                Console.WriteLine("Usage: ./Retina source.ret\n"+
+                                  "You can also split the code over multiple files using the '-m' flag, in which case each\n" +
+                                  "file corresponds to one line in a single source file (but may contain linefeeds.)\n" +
+                                  "Usage: ./Retina -m pattern.rgx [replacement.rpl [pattern2.rgx replacement2.rpl [...]]]\n" +
+                                  "Instead of a file name you can also use '-e pattern' or '-e replacement'.\n");
             else
             {
                 List<string> sources = ReadSources(args);
@@ -106,13 +107,9 @@ namespace Retina
         {
             var result = new List<string>();
 
-            if (args[0] == "-s")
+            if (args[0] == "-m")
             {
-                result.AddRange(File.ReadAllText(args[1]).Split(new[] { '\n' }));
-            }
-            else
-            {
-                int i = 0;
+                int i = 1;
                 while (i < args.Length)
                 {
                     if (args[i] == "-e")
@@ -122,6 +119,10 @@ namespace Retina
 
                     ++i;
                 }
+            }
+            else
+            {
+                result.AddRange(File.ReadAllText(args[0]).Split(new[] { '\n' }));
             }
 
             return result;

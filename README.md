@@ -14,20 +14,22 @@ There is an up-to-date Windows binary of Retina in the root directory of the rep
 
 Each program is grouped into *stages*. A stage consists of one or two parts depending on its type (or *mode*). Each stage transforms its input (string) to an output string which is passed to the next stage. The first stage reads from the standard input stream. Each stage may optionally print its result to the standard output stream in addition to passing it on. By default, only the very last stage prints its result. Stages can also be grouped into loops.
 
-The Retina interpreter takes the files for the stages' parts as command-line arguments. Instead of filenames, you can also supply the parts directly on the command line, by using the `-e` flag. So all of the following are valid invocations:
+By default, Retina reads a single source file, where each line is a separate "part" (so each stage is one or two lines):
 
-    Retina ./pattern.rgx
-    Retina -e "foo.*"
-    Retina ./pattern.rgx ./replacement.rpl
-    Retina ./pattern.rgx -e "bar"
-    Retina -e "foo.*" ./replacement.rpl
-    Retina -e "foo.*" -e "bar"
-    Retina ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx
-    Retina ./pattern1.rgx -e "bar" -e "foo*"
+    Retina ./program.ret
 
-Because this can get cumbersome from programs with many stages, you can also use the `-s` flag and read all parts from a single newline-separated file. In this case, the recommended file extension is `.ret`:
+**Important:** Retina expects the file to use Unix-style line endings (a single linefeed character, 0x0A). If the file uses Windows-style line endings (`\r\n`, carriage return 0x0D followed by linefeed), the carriage returns will be contained at the ends of the parts.
 
-    Retina -s ./program.ret
+Note that this means that no part can contain a linefeed character. However, escape sequences exist (`\n` or `$n` depending on whether you're in a regex or a substitution). If you actually want to use multiple lines for each parts (e.g. to split a complicated regex over multiple lines in free-spacing mode), you can use the `-m` flag. In this case, each part is either given as a separate file, or directly on the command line, by using the `-e` flag. So all of the following are valid invocations:
+
+    Retina -m ./pattern.rgx
+    Retina -m -e "foo.*"
+    Retina -m ./pattern.rgx ./replacement.rpl
+    Retina -m ./pattern.rgx -e "bar"
+    Retina -m -e "foo.*" ./replacement.rpl
+    Retina -m -e "foo.*" -e "bar"
+    Retina -m ./pattern1.rgx ./replacement1.rpl ./pattern2.rgx
+    Retina -m ./pattern1.rgx -e "bar" -e "foo*"
 
 ### The Pattern
 
