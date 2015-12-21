@@ -11,10 +11,11 @@ namespace Retina.Stages
     {
         public List<Stage> Stages { get; set; }
 
-        public LoopStage(List<Stage> stages, bool? silent = null)
+        public LoopStage(List<Stage> stages, bool? silent = null, bool trailingLinefeed = false)
         {
             if (silent != null)
                 Silent = silent;
+            TrailingLinefeed = trailingLinefeed;
             Stages = stages;
         }
 

@@ -16,6 +16,7 @@ namespace Retina
 
         // General options
         public bool? Silent { get; set; }
+        public bool TrailingLinefeed { get; set; }
 
         // Options for Match mode
         public bool Overlapping { get; set; }
@@ -28,12 +29,16 @@ namespace Retina
 
         // Options for control flow
         public int OpenLoops { get; set; }
-        public List<bool?> CloseLoops { get; set; }
+        public List<bool?> CloseLoopsSilent { get; set; }
+        public List<bool> CloseLoopsTrailingLinefeed { get; set; }
 
         public Options(string optionString, Modes defaultMode)
         {
             Mode = defaultMode;
-            CloseLoops = new List<bool?>();
+            CloseLoopsSilent = new List<bool?>();
+            CloseLoopsTrailingLinefeed = new List<bool>();
+
+            TrailingLinefeed = true;
 
             foreach (char c in optionString)
             {
@@ -87,22 +92,29 @@ namespace Retina
 
                 // General options
                 case ';':
-                    if (CloseLoops.Count == 0)
+                    if (CloseLoopsSilent.Count == 0)
                         Silent = true;
                     else
-                        CloseLoops[CloseLoops.Count - 1] = true;
+                        CloseLoopsSilent[CloseLoopsSilent.Count - 1] = true;
                     break;
                 case ':':
-                    if (CloseLoops.Count == 0)
+                    if (CloseLoopsSilent.Count == 0)
                         Silent = false;
                     else
-                        CloseLoops[CloseLoops.Count - 1] = false;
+                        CloseLoopsSilent[CloseLoopsSilent.Count - 1] = false;
+                    break;
+                case '\\':
+                    if (CloseLoopsTrailingLinefeed.Count == 0)
+                        TrailingLinefeed = false;
+                    else
+                        CloseLoopsTrailingLinefeed[CloseLoopsTrailingLinefeed.Count - 1] = false;
                     break;
                 case '(':
                     ++OpenLoops;
                     break;
                 case ')':
-                    CloseLoops.Add(null);
+                    CloseLoopsSilent.Add(null);
+                    CloseLoopsTrailingLinefeed.Add(true);
                     break;
 
                 // Mode-specific options
@@ -118,7 +130,8 @@ namespace Retina
                 case '+':
                     // Short-hand for ()
                     ++OpenLoops;
-                    CloseLoops.Add(null);
+                    CloseLoopsSilent.Add(null);
+                    CloseLoopsTrailingLinefeed.Add(true);
                     break;
                 default:
                     break;

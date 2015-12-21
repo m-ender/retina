@@ -1,5 +1,9 @@
 ## 0.7.1
 
+- New general option: `\` suppresses a stage's trailing linefeed. Like `;` and `:`, it's relative position with respect to closing loops is relevant.
+
+## 0.7.1
+
 - Hotfix release: Mono could no longer read input from a pipe, which is fixed now.
 
 ## 0.7.0

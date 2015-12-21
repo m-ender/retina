@@ -10,6 +10,7 @@ namespace Retina.Stages
     public abstract class Stage
     {
         public bool? Silent { get; set; }
+        public bool TrailingLinefeed{ get; set; }
 
         public Stage() { }
 
@@ -20,7 +21,10 @@ namespace Retina.Stages
             string result = builder.ToString();
 
             if (!(Silent ?? true))
-                Console.WriteLine(result);
+                if (TrailingLinefeed)
+                    Console.WriteLine(result);
+                else
+                    Console.Write(result);
 
             return result;
         }

@@ -16,6 +16,7 @@ namespace Retina.Stages
         {
             Options = options;
             Silent = Options.Silent;
+            TrailingLinefeed = Options.TrailingLinefeed;
         }
 
         public RegexStage(Options options, string pattern) : this(options)

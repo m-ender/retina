@@ -66,12 +66,12 @@ namespace Retina
 
                     stageTree.Peek().Add(stage);
 
-                    for (int j = 0; j < options.CloseLoops.Count; ++j)
+                    for (int j = 0; j < options.CloseLoopsSilent.Count; ++j)
                     {
                         var loopBody = stageTree.Pop();
                         if (stageTree.Count == 0)
                             stageTree.Push(new List<Stage>());
-                        stageTree.Peek().Add(new LoopStage(loopBody, options.CloseLoops[j]));
+                        stageTree.Peek().Add(new LoopStage(loopBody, options.CloseLoopsSilent[j], options.CloseLoopsTrailingLinefeed[j]));
                     }
                 }
 
