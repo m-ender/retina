@@ -73,8 +73,29 @@ namespace Retina.Stages
                     setBuilder.Append("0123456789");
                     rangePossible = false;
                     break;
+                case 'H':
+                    setBuilder.Append("0123456789ABCDEF");
+                    rangePossible = false;
+                    break;
+                case 'h':
+                    setBuilder.Append("0123456789abcdef");
+                    rangePossible = false;
+                    break;
+                case 'L':
+                    setBuilder.Append("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                    rangePossible = false;
+                    break;
+                case 'l':
+                    setBuilder.Append("abcdefghijklmnopqrstuvwxyz");
+                    rangePossible = false;
+                    break;
                 case 'w':
                     setBuilder.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+                    rangePossible = false;
+                    break;
+                case 'p':
+                    // Printable ASCII
+                    setBuilder.Append(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
                     rangePossible = false;
                     break;
                 // Ranges

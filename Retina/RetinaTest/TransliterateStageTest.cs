@@ -71,9 +71,21 @@ namespace RetinaTest
         [TestMethod]
         public void TestClasses()
         {
-            AssertTransliteration(@"d`abc\defghij", RegexOptions.None, "9876543210", "jihgfedcba");
-            AssertTransliteration(@"9-0`d", RegexOptions.None, "9876543210", "0123456789");
-            AssertTransliteration(@"w`dA-Za-z_", RegexOptions.None, "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_");
+            string printableAscii = @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+            AssertTransliteration(@"d`a-j", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./abcdefghij:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"w`dA-Za-z_", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./123456789A:;<=>?@BCDEFGHIJKLMNOPQRSTUVWXYZa[\]^0`bcdefghijklmnopqrstuvwxyz_{|}~");
+            AssertTransliteration(@"H`a-p", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./abcdefghij:;<=>?@klmnopGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"h`A-P", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./ABCDEFGHIJ:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`KLMNOPghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"L`a-z", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"l`A-Z", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~");
+            AssertTransliteration(@"p`!-~ ", RegexOptions.None, printableAscii,
+                                  @"!""#$%&'()*+,-./ABCDEFGHIJ:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`KLMNOPghijklmnopqrstuvwxyz{|}~ ");
         }
 
         private void AssertTransliteration(string pattern, RegexOptions rgxOptions, string input, string expectedOutput)
