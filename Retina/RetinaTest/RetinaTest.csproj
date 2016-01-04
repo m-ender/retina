@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ReplaceStageTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransliterateStageTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Retina\Retina.csproj">

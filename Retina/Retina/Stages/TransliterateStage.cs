@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    class TransliterateStage : RegexStage
+    public class TransliterateStage : RegexStage
     {
         public string Replacement { get; set; }
 
@@ -77,7 +77,9 @@ namespace Retina.Stages
                     setBuilder.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
                     rangePossible = false;
                     break;
+                // Ranges
                 case '-':
+                    // TODO: Make escapes work as the end of a range.
                     if (rangePossible && source.Length > 0)
                     {
                         char end = source[0];
@@ -111,7 +113,11 @@ namespace Retina.Stages
             int n = To.Length;
             int i = 0;
 
-            foreach (Match m in Pattern.Matches(input))
+            var matches = Pattern.Matches(input).Cast<Match>();
+            if (Pattern.Options.HasFlag(RegexOptions.RightToLeft))
+                matches = matches.Reverse();
+
+            foreach (Match m in matches)
             {
                 builder.Append(input.Substring(i, m.Index-i));
                 foreach (char c in m.Value)
