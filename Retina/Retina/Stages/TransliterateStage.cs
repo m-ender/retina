@@ -17,13 +17,37 @@ namespace Retina.Stages
         public TransliterateStage(Options options, string pattern) : base(options)
         {
 
-            var setBuilder = new StringBuilder();
+            var fromBuilder = new StringBuilder();
+            var toBuilder = new StringBuilder();
 
-            string remainder = ParseCharacterSet(setBuilder, pattern);
-            From = setBuilder.ToString();
-            setBuilder.Clear();
-            remainder = ParseCharacterSet(setBuilder, remainder);
-            To = setBuilder.ToString();
+            int otherIndexInFrom = -1;
+            bool otherReversedInFrom = false;
+            string remainder = ParseCharacterSet(fromBuilder, pattern, out otherIndexInFrom, out otherReversedInFrom);
+            
+            int otherIndexInTo = -1;
+            bool otherReversedInTo = false;
+            remainder = ParseCharacterSet(toBuilder, remainder, out otherIndexInTo, out otherReversedInTo);
+
+            if (otherIndexInFrom > -1 && otherIndexInTo > -1)
+            {
+                fromBuilder.Insert(otherIndexInFrom, 'o');
+                toBuilder.Insert(otherIndexInTo, 'o');
+            }
+            else if (otherIndexInFrom > -1)
+            {
+                var otherSet = toBuilder.ToString().ToCharArray();
+                if (otherReversedInFrom) Array.Reverse(otherSet);
+                fromBuilder.Insert(otherIndexInFrom, otherSet);
+            }
+            else if (otherIndexInTo > -1)
+            {
+                var otherSet = fromBuilder.ToString().ToCharArray();
+                if (otherReversedInTo) Array.Reverse(otherSet);
+                toBuilder.Insert(otherIndexInTo, otherSet);
+            }
+
+            From = fromBuilder.ToString();
+            To = toBuilder.ToString();
 
             Pattern = new Regex(remainder.Length == 0 ? @"[\s\S]+" : remainder, options.RegexOptions);
         }
@@ -49,8 +73,11 @@ namespace Retina.Stages
                 }
         }
 
-        private string ParseCharacterSet(StringBuilder setBuilder, string source)
+        private string ParseCharacterSet(StringBuilder setBuilder, string source, out int otherIndex, out bool otherReversed)
         {
+            otherIndex = -1;
+            otherReversed = false;
+
             var tokenizer = new Regex(@"\G(?: # Use \G to ensure that the tokens cover the entire string.
                 `(?<remainder>.*)        # ` Terminates the current part of the pattern and moves to the next one.
             |
@@ -61,7 +88,7 @@ namespace Retina.Stages
                     -                    #     A hyphen to denote a custom range.
                     (?<end>[^\\`]|\\.)   #     A non-backslash or an escaped sequence.
                   |                      #   or:
-                    (?<class>[dHhLlwp])  #     A built-in character class.
+                    (?<class>[dHhLlwpo]) #     A built-in character class.
                   )                      #   Priority is given to custom ranges, such that the built-in classes can 
                                          #   appear as the first character in a range without needing escaping.
                 )
@@ -96,6 +123,16 @@ namespace Retina.Stages
                         case 'w': range.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"); break;
                         // Printable ASCII
                         case 'p': range.Append(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"); break;
+                        // Set a marker to insert the other set
+                        case 'o':
+                            if (otherIndex < 0)
+                            {
+                                otherIndex = setBuilder.Length;
+                                otherReversed = t.Groups["reverse"].Length % 2 == 1;
+                            }
+                            else
+                                setBuilder.Append('o');
+                            continue;
                         }
                     }
                     else

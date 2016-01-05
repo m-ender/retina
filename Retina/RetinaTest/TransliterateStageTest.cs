@@ -130,6 +130,40 @@ namespace RetinaTest
 
         }
 
+        [TestMethod]
+        public void TestReferencingOtherSet()
+        {
+            string printableAscii = @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+            AssertTransliteration(@"#$%&'()*+,-./`/o", RegexOptions.None, printableAscii,
+                                  @" !""/#$%&'()*+,-.0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"/o`#$%&'()*+,-./", RegexOptions.None, printableAscii,
+                                  @" !""$%&'()*+,-./#0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"#$%&'()*+,-./`Ro", RegexOptions.None, printableAscii,
+                                  @" !""/.-,+*)('&%$#0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Ro`#$%&'()*+,-./", RegexOptions.None, printableAscii,
+                                  @" !""/.-,+*)('&%$#0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+
+            // Using "o" twice inserts literal "o"s because inserting the other set twice is pointless
+            AssertTransliteration(@"#$%&'()*+,-./`/ofoo", RegexOptions.None, printableAscii,
+                                  @" !""/#$%&'()*+,-.0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"/ofoo`#$%&'()*+,-./", RegexOptions.None, printableAscii,
+                                  @" !""$%&'()*+,-./#0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcde/ghijklmn/pqrstuvwxyz{|}~");
+            AssertTransliteration(@"#$%&'()*+,-./`Rofoo", RegexOptions.None, printableAscii,
+                                  @" !""/.-,+*)('&%$#0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Rofoo`#$%&'()*+,-./", RegexOptions.None, printableAscii,
+                                  @" !""/.-,+*)('&%$#0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcde/ghijklmn/pqrstuvwxyz{|}~");
+
+            // Using "o" in both parts should make it a literal.
+            AssertTransliteration(@"no\p`o\pn", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmopnqrstuvwxyz{|}~");
+            AssertTransliteration(@"noo\p`o\pnq", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmopqqrstuvwxyz{|}~");
+            AssertTransliteration(@"no\p`Ro\pn", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmopnqrstuvwxyz{|}~");
+            AssertTransliteration(@"nRo\p`o\pn", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmopnqrstuvwxyz{|}~");
+        }
+
         private void AssertTransliteration(string pattern, RegexOptions rgxOptions, string input, string expectedOutput)
         {
             var options = new Options("", Modes.Transliterate);
