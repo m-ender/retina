@@ -65,7 +65,11 @@ namespace RetinaTest
             AssertTransliteration(@"--0`123", RegexOptions.None, "-./0", "1233");
             AssertTransliteration(@"0--`321", RegexOptions.None, "-./0", "1123");
             AssertTransliteration(@"\n- `a-z", RegexOptions.None, "\n ", "aw");
-            // TODO: Make escapes work at the end of ranges.
+            AssertTransliteration(@" -\n`z-a", RegexOptions.None, "\n ", "dz");
+            
+            // Hyphens at the start or end are literals:
+            AssertTransliteration(@"-xy`123", RegexOptions.None, "-vwxyz", "1vw23z");
+            AssertTransliteration(@"bc-`123", RegexOptions.None, "-abcde", "3a12de");
         }
 
         [TestMethod]
@@ -85,7 +89,45 @@ namespace RetinaTest
             AssertTransliteration(@"l`A-Z", RegexOptions.None, printableAscii,
                                   @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~");
             AssertTransliteration(@"p`!-~ ", RegexOptions.None, printableAscii,
-                                  @"!""#$%&'()*+,-./ABCDEFGHIJ:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`KLMNOPghijklmnopqrstuvwxyz{|}~ ");
+                                  @"!""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ");
+
+            // Classes in ranges are ignored:
+            AssertTransliteration(@"d-f`123", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abc123ghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"f-d`321", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abc123ghijklmnopqrstuvwxyz{|}~");
+        }
+
+        [TestMethod]
+        public void TestReverseRange()
+        {
+            string printableAscii = @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+            AssertTransliteration(@"Rd`a-j", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./jihgfedcba:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"RRd`a-j", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./abcdefghij:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"RRRd`a-j", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./jihgfedcba:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Rw`w", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./yxwvutsrqp:;<=>?@onmlkjihgfedcbaZYXWVUTSRQP[\]^z`ONMLKJIHGFEDCBA9876543210_{|}~");
+            AssertTransliteration(@"a-z`Ra-z", RegexOptions.None, "Hello, World!", "Hvool, Wliow!");
+            AssertTransliteration(@"Ra-z`a-z", RegexOptions.None, "Hello, World!", "Hvool, Wliow!");
+            AssertTransliteration(@"z-a`Rz-a", RegexOptions.None, "Hello, World!", "Hvool, Wliow!");
+            AssertTransliteration(@"Rz-a`z-a", RegexOptions.None, "Hello, World!", "Hvool, Wliow!");
+            AssertTransliteration(@"R\\-Z`\\-Z", RegexOptions.None, @"RXYZ[\]^", @"RXY\[Z]^");
+
+            // R not followed by a range or class should be literal R, as should R as part of a range.
+            AssertTransliteration(@"a-zR`a-z", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQzSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Rab-z`Qa-z", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQQSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"R-Z`Z-R", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQZYXWVUTSR[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"RR-Z`R-Z", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQZYXWVUTSR[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"RRR-Z`R-Z", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+
         }
 
         private void AssertTransliteration(string pattern, RegexOptions rgxOptions, string input, string expectedOutput)

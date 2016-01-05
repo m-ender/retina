@@ -16,115 +16,114 @@ namespace Retina.Stages
 
         public TransliterateStage(Options options, string pattern) : base(options)
         {
-            var source = new StringBuilder(pattern);
 
-            var from = new StringBuilder();
-            var to = new StringBuilder();
+            var setBuilder = new StringBuilder();
 
-            ParseCharacterSet(from, source);
-            ParseCharacterSet(to, source);
+            string remainder = ParseCharacterSet(setBuilder, pattern);
+            From = setBuilder.ToString();
+            setBuilder.Clear();
+            remainder = ParseCharacterSet(setBuilder, remainder);
+            To = setBuilder.ToString();
 
-            From = from.ToString();
-            To = to.ToString();
-
-            Pattern = new Regex(source.Length == 0 ? @"[\s\S]+" : source.ToString(), options.RegexOptions);
+            Pattern = new Regex(remainder.Length == 0 ? @"[\s\S]+" : remainder, options.RegexOptions);
         }
 
-        private void ParseCharacterSet(StringBuilder setBuilder, StringBuilder source)
+        private char ParseCharacterToken(string token)
         {
-            int i = 0;
-            bool rangePossible = false;
-            while (source.Length > 0)
-            {
-                char c = source[0];
-                source.Remove(0, 1);
-                switch (c)
+            if (token.Length == 1 || token[0] != '\\')
+                return token[0];
+            else
+                switch (token[1])
                 {
-                case '`':
-                    return;
-                case '\\':
-                    if (source.Length == 0)
-                    {
-                        setBuilder.Append(c);
-                    }
-                    else
-                    {
-                        c = source[0];
-                        source.Remove(0, 1);
-                        rangePossible = true;
-                        switch (c)
-                        {
-                        // Character escapes
-                        case 'a': setBuilder.Append('\a'); break;
-                        case 'b': setBuilder.Append('\b'); break;
-                        case 'f': setBuilder.Append('\f'); break;
-                        case 'n': setBuilder.Append('\n'); break;
-                        case 'r': setBuilder.Append('\r'); break;
-                        case 't': setBuilder.Append('\t'); break;
-                        case 'v': setBuilder.Append('\v'); break;
+                // Character escapes
+                case 'a': return '\a';
+                case 'b': return '\b';
+                case 'f': return '\f';
+                case 'n': return '\n';
+                case 'r': return '\r';
+                case 't': return '\t';
+                case 'v': return '\v';
 
-                        // Any other character is treated as a literal.
-                        default: setBuilder.Append(c); break;
+                // Any other character is treated as a literal.
+                default: return token[1];
+                }
+        }
+
+        private string ParseCharacterSet(StringBuilder setBuilder, string source)
+        {
+            var tokenizer = new Regex(@"\G(?: # Use \G to ensure that the tokens cover the entire string.
+                `(?<remainder>.*)        # ` Terminates the current part of the pattern and moves to the next one.
+            |
+                (?<range>                # Match a range:
+                  (?<reverse>R*)         #   Each leading 'R' reverses the range.
+                  (?:                    #   A range could be either:
+                    (?<start>[^\\`]|\\.) #     A non-backslash or an escaped sequence.
+                    -                    #     A hyphen to denote a custom range.
+                    (?<end>[^\\`]|\\.)   #     A non-backslash or an escaped sequence.
+                  |                      #   or:
+                    (?<class>[dHhLlwp])  #     A built-in character class.
+                  )                      #   Priority is given to custom ranges, such that the built-in classes can 
+                                         #   appear as the first character in a range without needing escaping.
+                )
+            |   
+                (?<char>\\.|.)           # Backslashes indicate escape sequences similar to normal regex.
+                                         # Anything else is just a literal character.
+            )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+
+            MatchCollection tokens = tokenizer.Matches(source);
+
+            string remainder = "";
+
+            foreach (Match t in tokens)
+            {
+                if (t.Groups["remainder"].Success)
+                {
+                    remainder = t.Groups["remainder"].Value;
+                    break; // Technically not necessary, but you never know.
+                }
+                else if (t.Groups["range"].Success)
+                {
+                    var range = new StringBuilder();
+                    if (t.Groups["class"].Success)
+                    {
+                        switch (t.Groups["class"].Value[0])
+                        {
+                        case 'd': range.Append("0123456789"); break;
+                        case 'H': range.Append("0123456789ABCDEF"); break;
+                        case 'h': range.Append("0123456789abcdef"); break;
+                        case 'L': range.Append("ABCDEFGHIJKLMNOPQRSTUVWXYZ"); break;
+                        case 'l': range.Append("abcdefghijklmnopqrstuvwxyz"); break;
+                        case 'w': range.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"); break;
+                        // Printable ASCII
+                        case 'p': range.Append(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"); break;
                         }
                     }
-                    break;
-                // Character classes
-                case 'd': 
-                    setBuilder.Append("0123456789");
-                    rangePossible = false;
-                    break;
-                case 'H':
-                    setBuilder.Append("0123456789ABCDEF");
-                    rangePossible = false;
-                    break;
-                case 'h':
-                    setBuilder.Append("0123456789abcdef");
-                    rangePossible = false;
-                    break;
-                case 'L':
-                    setBuilder.Append("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-                    rangePossible = false;
-                    break;
-                case 'l':
-                    setBuilder.Append("abcdefghijklmnopqrstuvwxyz");
-                    rangePossible = false;
-                    break;
-                case 'w':
-                    setBuilder.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-                    rangePossible = false;
-                    break;
-                case 'p':
-                    // Printable ASCII
-                    setBuilder.Append(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-                    rangePossible = false;
-                    break;
-                // Ranges
-                case '-':
-                    // TODO: Make escapes work as the end of a range.
-                    if (rangePossible && source.Length > 0)
-                    {
-                        char end = source[0];
-                        source.Remove(0, 1);
-                        c = setBuilder[setBuilder.Length - 1];
-                        setBuilder.Remove(setBuilder.Length - 1, 1);
-                        int step = end > c ? 1 : -1;
-                        for (; c != end; c = (char)((int)c + step))
-                            setBuilder.Append(c);
-                        setBuilder.Append(c);
-                        rangePossible = false;
-                    }
                     else
                     {
-                        setBuilder.Append(c);
-                        rangePossible = true;
+                        char start = ParseCharacterToken(t.Groups["start"].Value);
+                        char end = ParseCharacterToken(t.Groups["end"].Value);
+                        int step = end > start ? 1 : -1;
+                        char c;
+                        for (c = start; c != end; c = (char)((int)c + step))
+                            range.Append(c);
+                        range.Append(c);
                     }
-                    break;
-                default:
-                    setBuilder.Append(c);
-                    rangePossible = true;
-                    break;
+                    string rangeStr = range.ToString();
+                    if (t.Groups["reverse"].Length % 2 == 1)
+                    {
+                        var characters = rangeStr.ToCharArray();
+                        Array.Reverse(characters);
+                        rangeStr = new string(characters);
+                    }
+                    setBuilder.Append(rangeStr);
                 }
+                else if (t.Groups["char"].Success)
+                    setBuilder.Append(ParseCharacterToken(t.Groups["char"].Value));
+                else
+                    throw new Exception("This shouldn't happen...");
             }
+
+            return remainder;
         }
 
         protected override StringBuilder Process(string input)

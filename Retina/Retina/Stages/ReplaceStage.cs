@@ -23,34 +23,34 @@ namespace Retina.Stages
             Tokens = new List<Token>();
 
             var tokenizer = new Regex(@"\G(?: # Use \G to ensure that the tokens cover the entire string.
-  (?<literal>[^$]+)        # All special substitution elements start with $, so everything else is a literal.
-|
-  (?<input>[$]_)           # $_ includes the entire input string.
-|
-  (?<prefix>[$]`)          # $` includes everything before the match.
-|
-  (?<suffix>[$]')          # $' includes everything after the match.
-|
-  (?<match>[$]&)           # $& includes the entire match and is synonymous with $0.
-|
-  (?<last>[$][+])          # $+ includes the capture group with the largest number.
-|
-  (?<group>[$](?:          # Match a group reference.
-    (?<number>\d+)         # Either an integer.
-  |
-    {(?:                   # Or it's wrapped in braces, where it's either...
-      (?<number>\d+)       #   still an integer.
-    |                      # or
-      (?<name>[^\W\d]\w*)  #   a valid group name.
-    )}
-  ))
-|
-  [$](?<literal>[$])       # $$ is an escape sequence for a single $.
-| # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
-  (?<linefeed>[$]n)        # $n is an escape sequence for a linefeed character.
-|
-  (?<literal>[$])          # If none of the above special elements matched, we treat the $ as a literal, too.
-)", RegexOptions.IgnorePatternWhitespace);
+              (?<literal>[^$]+)        # All special substitution elements start with $, so everything else is a literal.
+            |
+              (?<input>[$]_)           # $_ includes the entire input string.
+            |
+              (?<prefix>[$]`)          # $` includes everything before the match.
+            |
+              (?<suffix>[$]')          # $' includes everything after the match.
+            |
+              (?<match>[$]&)           # $& includes the entire match and is synonymous with $0.
+            |
+              (?<last>[$][+])          # $+ includes the capture group with the largest number.
+            |
+              (?<group>[$](?:          # Match a group reference.
+                (?<number>\d+)         # Either an integer.
+              |
+                {(?:                   # Or it's wrapped in braces, where it's either...
+                  (?<number>\d+)       #   still an integer.
+                |                      # or
+                  (?<name>[^\W\d]\w*)  #   a valid group name.
+                )}
+              ))
+            |
+              [$](?<literal>[$])       # $$ is an escape sequence for a single $.
+            | # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
+              (?<linefeed>[$]n)        # $n is an escape sequence for a linefeed character.
+            |
+              (?<literal>[$])          # If none of the above special elements matched, we treat the $ as a literal, too.
+            )", RegexOptions.IgnorePatternWhitespace);
 
             MatchCollection tokens = tokenizer.Matches(replacement);
 
