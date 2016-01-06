@@ -133,6 +133,27 @@ namespace RetinaTest
             AssertReplacement("(.)(.)", "n$n${n}", RegexOptions.None, "abcd", "n\n${n}n\n${n}");
         }
 
+        [TestMethod]
+        public void TestCaptureCount()
+        {
+            AssertReplacement("(.)+", "#$#1", RegexOptions.None, "abcd\ndef", "#4\n#3");
+            AssertReplacement("()(.)*", "$#2", RegexOptions.None, "abcd\ndef", "40\n30");
+            AssertReplacement("(a)+(?<1>b)+", "$#1", RegexOptions.None, "aaabbcabbb", "5c4");
+
+            // Curly braces should also work:
+            AssertReplacement("(.)+", "#$#{1}", RegexOptions.None, "abcd\ndef", "#4\n#3");
+            AssertReplacement("()(.)*", "$#{2}", RegexOptions.None, "abcd\ndef", "40\n30");
+            AssertReplacement("(a)+(?<1>b)+", "$#{1}$#{01}$#{001}", RegexOptions.None, "aaabbcabbb", "555c444");
+            AssertReplacement("(?<foo>a)+(?<bar>b)+", "$#{foo}$#{bar}", RegexOptions.None, "aaabbcabbb", "32c13");
+
+            // $# not followed by a valid group should be taken literally:
+            AssertReplacement("(.)+", "$#2$#{2}$#$#}", RegexOptions.None, "abcd", "$#2$#{2}$#$#}");
+            AssertReplacement("(?<a>.)+", "$#a$#{b}$#{", RegexOptions.None, "abcd", "$#a$#{b}$#{");
+
+            // $#0 is useless but should also work:
+            AssertReplacement("(.)+", "$#0$#{0}$#{00}", RegexOptions.None, "abcd\ndef", "111\n111");
+        }
+
         private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
         {
             var options = new Options("", Modes.Replace);

@@ -10,14 +10,16 @@ namespace Retina.Replace
     public class NamedGroup : Token
     {
         public string Name { get; set; }
+        public bool GetCount { get; set; }
 
-        public NamedGroup(string name) {
+        public NamedGroup(string name, bool getCount) {
             Name = name;
+            GetCount = getCount;
         }
 
         public override string Process(string input, Match match)
         {
-            return match.Groups[Name].Value;
+            return GetCount ? match.Groups[Name].Captures.Count.ToString() : match.Groups[Name].Value;
         }
     }
 }

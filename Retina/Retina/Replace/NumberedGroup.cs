@@ -10,14 +10,16 @@ namespace Retina.Replace
     public class NumberedGroup : Token
     {
         public int Number { get; set; }
+        public bool GetCount { get; set; }
 
-        public NumberedGroup(int number) {
+        public NumberedGroup(int number, bool getCount) {
             Number = number;
+            GetCount = getCount;
         }
 
         public override string Process(string input, Match match)
         {
-            return match.Groups[Number].Value;
+            return GetCount ? match.Groups[Number].Captures.Count.ToString() : match.Groups[Number].Value;
         }
     }
 }

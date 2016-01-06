@@ -6,6 +6,7 @@
 - Transliterate mode: new character classes, `h`, `H` (hexadecimal digits), `l`, `L` (letters), `p` (printable ASCII).
 - Transliterate mode: ranges and classes can be reversed by prepending `R`.
 - Transliterate mode: the other set can be referenced once with `o`. If `o` is used in both sets, it will become a literal instead.
+- Replace mode: `$#1` and `$#{foo}` to insert capture counts.
 
 ## 0.7.1
 

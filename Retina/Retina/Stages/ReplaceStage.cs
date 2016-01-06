@@ -35,7 +35,9 @@ namespace Retina.Stages
             |
               (?<last>[$][+])          # $+ includes the capture group with the largest number.
             |
-              (?<group>[$](?:          # Match a group reference.
+              (?<group>[$]             # Match a group reference.
+              (?<count>[#])?           # Custom addition: by inserting a #, we get the capture count instead of the result.
+              (?:
                 (?<number>\d+)         # Either an integer.
               |
                 {(?:                   # Or it's wrapped in braces, where it's either...
@@ -70,12 +72,13 @@ namespace Retina.Stages
                     Tokens.Add(new LastGroup());
                 else if (t.Groups["group"].Success)
                 {
+                    bool getCount = t.Groups["count"].Success;
                     string raw = t.Groups["group"].Value;
                     if (t.Groups["number"].Success)
                     {
                         int number = int.Parse(t.Groups["number"].Value);
                         if (Pattern.GetGroupNumbers().Contains(number))
-                            Tokens.Add(new NumberedGroup(number));
+                            Tokens.Add(new NumberedGroup(number, getCount));
                         else
                             Tokens.Add(new Literal(raw));
                     }
@@ -83,7 +86,7 @@ namespace Retina.Stages
                     {
                         string name = t.Groups["name"].Value;
                         if (Pattern.GetGroupNames().Contains(name))
-                            Tokens.Add(new NamedGroup(name));
+                            Tokens.Add(new NamedGroup(name, getCount));
                         else
                             Tokens.Add(new Literal(raw));
                     }

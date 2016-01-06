@@ -109,6 +109,7 @@ Replace mode does what it says on the tin: it replaces all matches of the regex 
 Replace mode does not use .NET's built-in `Regex.Replace`, but a custom implementation instead. All of the substitution elements `$...` that are valid in .NET also work in Replace mode. However, Retina understands the following additional substitution elements:
 
 - `$n`: Is an escape sequence for a linefeed character (0x0A), much like `\n` inside a regex.
+- `$#1`, `$#{foo}`: By inserting `#` into a group reference, the number of captures made by that group is included (instead of the value of the last capture). This creates a simple way to count things and convert unary to decimal.
 
 ### Split Mode
 
