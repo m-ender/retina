@@ -85,7 +85,7 @@ The following options apply to all modes:
 - `(` and `)`: `(` opens a loop and `)` closes a loop. All stages between `(` and `)` (inclusive) will be repeated in a loop until an iteration doesn't change the result. Note that `(` and `)` may appear in the same stage, looping only that stage. Also, the order of `(` and `)` within a single stage is irrelevant - they are always treated as if all `(` appear before all `)`. Furthermore, an unmatched `)` assumes a `(` in the first stage, and an unmatched `(` assumes a `)` in the last stage. Loops can be nested. These options makes Retina [Turing-complete](http://en.wikipedia.org/wiki/Turing_completeness) (see below for details).
 - `+`: Short-hand for `()`.
 - `;` and `:`: Turn Silent mode off and on, respectively (this determines whether the result of a stage or loop is printed to the standard output stream). Every stage *and* every loop has a separate silent flag. All but the last outermost loop are silent by default. If a loop has been closed with `)` or `+` in the current configuration string *before* the `;` or `:`, the silent mode of that (last closed) loop is affected. Otherwise, the stage's own silent mode is affected. This means that `(:)` defines a stage which is looped and prints its result on each iteration, but `()+` is a stage which is looped but only prints the result once the loop terminates. By default non-silent stages always print a trailing linefeed. This is a rare case where the order of options in the configuration string is not arbitrary.
-- `\`: If the current stage is not silent, suppress its trailing linefeed. Like `;` and `:` it's relative position with respect to `)` or `+` matters.
+- `\`: If the current stage is not silent, suppress its trailing linefeed. Like `;` and `:` its relative position with respect to `)` or `+` matters.
 
 ## Operation Modes
 
@@ -128,22 +128,28 @@ AntiGrep mode is almost the same, except that it prints all lines which *didn't*
 
 ### Transliterate Mode
 
-This mode is rather versatile mode, which is mainly intended for substituting individual characters for others. Its format is slightly different from the other modes, in that it consists of up to four segments on a single line. All of the following are valid Transliterate stages:
+This mode is a rather versatile mode, which is mainly intended for substituting individual characters for others. Its format is slightly different from the other modes, in that it consists of up to four segments on a single line. All of the following are valid Transliterate stages:
 
     config`from
     config`from`to
     config`from`to`regex
 
-Here, `config` is just the regular configuration string, which needs to contain `T` to select this mode. If `to` is not given it is assumed to be an empty string. If `regex` is not given *or* empty it is assumed to be `[\s\S]+`, which always matches the entire input.
+Here, `config` is just the regular configuration string, which needs to contain `T` to select this mode. If `to` is not given it is assumed to be an empty string. If `regex` is not given *or* empty it is assumed to be `[\s\S]+`, which always matches the entire input (unless the input is empty, in which case this stage would be a no-op anyway).
 
-First, both `from` and `to` are expanded to lists of characters, using the following rules (reading left to right):
+First, both `from` and `to` are expanded to lists of characters, using similar rules to character classes in regex:
 
-- The following escape sequences are known (only for convenience - you can also embed the characters directly in the source code): `\a` (bell, 0x07), `\b` (backspace, 0x08), `\f` (form feed, `0x0C`), `\n` (line feed, `0x0A`), `\r` (carriage return, `0x0D`), `\t` (tab, `0x09`), `\v` (vertical tab, `0x0B`). If these are encountered, they are added to the character list.
-- If a `\` is encountered which is not followed by one of these characters, the next character itself is added to the list (this let's you add, e.g., `` ` `` to the list). If there is a single `\` left at the end of the stage, it is also added to the list literally.
-- If a `-` is encountered before the end of the stage and a single character was added to the list just before this, it denotes a range of characters. Ranges can be ascending or descending (they can also be degenerate, e.g. `a-a`). Note that the `-` also acts as an escape for the next character, which means that ``A-` `` is a range and does *not* end the current part. However, the above special escape sequences are not known, so they cannot be used at the right end of a range: `a-\n` would add a range from `a` to `\` and the single character `n`. However `\n-a` would be a range from the line feed (0x0A) to `a`.
-- `d` is equivalent to `0-9`.
-- `w` is equivalent to `_0-9A-Za-z`.
-- In any case not covered above, the encountered character is just added to the list literally.
+- `\` escapes the next character. The following escape sequences are known (only for convenience - you can also embed the characters directly in the source code): `\a` (bell, 0x07), `\b` (backspace, 0x08), `\f` (form feed, `0x0C`), `\n` (line feed, `0x0A`, if you want to embed this literally, use `¶`), `\r` (carriage return, `0x0D`), `\t` (tab, `0x09`), `\v` (vertical tab, `0x0B`). If a `\` is followed by any other character, it just escapes that next character (this let's you add, e.g., `` ` `` or `\` itself to the list). If there is a single `\` left at the end of the stage, it represents a literal backslash.
+- If `-` is preceded and followed by a single character or escape sequence it denotes a range. As opposed to regex, ranges can be both ascending and descending. `0-4` denotes `01234`, but `d-a` denotes `dcba`. Ranges can also be degenerate, e.g. `a-a`. Backticks have to be escaped. A hyphen at the beginning of end of the current segment, or one which follows immediately after another range is treated literally. The character classes listed below are ignored when they appear as one end of a range.
+- There are several built-in character classes. As opposed to regex, they do not need a backslash, so be careful when using literal letters in your code:
+  - `d` is equivalent to `0-9`.
+  - `H` is equivalent to `0-9A-F`.
+  - `h` is equivalent to `0-9a-f`.
+  - `L` is equivalent to `A-Z`.
+  - `l` is equivalent to `a-z`.
+  - `w` is equivalent to `_0-9A-Za-z`.
+  - `p` is equivalent to `<sp>-~`, where `<sp>` is a space.
+  - The first `o` inserts the *other* set. That is, if `o` is used in `from` it inserts `to`. If `o` is used in `to` it inserts `from`. Subsequent occurrences of `o` are treated as literals. If `o` is used in both `from` and `to` it is treated as a literal everywhere.
+- Preceding any range or built-in character class with `R` reverses that range (this also works for `o`). Multiple `R`s can be used as well, although that is currently rather useless (an even number of `R` is a no-op, an odd number reverses the range). While `R` does with ranges, it's simpler to just use the opposite range: `Ra-z` is the same as `z-a`. `R` not followed by a range or class is treated as a literal.
 
 If the expanded `to` list is shorter than the `from` list, it will be padded to the same length by repeating its last character. That is, the following specifications are equivalent:
 
@@ -152,13 +158,16 @@ If the expanded `to` list is shorter than the `from` list, it will be padded to 
 
 After this preprocessing has been done, the regex is applied to the input string. Parts which aren't matched are left unchanged, but in the matches, every character found in `from` is replaced by the character at the same position in `to`. Characters not found in `from` are left unchanged as well. If `to` is empty, the characters in `from` are removed from the matches instead.
 
+If a character appears multiple times in `from`, only its first occurrence is taken into account.
+
 This mode allows simple character transformations which would otherwise require listing every character separately. Some examples:
 
-    Tx`A-Za-z`a-zA-Z  # Swap the case of all ASCII letters in the input.
-    Tx`w`_da-zA-Z     # Same, but three characters shorter.
-    Tx`a-z`A-Z`\b.    # Capitalise the first letter of each word.
-    Tx`A-Z`N-ZA-M     # ROT-13.
-    Tx`A-Z`Z-A        # Atbash cypher.
+    Tx`Ll`lL          # Swap the case of all ASCII letters in the input.
+    Tx`l`L`\b.        # Capitalise the first letter of each word.
+    Tx`L`N-ZA-M       # ROT-13.
+    Tx`L`N-ZL         # Also ROT-13.
+    Tx`L`RL           # Atbash cypher.
+    Tx`L`Ro           # Also Atbash cypher.
 
 Transliterate mode currently doesn't have any dedicated options.
 
