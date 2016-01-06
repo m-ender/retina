@@ -7,6 +7,7 @@
 - Transliterate mode: ranges and classes can be reversed by prepending `R`.
 - Transliterate mode: the other set can be referenced once with `o`. If `o` is used in both sets, it will become a literal instead.
 - Replace mode: `$#1` and `$#{foo}` to insert capture counts.
+- Replace mode: `$*_` repeats the character `_` *n* times where *n* is the first decimal number in the result of the preceding token.
 
 ## 0.7.1
 

@@ -23,7 +23,10 @@ namespace Retina.Stages
             Tokens = new List<Token>();
 
             var tokenizer = new Regex(@"\G(?: # Use \G to ensure that the tokens cover the entire string.
-              (?<literal>[^$]+)        # All special substitution elements start with $, so everything else is a literal.
+              (?<literal>\d+)          # Numbers are literals but are treated as single tokens for the purpose of other
+                                       # like $*.
+            |
+              (?<literal>[^$])         # All special substitution elements start with $, so everything else is a literal.
             |
               (?<input>[$]_)           # $_ includes the entire input string.
             |
@@ -51,8 +54,12 @@ namespace Retina.Stages
             | # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
               (?<linefeed>[$]n)        # $n is an escape sequence for a linefeed character.
             |
+              (?!^)                    # Cannot be the first token.
+              [$][*](?<repeat>.)       # Repeats the matched character by the first decimal number found in the result of
+                                       # of the preceding token.
+            |
               (?<literal>[$])          # If none of the above special elements matched, we treat the $ as a literal, too.
-            )", RegexOptions.IgnorePatternWhitespace);
+            )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             MatchCollection tokens = tokenizer.Matches(replacement);
 
@@ -93,6 +100,12 @@ namespace Retina.Stages
                 }
                 else if (t.Groups["linefeed"].Success)
                     Tokens.Add(new Literal("\n"));
+                else if (t.Groups["repeat"].Success)
+                {
+                    Token lastToken = Tokens.Last();
+                    Tokens.RemoveAt(Tokens.Count - 1);
+                    Tokens.Add(new Repetition(t.Groups["repeat"].Value[0], lastToken));
+                }
                 else
                     throw new Exception("This shouldn't happen...");
             }

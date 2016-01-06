@@ -110,6 +110,7 @@ Replace mode does not use .NET's built-in `Regex.Replace`, but a custom implemen
 
 - `$n`: Is an escape sequence for a linefeed character (0x0A), much like `\n` inside a regex.
 - `$#1`, `$#{foo}`: By inserting `#` into a group reference, the number of captures made by that group is included (instead of the value of the last capture). This creates a simple way to count things and convert unary to decimal.
+- `$*_`: `_` can be replaced with any character. This repeats that character *n* times where *n* is the first decimal number in the result of the preceding token. Literal integers are treated as single tokens. Otherwise, each character in a literal is treated as a separate token. This creates a simple way to convert decimal to unary, e.g. by replacing `\d+` with `$0$*1`.
 
 ### Split Mode
 

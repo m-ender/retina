@@ -44,6 +44,7 @@
     <Compile Include="Replace\NumberedGroup.cs" />
     <Compile Include="Replace\NamedGroup.cs" />
     <Compile Include="Replace\LastGroup.cs" />
+    <Compile Include="Replace\Repetition.cs" />
     <Compile Include="Replace\Suffix.cs" />
     <Compile Include="Replace\Prefix.cs" />
     <Compile Include="Replace\EntireMatch.cs" />

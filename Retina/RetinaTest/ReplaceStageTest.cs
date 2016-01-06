@@ -137,6 +137,7 @@ namespace RetinaTest
         public void TestCaptureCount()
         {
             AssertReplacement("(.)+", "#$#1", RegexOptions.None, "abcd\ndef", "#4\n#3");
+            AssertReplacement("(..)+", "#$#1", RegexOptions.None, "abcd\ndef", "#2\n#1f");
             AssertReplacement("()(.)*", "$#2", RegexOptions.None, "abcd\ndef", "40\n30");
             AssertReplacement("(a)+(?<1>b)+", "$#1", RegexOptions.None, "aaabbcabbb", "5c4");
 
@@ -152,6 +153,35 @@ namespace RetinaTest
 
             // $#0 is useless but should also work:
             AssertReplacement("(.)+", "$#0$#{0}$#{00}", RegexOptions.None, "abcd\ndef", "111\n111");
+        }
+
+        [TestMethod]
+        public void TestCharacterRepetition()
+        {
+            AssertReplacement("(.)+", "15$*_", RegexOptions.None, "abc", "_______________");
+            AssertReplacement("(.)+", "xyz$*_", RegexOptions.None, "abc", "xy");
+            AssertReplacement(@"\d+", "$0$*1", RegexOptions.None, "3 12 4", "111 111111111111 1111");
+            AssertReplacement(".+", "$0$*1", RegexOptions.None, "3 12 4", "111");
+            AssertReplacement(".+", "$0$*1", RegexOptions.None, "abc10def", "1111111111");
+            AssertReplacement(".+", "$0$*1", RegexOptions.None, "abc0def", "");
+            AssertReplacement("(.)+", "$#1$*1", RegexOptions.None, "abcd\ndef", "1111\n111");
+            AssertReplacement("(..)+", "$#1$*1", RegexOptions.None, "abcd\ndef", "11\n1f");
+            AssertReplacement("(?<a>.)+", "$#{a}$*1", RegexOptions.None, "abcd\ndef", "1111\n111");
+            AssertReplacement("$", " $`$*1", RegexOptions.None, "12 123", "12 123 111111111111");
+            AssertReplacement("$", " $_$*1", RegexOptions.None, "12 123", "12 123 111111111111");
+            AssertReplacement("^", "$'$*1 ", RegexOptions.None, "12 123", "111111111111 12 123");
+
+            AssertReplacement(".+", "$0$*$", RegexOptions.None, "5", "$$$$$");
+            AssertReplacement(".+", @"$0$*\", RegexOptions.None, "5", @"\\\\\");
+            AssertReplacement(".+", "$0$**", RegexOptions.None, "5", "*****");
+
+            // $* can be nested:
+            AssertReplacement(".+", "2$*3$*_", RegexOptions.None, "abc", "_________________________________"); // 2 --> 33 --> thirty-three underscores
+            AssertReplacement(".+", "2$*_$*1", RegexOptions.None, "abc", "");
+
+            // $* as the first token, or not followed by another character, is a literal:
+            AssertReplacement(".+", "$*1", RegexOptions.None, "abc", "$*1");
+            AssertReplacement(".+", "5$*", RegexOptions.None, "abc", "5$*");
         }
 
         private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
