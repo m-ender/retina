@@ -1,6 +1,11 @@
-## 0.7.1
+## 0.7.2
 
 - New general option: `\` suppresses a stage's trailing linefeed. Like `;` and `:`, it's relative position with respect to closing loops is relevant.
+- Transliterate mode has been rewritten to allow for new features.
+- Transliterate mode: ranges can now take escape sequences on either end.
+- Transliterate mode: new character classes, `h`, `H` (hexadecimal digits), `l`, `L` (letters), `p` (printable ASCII).
+- Transliterate mode: ranges and classes can be reversed by prepending `R`.
+- Transliterate mode: the other set can be referenced once with `o`. If `o` is used in both sets, it will become a literal instead.
 
 ## 0.7.1
 
