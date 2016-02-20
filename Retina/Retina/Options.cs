@@ -103,11 +103,17 @@ namespace Retina
                     else
                         CloseLoopsSilent[CloseLoopsSilent.Count - 1] = false;
                     break;
-                case '\\':
+                case '\\': // Implies :
                     if (CloseLoopsTrailingLinefeed.Count == 0)
+                    {
+                        Silent = false;
                         TrailingLinefeed = false;
+                    }
                     else
+                    {
+                        CloseLoopsSilent[CloseLoopsSilent.Count - 1] = false;
                         CloseLoopsTrailingLinefeed[CloseLoopsTrailingLinefeed.Count - 1] = false;
+                    }
                     break;
                 case '(':
                     ++OpenLoops;
