@@ -9,11 +9,16 @@ namespace Retina.Replace
 {
     public class LastGroup : Token
     {
-        public LastGroup() { }
+        public bool GetCount { get; set; }
+        public LastGroup(bool getCount)
+        {
+            GetCount = getCount;
+        }
 
         public override string Process(string input, Match match)
         {
-            return match.Groups[match.Groups.Count-1].Value;
+            int num = match.Groups.Count-1;
+            return GetCount ? match.Groups[num].Captures.Count.ToString() : match.Groups[num].Value;
         }
     }
 }

@@ -153,6 +153,9 @@ namespace RetinaTest
 
             // $#0 is useless but should also work:
             AssertReplacement("(.)+", "$#0$#{0}$#{00}", RegexOptions.None, "abcd\ndef", "111\n111");
+
+            // $#+ should work
+            AssertReplacement("()(.)*", "$#+", RegexOptions.None, "abcd\ndef", "40\n30");
         }
 
         [TestMethod]

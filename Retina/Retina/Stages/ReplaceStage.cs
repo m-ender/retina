@@ -36,7 +36,10 @@ namespace Retina.Stages
             |
               (?<match>[$]&)           # $& includes the entire match and is synonymous with $0.
             |
-              (?<last>[$][+])          # $+ includes the capture group with the largest number.
+              (?<last>[$]              # $+ includes the capture group with the largest number.
+                (?<count>[#])?         # Custom addition: by inserting a #, we get the capture count instead of the result.
+                [+]
+              )
             |
               (?<group>[$]             # Match a group reference.
               (?<count>[#])?           # Custom addition: by inserting a #, we get the capture count instead of the result.
@@ -76,7 +79,7 @@ namespace Retina.Stages
                 else if (t.Groups["match"].Success)
                     Tokens.Add(new EntireMatch());
                 else if (t.Groups["last"].Success)
-                    Tokens.Add(new LastGroup());
+                    Tokens.Add(new LastGroup(t.Groups["count"].Success));
                 else if (t.Groups["group"].Success)
                 {
                     bool getCount = t.Groups["count"].Success;
