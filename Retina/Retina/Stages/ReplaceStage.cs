@@ -28,38 +28,46 @@ namespace Retina.Stages
             |
               (?<literal>[^$])         # All special substitution elements start with $, so everything else is a literal.
             |
-              (?<input>[$]_)           # $_ includes the entire input string.
-            |
-              (?<prefix>[$]`)          # $` includes everything before the match.
-            |
-              (?<suffix>[$]')          # $' includes everything after the match.
-            |
-              (?<match>[$]&)           # $& includes the entire match and is synonymous with $0.
-            |
-              (?<last>[$]              # $+ includes the capture group with the largest number.
-                (?<count>[#])?         # Custom addition: by inserting a #, we get the capture count instead of the result.
-                [+]
-              )
-            |
-              (?<group>[$]             # Match a group reference.
-              (?<count>[#])?           # Custom addition: by inserting a #, we get the capture count instead of the result.
+              (?<raw>                  # We use this <raw> group to capture the exact prefix that introduced the
+                                       # substitution element, in case it needs to be printed literally.
+                [$]
+                (?<count>              # Custom addition: by inserting a #, we get the capture count instead of the result.
+                  [#]
+                  (?![$n_`'&])         # This shouldn't work with all substitution elements.
+                )?
+              )                       
               (?:
-                (?<number>\d+)         # Either an integer.
+                (?<input>_)            # $_ includes the entire input string.
               |
-                {(?:                   # Or it's wrapped in braces, where it's either...
-                  (?<number>\d+)       #   still an integer.
-                |                      # or
-                  (?<name>[^\W\d]\w*)  #   a valid group name.
-                )}
-              ))
-            |
-              [$](?<literal>[$])       # $$ is an escape sequence for a single $.
-            | # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
-              (?<linefeed>[$]n)        # $n is an escape sequence for a linefeed character.
-            |
-              (?!^)                    # Cannot be the first token.
-              [$][*](?<repeat>.)       # Repeats the matched character by the first decimal number found in the result of
+                (?<prefix>`)           # $` includes everything before the match.
+              |
+                (?<suffix>')           # $' includes everything after the match.
+              |
+                (?<match>&)            # $& includes the entire match and is synonymous with $0.
+              |
+                (?<last>               # $+ includes the capture group with the largest number.
+                  [+]
+                )
+              |
+                (?<group>              # Match a group reference.
+                (?:
+                  (?<number>\d+)       # Either an integer.
+                |
+                  {(?:                   # Or it's wrapped in braces, where it's either...
+                    (?<number>\d+)       #   still an integer.
+                  |                      # or
+                    (?<name>[^\W\d]\w*)  #   a valid group name.
+                  )}
+                ))
+              |
+                (?<literal>[$])        # $$ is an escape sequence for a single $.
+              | # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
+                (?<linefeed>n)         # $n is an escape sequence for a linefeed character.
+              |
+                (?<!^.)                # Cannot be the first token.
+                [*](?<repeat>.)        # Repeats the matched character by the first decimal number found in the result of
                                        # of the preceding token.
+              )
             |
               (?<literal>[$])          # If none of the above special elements matched, we treat the $ as a literal, too.
             )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
@@ -83,7 +91,7 @@ namespace Retina.Stages
                 else if (t.Groups["group"].Success)
                 {
                     bool getCount = t.Groups["count"].Success;
-                    string raw = t.Groups["group"].Value;
+                    string raw = t.Groups["raw"].Value + t.Groups["group"].Value;
                     if (t.Groups["number"].Success)
                     {
                         int number = int.Parse(t.Groups["number"].Value);
