@@ -72,9 +72,9 @@ namespace Retina.Stages
               | # Apart from the last option, all remaining tokens are custom additions to what .NET would provide as well.
                 (?<linefeed>n)         # $n is an escape sequence for a linefeed character.
               |
-                (?<!^.)                # Cannot be the first token.
-                [*](?<repeat>.)        # Repeats the matched character by the first decimal number found in the result of
-                                       # of the preceding token.
+                [*](?<repeat>.|$)      # Repeats the matched character by the first decimal number found in the result of
+                                       # of the preceding token. If there is no preceding token, assume $&. If there is no
+                                       # character following $*, assume '1'.
               )
             |
               (?<literal>[$])          # If none of the above special elements matched, we treat the $ as a literal, too.
@@ -123,9 +123,17 @@ namespace Retina.Stages
                     Tokens.Add(new Literal("\n"));
                 else if (t.Groups["repeat"].Success)
                 {
-                    Token lastToken = Tokens.Last();
-                    Tokens.RemoveAt(Tokens.Count - 1);
-                    Tokens.Add(new Repetition(t.Groups["repeat"].Value[0], lastToken));
+                    Token lastToken;
+                    if (Tokens.Count > 0)
+                    {
+                        lastToken = Tokens.Last();
+                        Tokens.RemoveAt(Tokens.Count - 1);
+                    }
+                    else
+                        lastToken = new EntireMatch();
+
+                    char character = t.Groups["repeat"].Length > 0 ? t.Groups["repeat"].Value[0] : '1';
+                    Tokens.Add(new Repetition(character, lastToken));
                 }
                 else
                     throw new Exception("This shouldn't happen...");

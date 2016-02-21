@@ -11,7 +11,7 @@ namespace Retina.Replace
     {
         public bool GetLength { get; set; }
 
-        public EntireMatch(bool getLength)
+        public EntireMatch(bool getLength = false)
         {
             GetLength = getLength;
         }

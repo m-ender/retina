@@ -213,9 +213,10 @@ namespace RetinaTest
             AssertReplacement(".+", "2$*3$*_", RegexOptions.None, "abc", "_________________________________"); // 2 --> 33 --> thirty-three underscores
             AssertReplacement(".+", "2$*_$*1", RegexOptions.None, "abc", "");
 
-            // $* as the first token, or not followed by another character, is a literal:
-            AssertReplacement(".+", "$*1", RegexOptions.None, "abc", "$*1");
-            AssertReplacement(".+", "5$*", RegexOptions.None, "abc", "5$*");
+            // $* as the first token implies $&. $* as the last token implies 1.
+            AssertReplacement("(.).+", "$*:", RegexOptions.None, "10!", "::::::::::");
+            AssertReplacement(".+", "5$*", RegexOptions.None, "a3c", "11111");
+            AssertReplacement("(.).+", "$*", RegexOptions.None, "10!", "1111111111");
         }
 
         private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
