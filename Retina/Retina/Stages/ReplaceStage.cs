@@ -31,9 +31,17 @@ namespace Retina.Stages
               (?<raw>                  # We use this <raw> group to capture the exact prefix that introduced the
                                        # substitution element, in case it needs to be printed literally.
                 [$]
-                (?<count>              # Custom addition: by inserting a #, we get the capture count instead of the result.
-                  [#]
-                  (?![$n_`'&])         # This shouldn't work with all substitution elements.
+                (?:                    # There are certain modifiers that can come after the $ which change which property
+                                       # of the chosen substitution element is going to be inserted.
+                  (?<count>            # Custom addition: by inserting a #, we get the capture count instead of the result.
+                    [#]
+                    (?![$n_`'&])       # This shouldn't work with all substitution elements.
+                  )
+                |
+                  (?<length>
+                    [.]
+                    (?![$n])           # This shouldn't work with all substitution elements.
+                  )
                 )?
               )                       
               (?:
@@ -76,18 +84,20 @@ namespace Retina.Stages
 
             foreach (Match t in tokens)
             {
+                bool getLength = t.Groups["length"].Success;
+
                 if (t.Groups["literal"].Success)
                     Tokens.Add(new Literal(t.Groups["literal"].Value));
                 else if (t.Groups["input"].Success)
-                    Tokens.Add(new EntireInput());
+                    Tokens.Add(new EntireInput(getLength));
                 else if (t.Groups["prefix"].Success)
-                    Tokens.Add(new Prefix());
+                    Tokens.Add(new Prefix(getLength));
                 else if (t.Groups["suffix"].Success)
-                    Tokens.Add(new Suffix());
+                    Tokens.Add(new Suffix(getLength));
                 else if (t.Groups["match"].Success)
-                    Tokens.Add(new EntireMatch());
+                    Tokens.Add(new EntireMatch(getLength));
                 else if (t.Groups["last"].Success)
-                    Tokens.Add(new LastGroup(t.Groups["count"].Success));
+                    Tokens.Add(new LastGroup(t.Groups["count"].Success, getLength));
                 else if (t.Groups["group"].Success)
                 {
                     bool getCount = t.Groups["count"].Success;
@@ -96,7 +106,7 @@ namespace Retina.Stages
                     {
                         int number = int.Parse(t.Groups["number"].Value);
                         if (Pattern.GetGroupNumbers().Contains(number))
-                            Tokens.Add(new NumberedGroup(number, getCount));
+                            Tokens.Add(new NumberedGroup(number, getCount, getLength));
                         else
                             Tokens.Add(new Literal(raw));
                     }
@@ -104,7 +114,7 @@ namespace Retina.Stages
                     {
                         string name = t.Groups["name"].Value;
                         if (Pattern.GetGroupNames().Contains(name))
-                            Tokens.Add(new NamedGroup(name, getCount));
+                            Tokens.Add(new NamedGroup(name, getCount, getLength));
                         else
                             Tokens.Add(new Literal(raw));
                     }

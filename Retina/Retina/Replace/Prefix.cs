@@ -9,11 +9,16 @@ namespace Retina.Replace
 {
     public class Prefix : Token
     {
-        public Prefix() { }
+        public bool GetLength { get; set; }
+
+        public Prefix(bool getLength)
+        {
+            GetLength = getLength;
+        }
 
         public override string Process(string input, Match match)
         {
-            return input.Substring(0, match.Index);
+            return GetLength ? match.Index.ToString() : input.Substring(0, match.Index);
         }
     }
 }

@@ -9,11 +9,16 @@ namespace Retina.Replace
 {
     public class EntireInput : Token
     {
-        public EntireInput() { }
+        public bool GetLength { get; set; }
+
+        public EntireInput(bool getLength)
+        {
+            GetLength = getLength;
+        }
 
         public override string Process(string input, Match match)
         {
-            return input;
+            return GetLength ? input.Length.ToString() : input;
         }
     }
 }

@@ -159,6 +159,37 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestCaptureLength()
+        {
+            AssertReplacement(".+", ".$.0", RegexOptions.None, "abcd\ndef", ".4\n.3");
+            AssertReplacement("(.)+", ".$.1", RegexOptions.None, "abcd\ndef", ".1\n.1");
+            AssertReplacement("(.+)", ".$.1", RegexOptions.None, "abcd\ndef", ".4\n.3");
+            AssertReplacement("()(.*)", "$.2", RegexOptions.None, "abcd\ndef", "40\n30");
+
+            // Curly braces should also work:
+            AssertReplacement(".+", ".$.{0}", RegexOptions.None, "abcd\ndef", ".4\n.3");
+            AssertReplacement("(.+)", ".$.{1}", RegexOptions.None, "abcd\ndef", ".4\n.3");
+            AssertReplacement("()(.*)", "$.{2}", RegexOptions.None, "abcd\ndef", "40\n30");
+            AssertReplacement("(?<foo>a+)(?<bar>b+)", "$.{foo}$.{bar}", RegexOptions.None, "aaabbcabbb", "32c13");
+
+            // Make sure $`, $', $_, $& and $+ work:
+            AssertReplacement("a", "$.`", RegexOptions.None, ";!~&a@#", ";!~&4@#");
+            AssertReplacement("a", "$.'", RegexOptions.None, ";!~&a@#", ";!~&2@#");
+            AssertReplacement("a", "$._", RegexOptions.None, ";!~&a@#", ";!~&7@#");
+            AssertReplacement("a+", "$.&", RegexOptions.None, ";!~&aaa@#", ";!~&3@#");
+            AssertReplacement("()(.*)", "$.+", RegexOptions.None, "abcd\ndef", "40\n30");
+
+            // An entirely unmatched group should result in an empty string, not 0:
+            AssertReplacement("a|(b)", "$.1", RegexOptions.None, "::a::b::", "::::1::");
+            AssertReplacement("()(.)*", "$.2", RegexOptions.None, "abcd\ndef", "1\n1");
+            AssertReplacement("()(.)*", "$.+", RegexOptions.None, "abcd\ndef", "1\n1");
+
+            // $. not followed by a valid group be taken literally:
+            AssertReplacement("(.+)", "$.2$.{2}$.$.}", RegexOptions.None, "abcd", "$.2$.{2}$.$.}");
+            AssertReplacement("(?<a>.+)", "$.a$.{b}$.{", RegexOptions.None, "abcd", "$.a$.{b}$.{");
+        }
+
+        [TestMethod]
         public void TestCharacterRepetition()
         {
             AssertReplacement("(.)+", "15$*_", RegexOptions.None, "abc", "_______________");

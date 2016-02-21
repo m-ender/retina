@@ -11,15 +11,23 @@ namespace Retina.Replace
     {
         public string Name { get; set; }
         public bool GetCount { get; set; }
+        public bool GetLength { get; set; }
 
-        public NamedGroup(string name, bool getCount) {
+        public NamedGroup(string name, bool getCount, bool getLength)
+        {
             Name = name;
             GetCount = getCount;
+            GetLength = getLength;
         }
 
         public override string Process(string input, Match match)
         {
-            return GetCount ? match.Groups[Name].Captures.Count.ToString() : match.Groups[Name].Value;
+            if (GetCount)
+                return match.Groups[Name].Captures.Count.ToString();
+            else if (GetLength)
+                return match.Groups[Name].Success ? match.Groups[Name].Length.ToString() : "";
+            else
+                return match.Groups[Name].Value;
         }
     }
 }
