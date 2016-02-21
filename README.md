@@ -85,7 +85,7 @@ The following options apply to all modes:
 - `(` and `)`: `(` opens a loop and `)` closes a loop. All stages between `(` and `)` (inclusive) will be repeated in a loop until an iteration doesn't change the result. Note that `(` and `)` may appear in the same stage, looping only that stage. Also, the order of `(` and `)` within a single stage is irrelevant - they are always treated as if all `(` appear before all `)`. Furthermore, an unmatched `)` assumes a `(` in the first stage, and an unmatched `(` assumes a `)` in the last stage. Loops can be nested. These options makes Retina [Turing-complete](http://en.wikipedia.org/wiki/Turing_completeness) (see below for details).
 - `+`: Short-hand for `()`.
 - `;` and `:`: Turn Silent mode off and on, respectively (this determines whether the result of a stage or loop is printed to the standard output stream). Every stage *and* every loop has a separate silent flag. All but the last outermost loop are silent by default. If a loop has been closed with `)` or `+` in the current configuration string *before* the `;` or `:`, the silent mode of that (last closed) loop is affected. Otherwise, the stage's own silent mode is affected. This means that `(:)` defines a stage which is looped and prints its result on each iteration, but `()+` is a stage which is looped but only prints the result once the loop terminates. By default non-silent stages always print a trailing linefeed. This is a rare case where the order of options in the configuration string is not arbitrary.
-- `\`: If the current stage is not silent, suppress its trailing linefeed. Like `;` and `:` its relative position with respect to `)` or `+` matters.
+- `\`: Turn off Silent mode and suppress its trailing linefeed. Like `;` and `:` its relative position with respect to `)` or `+` matters.
 
 ## Operation Modes
 
@@ -109,8 +109,9 @@ Replace mode does what it says on the tin: it replaces all matches of the regex 
 Replace mode does not use .NET's built-in `Regex.Replace`, but a custom implementation instead. All of the substitution elements `$...` that are valid in .NET also work in Replace mode. However, Retina understands the following additional substitution elements:
 
 - `$n`: Is an escape sequence for a linefeed character (0x0A), much like `\n` inside a regex.
-- `$#1`, `$#{foo}`: By inserting `#` into a group reference, the number of captures made by that group is included (instead of the value of the last capture). This creates a simple way to count things and convert unary to decimal.
-- `$*_`: `_` can be replaced with any character. This repeats that character *n* times where *n* is the first decimal number in the result of the preceding token. Literal integers are treated as single tokens. Otherwise, each character in a literal is treated as a separate token. This creates a simple way to convert decimal to unary, e.g. by replacing `\d+` with `$0$*1`.
+- `$#1`, `$#{foo}`: By inserting `#` into a group reference, the number of captures made by that group is included (instead of the value of the last capture). This also works with `$#+`. This creates a simple way to count things and convert unary to decimal.
+- `$.1`, `$.{foo}`: By inserting `.` into a group reference, the length of the (most recent) capture is included (instead of the value). This also works with the substitution elements ``$.` ``, `$.'`, `$._`, `$.&` and `$.+`.
+- `$*_`: `_` can be replaced with any character. This repeats that character *n* times where *n* is the first decimal number in the result of the preceding token. Literal integers are treated as single tokens. Otherwise, each character in a literal is treated as a separate token. This creates a simple way to convert decimal to unary, e.g. by replacing `\d+` with `$&$*1`. If there is no preceding token, `$&` is implied. If there is no character after `$*`, `1` is implied. So the previous example can be shortened to replacing `\d+` with `$*`.
 
 ### Split Mode
 

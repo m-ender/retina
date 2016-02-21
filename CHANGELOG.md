@@ -1,3 +1,10 @@
+## 0.7.3
+
+- General options: `\` now implies `:`.
+- Replace mode: `$#+` works now.
+- Replace mode: `$*` now has implicit behaviour if not surrounded by other tokens. The preceding token defaults to $&, the following character to '1'.
+- Replace mode: `$.1` and `$.{foo}` insert the length of the capture. Also works with ``$.` ``, `$.'`, `$._`, `$.&` and `$.+`.
+
 ## 0.7.2
 
 - New general option: `\` suppresses a stage's trailing linefeed. Like `;` and `:`, it's relative position with respect to closing loops is relevant.
