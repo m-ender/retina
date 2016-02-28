@@ -9,19 +9,20 @@ namespace Retina.Stages
 {
     public abstract class RegexStage : Stage
     {
-        public Options Options { get; set; }
+        public string PatternString { get; set; }
         public Regex Pattern { get; set; }
 
-        protected RegexStage(Options options)
-        {
-            Options = options;
-            Silent = Options.Silent;
-            TrailingLinefeed = Options.TrailingLinefeed;
-        }
+        protected RegexStage(Options options) : base(options) { }
 
         public RegexStage(Options options, string pattern) : this(options)
         {
-            Pattern = new Regex(pattern, options.RegexOptions);
+            PatternString = pattern;
+        }
+
+        public override string Execute(string input)
+        {
+            Pattern = new Regex(PatternString, Options.RegexOptions);
+            return base.Execute(input);
         }
     }
 }

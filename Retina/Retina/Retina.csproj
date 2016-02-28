@@ -53,7 +53,7 @@
     <Compile Include="Replace\Token.cs" />
     <Compile Include="Stages\TransliterateStage.cs" />
     <Compile Include="Stages\RegexStage.cs" />
-    <Compile Include="Stages\LoopStage.cs" />
+    <Compile Include="Stages\GroupStage.cs" />
     <Compile Include="Stages\GrepStage.cs" />
     <Compile Include="Stages\MatchStage.cs" />
     <Compile Include="Modes.cs" />

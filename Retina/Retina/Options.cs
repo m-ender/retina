@@ -17,6 +17,11 @@ namespace Retina
         // General options
         public bool? Silent { get; set; }
         public bool TrailingLinefeed { get; set; }
+        public bool Loop { get; set; }
+        public bool IterationSilent { get; set; }
+        public bool IterationTrailingLinefeed { get; set; }
+
+        public List<int> Limits { get; set; }
 
         // Options for Match mode
         public bool Overlapping { get; set; }
@@ -27,122 +32,128 @@ namespace Retina
 
         // Options for Replace mode
 
-        // Options for control flow
-        public int OpenLoops { get; set; }
-        public List<bool?> CloseLoopsSilent { get; set; }
-        public List<bool> CloseLoopsTrailingLinefeed { get; set; }
-
         public Options(string optionString, Modes defaultMode)
         {
-            Mode = defaultMode;
-            CloseLoopsSilent = new List<bool?>();
-            CloseLoopsTrailingLinefeed = new List<bool>();
-
             TrailingLinefeed = true;
+            IterationSilent = true;
+            IterationTrailingLinefeed = true;
 
-            foreach (char c in optionString)
+            Mode = defaultMode;
+
+            var tokenizer = new Regex(@"\G(?:    # Use \G to ensure that the tokens cover the entire string.
+                        (?<limit>\d+)            # All integers are read as limits.
+                    |
+                        .                        # All other characters are read individually and represent various options.
+                    )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+
+            MatchCollection tokens = tokenizer.Matches(optionString);
+
+            foreach (Match t in tokens)
             {
-                switch (c)
+                if (t.Groups["limit"].Success)
                 {
-                // Parse RegexOptions
-                case 'c':
-                    RegexOptions |= RegexOptions.CultureInvariant;
-                    break;
-                case 'e':
-                    RegexOptions |= RegexOptions.ECMAScript;
-                    break;
-                case 'i':
-                    RegexOptions |= RegexOptions.IgnoreCase;
-                    break;
-                case 'm':
-                    RegexOptions |= RegexOptions.Multiline;
-                    break;
-                case 'n':
-                    RegexOptions |= RegexOptions.ExplicitCapture;
-                    break;
-                case 'r':
-                    RegexOptions |= RegexOptions.RightToLeft;
-                    break;
-                case 's':
-                    RegexOptions |= RegexOptions.Singleline;
-                    break;
-                case 'x':
-                    RegexOptions |= RegexOptions.IgnorePatternWhitespace;
-                    break;
-
-                // Parse Mode
-                case 'M':
-                    Mode = Modes.Match;
-                    break;
-                case 'R':
-                    Mode = Modes.Replace;
-                    break;
-                case 'G':
-                    Mode = Modes.Grep;
-                    break;
-                case 'A':
-                    Mode = Modes.AntiGrep;
-                    break;
-                case 'S':
-                    Mode = Modes.Split;
-                    break;
-                case 'T':
-                    Mode = Modes.Transliterate;
-                    break;
-
-                // General options
-                case ';':
-                    if (CloseLoopsSilent.Count == 0)
-                        Silent = true;
-                    else
-                        CloseLoopsSilent[CloseLoopsSilent.Count - 1] = true;
-                    break;
-                case ':':
-                    if (CloseLoopsSilent.Count == 0)
-                        Silent = false;
-                    else
-                        CloseLoopsSilent[CloseLoopsSilent.Count - 1] = false;
-                    break;
-                case '\\': // Implies :
-                    if (CloseLoopsTrailingLinefeed.Count == 0)
+                    Limits.Add(int.Parse(t.Groups["limit"].Value));
+                }
+                else
+                {
+                    switch (t.Value[0])
                     {
-                        Silent = false;
-                        TrailingLinefeed = false;
-                    }
-                    else
-                    {
-                        CloseLoopsSilent[CloseLoopsSilent.Count - 1] = false;
-                        CloseLoopsTrailingLinefeed[CloseLoopsTrailingLinefeed.Count - 1] = false;
-                    }
-                    break;
-                case '(':
-                    ++OpenLoops;
-                    break;
-                case ')':
-                    CloseLoopsSilent.Add(null);
-                    CloseLoopsTrailingLinefeed.Add(true);
-                    break;
+                    // Parse RegexOptions
+                    case 'c':
+                        RegexOptions ^= RegexOptions.CultureInvariant;
+                        break;
+                    case 'e':
+                        RegexOptions ^= RegexOptions.ECMAScript;
+                        break;
+                    case 'i':
+                        RegexOptions ^= RegexOptions.IgnoreCase;
+                        break;
+                    case 'm':
+                        RegexOptions ^= RegexOptions.Multiline;
+                        break;
+                    case 'n':
+                        RegexOptions ^= RegexOptions.ExplicitCapture;
+                        break;
+                    case 'r':
+                        RegexOptions ^= RegexOptions.RightToLeft;
+                        break;
+                    case 's':
+                        RegexOptions ^= RegexOptions.Singleline;
+                        break;
+                    case 'x':
+                        RegexOptions ^= RegexOptions.IgnorePatternWhitespace;
+                        break;
 
-                // Mode-specific options
-                case '!':
-                    PrintMatches = true;
-                    break;
-                case '&':
-                    Overlapping = true;
-                    break;
-                case '_':
-                    OmitEmpty = true;
-                    break;
-                case '+':
-                    // Short-hand for ()
-                    ++OpenLoops;
-                    CloseLoopsSilent.Add(null);
-                    CloseLoopsTrailingLinefeed.Add(true);
-                    break;
-                default:
-                    break;
+                    // Parse Mode
+                    case 'M':
+                        Mode = Modes.Match;
+                        break;
+                    case 'R':
+                        Mode = Modes.Replace;
+                        break;
+                    case 'G':
+                        Mode = Modes.Grep;
+                        break;
+                    case 'A':
+                        Mode = Modes.AntiGrep;
+                        break;
+                    case 'S':
+                        Mode = Modes.Split;
+                        break;
+                    case 'T':
+                        Mode = Modes.Transliterate;
+                        break;
+
+                    // General options
+                    case ';':
+                        if (Loop)
+                            IterationSilent = true;
+                        else
+                            Silent = true;
+                        break;
+                    case ':':
+                        if (Loop)
+                            IterationSilent = false;
+                        else
+                            Silent = false;
+                        break;
+                    case '\\': // Implies :
+                        if (Loop)   
+                        {
+                            IterationSilent = false;
+                            IterationTrailingLinefeed = false;
+                        }
+                        else
+                        {
+                            Silent = false;
+                            TrailingLinefeed = false;
+                        }
+                        break;
+
+                    // Mode-specific options
+                    case '!':
+                        PrintMatches = true;
+                        break;
+                    case '&':
+                        Overlapping = true;
+                        break;
+                    case '_':
+                        OmitEmpty = true;
+                        break;
+                    case '+':
+                        Loop = true;
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
+        }
+
+        public void Inherit(Options other)
+        {
+            RegexOptions ^= other.RegexOptions;
+            // TODO: Inherit limits as well?
         }
 
     }

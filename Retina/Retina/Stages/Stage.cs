@@ -9,19 +9,36 @@ namespace Retina.Stages
 {
     public abstract class Stage
     {
-        public bool? Silent { get; set; }
-        public bool TrailingLinefeed{ get; set; }
+        public Options Options { get; set; }
 
-        public Stage() { }
-
-        public string Execute(string input)
+        public Stage(Options options)
         {
-            StringBuilder builder = Process(input);
+            Options = options;
+        }
 
-            string result = builder.ToString();
+        public virtual string Execute(string input)
+        {
+            string result;
+            if (Options.Loop)
+            {
+                result = input;
+                string lastResult;
+                do
+                {
+                    lastResult = result;
+                    result = Process(lastResult).ToString();
+                    if (!Options.IterationSilent)
+                        if (Options.IterationTrailingLinefeed)
+                            Console.WriteLine(result);
+                        else
+                            Console.Write(result);
+                } while (lastResult != result);
+            }
+            else
+                result = Process(input).ToString();
 
-            if (!(Silent ?? true))
-                if (TrailingLinefeed)
+            if (!(Options.Silent ?? true))
+                if (Options.TrailingLinefeed)
                     Console.WriteLine(result);
                 else
                     Console.Write(result);

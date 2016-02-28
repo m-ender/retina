@@ -17,6 +17,8 @@ namespace Retina
 	    {
             var stageTree = new Stack<List<Stage>>();
             stageTree.Push(new List<Stage>());
+            var groupOptions = new Stack<string>();
+            groupOptions.Push("");
 
             if (args.Count() < 1)
                 Console.WriteLine("Usage: ./Retina source.ret\n"+
@@ -33,12 +35,40 @@ namespace Retina
                 {
                     string pattern = sources[i++];
 
-                    Options options;
-                    string regex;
-                    ParsePattern(pattern, i < sources.Count, false, out options, out regex);
+                    string optionString = "";
 
-                    for (int j = 0; j < options.OpenLoops; ++j)
-                        stageTree.Push(new List<Stage>());
+                    // Options can be specified in the regex file in front of the first backtick
+                    var parts = new List<string>(pattern.Split(new[] { '`' }));
+                    if (parts.Count > 1)
+                    {
+                        optionString = parts[0];
+                        parts.RemoveAt(0);
+                    }
+
+                    string regex = String.Join("`", parts);
+
+                    optionString = optionString.Replace("{", "+(").Replace("}", "+)");
+
+                    if (optionString.Contains('(') && optionString.Contains(')'))
+                        throw new Exception("Stage configuration cannot contain both '(' and ')'.");
+
+
+                    if (optionString.Contains('('))
+                    {
+                        var openGroups = optionString.Split(new[] { '(' });
+                        for (int j = 0; j < openGroups.Length - 1; ++j)
+                        {
+                            groupOptions.Push(openGroups[j]);
+                            stageTree.Push(new List<Stage>());
+                        }
+                        optionString = openGroups.Last();
+                    }
+
+                    var groups = optionString.Split(new[] { ')' });
+
+                    optionString = groups.Last();
+
+                    Options options = new Options(optionString, i < sources.Count ? Modes.Replace : Modes.Match);
 
                     Stage stage = null;
                     switch (options.Mode)
@@ -66,26 +96,47 @@ namespace Retina
 
                     stageTree.Peek().Add(stage);
 
-                    for (int j = 0; j < options.CloseLoopsSilent.Count; ++j)
+                    for (int j = 0; j < groups.Length - 1; ++j)
                     {
-                        var loopBody = stageTree.Pop();
+                        optionString = groupOptions.Pop() + groups[j];
+                        if (groupOptions.Count == 0)
+                            groupOptions.Push("");
+
+                        options = new Options(optionString, Modes.Match);
+
+                        InheritOptions(stageTree.Peek(), options);
+                        stage = new GroupStage(options, stageTree.Pop());
                         if (stageTree.Count == 0)
                             stageTree.Push(new List<Stage>());
-                        stageTree.Peek().Add(new LoopStage(loopBody, options.CloseLoopsSilent[j], options.CloseLoopsTrailingLinefeed[j]));
+                        stageTree.Peek().Add(stage);
                     }
                 }
 
                 while (stageTree.Count > 1)
                 {
-                    var loopBody = stageTree.Pop();
-                    stageTree.Peek().Add(new LoopStage(loopBody));
+                    var options = new Options(groupOptions.Pop(), Modes.Match);
+
+                    InheritOptions(stageTree.Peek(), options);
+                    var stage = new GroupStage(options, stageTree.Pop());
+                    stageTree.Peek().Add(stage);
                 }
+
                 Stages = stageTree.Pop();
 
-                if (Stages.Last().Silent == null)
-                    Stages.Last().Silent = false;
+                if (Stages.Last().Options.Silent == null)
+                    Stages.Last().Options.Silent = false;
             }
 	    }
+
+        private static void InheritOptions(IList<Stage> stages, Options options)
+        {
+            foreach (var stage in stages)
+            {
+                stage.Options.Inherit(options);
+                if (stage is GroupStage)
+                    InheritOptions(((GroupStage)stage).Stages, options);
+            }
+        }
 
         private static void ParsePattern(string pattern, bool replaceMode, bool last, out Options options, out string regex)
         {
