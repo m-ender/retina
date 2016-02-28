@@ -8,7 +8,7 @@ Retina was mainly developed for [Code golf](https://en.wikipedia.org/wiki/Code_g
 
 ## Running Retina
 
-There is an up-to-date Windows binary of Retina in the root directory of the repository. Alternatively, you can build it yourself from the C# sources. The code requires .NET 4.5. I do not regularly test Retina with Mono, but previous versions have worked without problems.
+There is an up-to-date .NET binary of Retina in the root directory of the repository. Alternatively, you can build it yourself from the C# sources. The code requires .NET 4.5. I do not regularly test Retina with Mono, but previous versions have worked without problems.
 
 ## How does it work?
 
