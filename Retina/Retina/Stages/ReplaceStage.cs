@@ -10,12 +10,13 @@ namespace Retina.Stages
 {
     public class ReplaceStage : RegexStage
     {
+        string ReplacementString { get; set; }
         public List<Token> Tokens { get; set; }
 
         public ReplaceStage(Options options, string pattern, string replacement)
             : base(options, pattern)
         {
-            ParseReplacement(replacement);
+            ReplacementString = replacement;
         }
 
         private void ParseReplacement(string replacement)
@@ -142,6 +143,8 @@ namespace Retina.Stages
 
         protected override StringBuilder Process(string input)
         {
+            ParseReplacement(ReplacementString);
+
             var builder = new StringBuilder();
 
             int i = 0;

@@ -49,7 +49,7 @@ namespace Retina.Stages
             From = fromBuilder.ToString();
             To = toBuilder.ToString();
 
-            Pattern = new Regex(remainder.Length == 0 ? @"[\s\S]+" : remainder, options.RegexOptions);
+            PatternString = remainder.Length == 0 ? @"[\s\S]+" : remainder;
         }
 
         private char ParseCharacterToken(string token)
