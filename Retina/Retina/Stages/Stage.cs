@@ -18,6 +18,8 @@ namespace Retina.Stages
 
         public virtual string Execute(string input)
         {
+            // This whole function and the interaction between per-line mode, loops and output
+            // feels massively hacky... maybe one day I'll refactor this...
             string result;
             if (Options.PerLine)
             {

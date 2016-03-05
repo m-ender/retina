@@ -49,6 +49,9 @@ namespace Retina.Stages
                 }
             }
 
+            if (Options.Limits.Count > 0 && Options.Limits[0] > 0)
+                matches = new List<Match>(matches.Take(Options.Limits[0]));
+
             var builder = new StringBuilder();
 
             if (Options.PrintMatches)
@@ -58,7 +61,10 @@ namespace Retina.Stages
                 {
                     if (!first) builder.Append("\n");
                     first = false;
-                    builder.Append(match.Value);
+                    if (Options.Limits.Count > 1 && Options.Limits[1] > 0)
+                        builder.Append(match.Value.Substring(0,Math.Min(match.Length, Options.Limits[1])));
+                    else
+                        builder.Append(match.Value);
                 }
             }
             else

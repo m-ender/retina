@@ -40,6 +40,8 @@ namespace Retina
             IterationSilent = true;
             IterationTrailingLinefeed = true;
 
+            Limits = new List<int>();
+
             Mode = defaultMode;
 
             var tokenizer = new Regex(@"\G(?:    # Use \G to ensure that the tokens cover the entire string.
