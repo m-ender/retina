@@ -17,9 +17,11 @@ namespace Retina
         // General options
         public bool? Silent { get; set; }
         public bool TrailingLinefeed { get; set; }
+        public bool PerLine { get; set; }
         public bool Loop { get; set; }
         public bool IterationSilent { get; set; }
         public bool IterationTrailingLinefeed { get; set; }
+        public bool IterationPerLine { get; set; }
 
         public List<int> Limits { get; set; }
 
@@ -116,6 +118,12 @@ namespace Retina
                             IterationSilent = false;
                         else
                             Silent = false;
+                        break;
+                    case '%':
+                        if (Loop)
+                            IterationPerLine = true;
+                        else
+                            PerLine = true;
                         break;
                     case '\\': // Implies :
                         if (Loop)   

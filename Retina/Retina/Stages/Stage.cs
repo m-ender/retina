@@ -19,6 +19,14 @@ namespace Retina.Stages
         public virtual string Execute(string input)
         {
             string result;
+            if (Options.PerLine)
+            {
+                Options.PerLine = false;
+                result = String.Join("\n", input.Split(new[] { '\n' }).Select(Execute));
+                Options.PerLine = true;
+                return result;
+            }
+
             if (Options.Loop)
             {
                 result = input;
@@ -26,7 +34,11 @@ namespace Retina.Stages
                 do
                 {
                     lastResult = result;
-                    result = Process(lastResult).ToString();
+                    if (Options.IterationPerLine)
+                        result = String.Join("\n", lastResult.Split(new[] { '\n' }).Select(x => Process(x).ToString()));
+                    else
+                        result = Process(lastResult).ToString();
+
                     if (!Options.IterationSilent)
                         if (Options.IterationTrailingLinefeed)
                             Console.WriteLine(result);
