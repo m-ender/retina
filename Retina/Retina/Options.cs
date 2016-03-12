@@ -49,7 +49,7 @@ namespace Retina
             LimitFlags? currentFlags = null;
 
             var tokenizer = new Regex(@"\G(?:    # Use \G to ensure that the tokens cover the entire string.
-                        (?<limit>\d+)            # All integers are read as limits.
+                        (?<limit>-?\d+)          # All integers are read as limits.
                     |
                         .                        # All other characters are read individually and represent various options.
                     )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
@@ -203,7 +203,7 @@ namespace Retina
                 return true;
 
             if (limit < 0)
-                limit = count + limit;
+                limit = count + limit + 1;
             
             return flags.HasFlag(LimitFlags.Less)    && value <  limit-1
                     || flags.HasFlag(LimitFlags.Equals)  && value == limit-1
