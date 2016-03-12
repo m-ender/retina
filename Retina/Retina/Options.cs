@@ -24,6 +24,7 @@ namespace Retina
         public bool IterationPerLine { get; set; }
 
         public List<int> Limits { get; set; }
+        public List<LimitFlags> LFlags { get; set; }
 
         // Options for Match mode
         public bool Overlapping { get; set; }
@@ -41,8 +42,11 @@ namespace Retina
             IterationTrailingLinefeed = true;
 
             Limits = new List<int>();
+            LFlags = new List<LimitFlags>();
 
             Mode = defaultMode;
+
+            LimitFlags? currentFlags = null;
 
             var tokenizer = new Regex(@"\G(?:    # Use \G to ensure that the tokens cover the entire string.
                         (?<limit>\d+)            # All integers are read as limits.
@@ -57,6 +61,9 @@ namespace Retina
                 if (t.Groups["limit"].Success)
                 {
                     Limits.Add(int.Parse(t.Groups["limit"].Value));
+                    if (currentFlags != null)
+                        LFlags.Add((LimitFlags)currentFlags);
+                    currentFlags = LimitFlags.Less | LimitFlags.Equals;
                 }
                 else
                 {
@@ -139,6 +146,21 @@ namespace Retina
                             TrailingLinefeed = false;
                         }
                         break;
+                    case '<':
+                        if (currentFlags == null)
+                            throw new Exception("Cannot use < before setting a limit.");
+                        currentFlags ^= LimitFlags.Less;
+                        break;
+                    case '=':
+                        if (currentFlags == null)
+                            throw new Exception("Cannot use = before setting a limit.");
+                        currentFlags ^= LimitFlags.Equals;
+                        break;
+                    case '>':
+                        if (currentFlags == null)
+                            throw new Exception("Cannot use > before setting a limit.");
+                        currentFlags ^= LimitFlags.Greater;
+                        break;
 
                     // Mode-specific options
                     case '!':
@@ -158,6 +180,9 @@ namespace Retina
                     }
                 }
             }
+
+            if (currentFlags != null)
+                LFlags.Add((LimitFlags)currentFlags);
         }
 
         public void Inherit(Options other)
@@ -166,5 +191,23 @@ namespace Retina
             // TODO: Inherit limits as well?
         }
 
+        public bool IsInRange(int limitIndex, int value, int count)
+        {
+            if (limitIndex >= Limits.Count)
+                return true;
+
+            var limit = Limits[limitIndex];
+            var flags = LFlags[limitIndex];
+
+            if (limit == 0)
+                return true;
+
+            if (limit < 0)
+                limit = count + limit;
+            
+            return flags.HasFlag(LimitFlags.Less)    && value <  limit-1
+                    || flags.HasFlag(LimitFlags.Equals)  && value == limit-1
+                    || flags.HasFlag(LimitFlags.Greater) && value >  limit-1;
+        }
     }
 }
