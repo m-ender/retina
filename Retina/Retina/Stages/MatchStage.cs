@@ -61,10 +61,13 @@ namespace Retina.Stages
                     {
                         if (!first) builder.Append("\n");
                         first = false;
-                        if (Options.Limits.Count > 1 && Options.Limits[1] > 0)
-                            builder.Append(match.Value.Substring(0, Math.Min(match.Length, Options.Limits[1])));
-                        else
-                            builder.Append(match.Value);
+                        int j = 0;
+                        foreach (char c in match.Value)
+                        {
+                            if (Options.IsInRange(1, j, match.Length))
+                                builder.Append(c);
+                            ++j;
+                        }
                     }
                     ++i;
                 }
