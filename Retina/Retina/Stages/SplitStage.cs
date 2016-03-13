@@ -13,21 +13,36 @@ namespace Retina.Stages
 
         protected override StringBuilder Process(string input)
         {
-            var builder = new StringBuilder();
+            int i = 0;
 
-            bool first = true;
+            IEnumerable<Match> matches = from Match m in Pattern.Matches(input)
+                                         orderby m.Index, m.Length
+                                         select m;
 
-            foreach (var part in Pattern.Split(input))
+            var parts = new List<string>();
+
+            int j = 0;
+            foreach (Match m in matches)
             {
-                if (!(Options.OmitEmpty && part == ""))
+                if (Options.IsInRange(0, j++, matches.Count()))
                 {
-                    if (!first) builder.Append("\n");
-                    first = false;
-                    builder.Append(part);
+                    if (!(Options.OmitEmpty && i == m.Index))
+                        parts.Add(input.Substring(i, m.Index - i));
+
+                    var groups = Pattern.GetGroupNumbers().Skip(1);
+
+                    foreach (var num in groups)
+                        if (m.Groups[num].Success && Options.IsInRange(1, num-1, groups.Last()))
+                            parts.Add(m.Groups[num].Value);
+
+                    i = m.Index + m.Length;
                 }
             }
 
-            return builder;
+            if (!(Options.OmitEmpty && i == input.Length))
+                parts.Add(input.Substring(i));
+
+            return new StringBuilder(String.Join("\n", parts));
         }
     }
 }
