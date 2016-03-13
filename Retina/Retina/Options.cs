@@ -49,7 +49,7 @@ namespace Retina
             LimitFlags? currentFlags = null;
 
             var tokenizer = new Regex(@"\G(?:    # Use \G to ensure that the tokens cover the entire string.
-                        (?<limit>-?\d+)          # All integers are read as limits.
+                        (?<limit>0|-?\d+)        # All integers are read as limits, but leading zeroes are read individually.
                     |
                         .                        # All other characters are read individually and represent various options.
                     )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
