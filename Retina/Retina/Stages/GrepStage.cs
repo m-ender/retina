@@ -14,20 +14,27 @@ namespace Retina.Stages
 
         protected override StringBuilder Process(string input)
         {
-            string line;
             var stringReader = new StringReader(input);
 
             var builder = new StringBuilder();
 
+            var lines = input.Split(new[] { '\n' });
+            var matches = lines.Select(line => Pattern.IsMatch(line)).ToList();
+
+            var matchCount = matches.Count(isMatch => isMatch);
+
             bool first = true;
-            while ((line = stringReader.ReadLine()) != null)
+            int i = 0;
+            int j = 0;
+            foreach (var line in lines)
             {
-                if (Pattern.IsMatch(line) ^ (Options.Mode == Modes.AntiGrep))
+                if ((matches[i] && Options.IsInRange(0, j++, matchCount)) ^ (Options.Mode == Modes.AntiGrep))
                 {
                     if (!first) builder.Append("\n");
                     first = false;
                     builder.Append(line);
                 }
+                ++i;
             }
 
             return builder;
