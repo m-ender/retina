@@ -149,17 +149,22 @@ namespace Retina
                     case '<':
                         if (currentFlags == null)
                             throw new Exception("Cannot use < before setting a limit.");
-                        currentFlags ^= LimitFlags.Less;
+                        currentFlags = LimitFlags.Less | LimitFlags.Equals;
                         break;
                     case '=':
                         if (currentFlags == null)
                             throw new Exception("Cannot use = before setting a limit.");
-                        currentFlags ^= LimitFlags.Equals;
+                        currentFlags = LimitFlags.Equals;
                         break;
                     case '>':
                         if (currentFlags == null)
                             throw new Exception("Cannot use > before setting a limit.");
-                        currentFlags ^= LimitFlags.Greater;
+                        currentFlags = LimitFlags.Greater;
+                        break;
+                    case '~':
+                        if (currentFlags == null)
+                            throw new Exception("Cannot use ~ before setting a limit.");
+                        currentFlags = LimitFlags.Less | LimitFlags.Greater;
                         break;
 
                     // Mode-specific options
