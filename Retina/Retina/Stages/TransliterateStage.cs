@@ -11,14 +11,14 @@ namespace Retina.Stages
     {
         public string Replacement { get; set; }
 
-        private string From { get; set; }
-        private string To { get; set; }
+        private List<char?> From { get; set; }
+        private List<char?> To { get; set; }
 
         public TransliterateStage(Options options, string pattern) : base(options)
         {
 
-            var fromBuilder = new StringBuilder();
-            var toBuilder = new StringBuilder();
+            var fromBuilder = new List<char?>();
+            var toBuilder = new List<char?>();
 
             int otherIndexInFrom = -1;
             bool otherReversedInFrom = false;
@@ -35,19 +35,24 @@ namespace Retina.Stages
             }
             else if (otherIndexInFrom > -1)
             {
-                var otherSet = toBuilder.ToString().ToCharArray();
-                if (otherReversedInFrom) Array.Reverse(otherSet);
-                fromBuilder.Insert(otherIndexInFrom, otherSet);
+                var otherSet = toBuilder.ToList();
+                if (otherReversedInFrom) otherSet.Reverse();
+                fromBuilder.InsertRange(otherIndexInFrom, otherSet);
             }
             else if (otherIndexInTo > -1)
             {
-                var otherSet = fromBuilder.ToString().ToCharArray();
-                if (otherReversedInTo) Array.Reverse(otherSet);
-                toBuilder.Insert(otherIndexInTo, otherSet);
+                var otherSet = fromBuilder.ToList();
+                if (otherReversedInTo) otherSet.Reverse();
+                toBuilder.InsertRange(otherIndexInTo, otherSet);
             }
 
-            From = fromBuilder.ToString();
-            To = toBuilder.ToString();
+            From = fromBuilder;
+            To = toBuilder;
+            if (To.Count == 0)
+            {
+                To = new List<char?>();
+                To.Add(null);
+            }
 
             PatternString = remainder.Length == 0 ? @"[\s\S]+" : remainder;
         }
@@ -73,7 +78,7 @@ namespace Retina.Stages
                 }
         }
 
-        private string ParseCharacterSet(StringBuilder setBuilder, string source, out int otherIndex, out bool otherReversed)
+        private string ParseCharacterSet(List<char?> setBuilder, string source, out int otherIndex, out bool otherReversed)
         {
             otherIndex = -1;
             otherReversed = false;
@@ -93,6 +98,9 @@ namespace Retina.Stages
                                          #   appear as the first character in a range without needing escaping.
                 )
             |   
+                (?<blank>_)              # These are don't affect any character if they appear in the TO set and
+                                         # remove the corresponding character if they appear in the FROM set.
+            |
                 (?<char>\\.|.)           # Backslashes indicate escape sequences similar to normal regex.
                                          # Anything else is just a literal character.
             )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
@@ -127,11 +135,11 @@ namespace Retina.Stages
                         case 'o':
                             if (otherIndex < 0)
                             {
-                                otherIndex = setBuilder.Length;
+                                otherIndex = setBuilder.Count;
                                 otherReversed = t.Groups["reverse"].Length % 2 == 1;
                             }
                             else
-                                setBuilder.Append('o');
+                                setBuilder.Add('o');
                             continue;
                         }
                     }
@@ -152,10 +160,13 @@ namespace Retina.Stages
                         Array.Reverse(characters);
                         rangeStr = new string(characters);
                     }
-                    setBuilder.Append(rangeStr);
+                    foreach (char c in rangeStr)
+                        setBuilder.Add(c);
                 }
+                else if (t.Groups["blank"].Success)
+                    setBuilder.Add(null);
                 else if (t.Groups["char"].Success)
-                    setBuilder.Append(ParseCharacterToken(t.Groups["char"].Value));
+                    setBuilder.Add(ParseCharacterToken(t.Groups["char"].Value));
                 else
                     throw new Exception("This shouldn't happen...");
             }
@@ -167,7 +178,6 @@ namespace Retina.Stages
         {
             var builder = new StringBuilder();
 
-            int n = To.Length;
             int i = 0;
 
             var matches = Pattern.Matches(input).Cast<Match>();
@@ -188,8 +198,12 @@ namespace Retina.Stages
                         int k = From.IndexOf(c);
                         if (k < 0 || !Options.IsInRange(1, p++, m.Length))
                             builder.Append(c);
-                        else if (n > 0)
-                            builder.Append(To[Math.Min(n - 1, k)]);
+                        else
+                        {
+                            char? target = To[Math.Min(To.Count - 1, k)];
+                            if (target != null)
+                                builder.Append(target);
+                        }
                     }
                 }
                 i = m.Index + m.Length;

@@ -78,7 +78,7 @@ namespace RetinaTest
             string printableAscii = @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
             AssertTransliteration(@"d`a-j", RegexOptions.None, printableAscii,
                                   @" !""#$%&'()*+,-./abcdefghij:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-            AssertTransliteration(@"w`dA-Za-z_", RegexOptions.None, printableAscii,
+            AssertTransliteration(@"w`dA-Za-z\_", RegexOptions.None, printableAscii,
                                   @" !""#$%&'()*+,-./123456789A:;<=>?@BCDEFGHIJKLMNOPQRSTUVWXYZa[\]^0`bcdefghijklmnopqrstuvwxyz_{|}~");
             AssertTransliteration(@"H`a-p", RegexOptions.None, printableAscii,
                                   @" !""#$%&'()*+,-./abcdefghij:;<=>?@klmnopGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
@@ -162,6 +162,14 @@ namespace RetinaTest
                                   @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmopnqrstuvwxyz{|}~");
             AssertTransliteration(@"nRo\p`o\pn", RegexOptions.None, printableAscii,
                                   @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmopnqrstuvwxyz{|}~");
+        }
+
+        [TestMethod]
+        public void TestRemoval()
+        {
+            AssertTransliteration(@"abc`A_C", RegexOptions.None, "abcdef", @"ACdef");
+            AssertTransliteration(@"abc`A_", RegexOptions.None, "abcdef", @"Adef");
+            AssertTransliteration(@"abc", RegexOptions.None, "abcdef", @"def");
         }
 
         private void AssertTransliteration(string pattern, RegexOptions rgxOptions, string input, string expectedOutput)
