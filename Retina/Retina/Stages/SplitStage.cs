@@ -29,12 +29,14 @@ namespace Retina.Stages
                     if (!(Options.OmitEmpty && i == m.Index))
                         parts.Add(input.Substring(i, m.Index - i));
 
-                    var groups = Pattern.GetGroupNumbers().Skip(1);
+                    if (!Options.OmitGroups)
+                    {
+                        var groups = Pattern.GetGroupNumbers().Skip(1);
 
-                    foreach (var num in groups)
-                        if (m.Groups[num].Success && Options.IsInRange(1, num-1, groups.Last()))
-                            parts.Add(m.Groups[num].Value);
-
+                        foreach (var num in groups)
+                            if (m.Groups[num].Success && Options.IsInRange(1, num - 1, groups.Last()))
+                                parts.Add(m.Groups[num].Value);
+                    }
                     i = m.Index + m.Length;
                 }
             }

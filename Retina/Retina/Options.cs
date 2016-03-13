@@ -32,6 +32,7 @@ namespace Retina
 
         // Options for Split mode
         public bool OmitEmpty { get; set; }
+        public bool OmitGroups { get; set; }
 
         // Options for Replace mode
 
@@ -176,6 +177,9 @@ namespace Retina
                         break;
                     case '_':
                         OmitEmpty = true;
+                        break;
+                    case '-':
+                        OmitGroups = true;
                         break;
                     case '+':
                         Loop = true;
