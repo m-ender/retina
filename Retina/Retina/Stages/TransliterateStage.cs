@@ -174,7 +174,7 @@ namespace Retina.Stages
             if (Pattern.Options.HasFlag(RegexOptions.RightToLeft))
                 matches = matches.Reverse();
 
-            var j = 0;
+            int j = 0;
             foreach (Match m in matches)
             {
                 builder.Append(input.Substring(i, m.Index-i));

@@ -153,11 +153,18 @@ namespace Retina.Stages
                                          orderby m.Index, m.Length
                                          select m;
 
+            int j = 0;
             foreach (Match m in matches)
             {
                 builder.Append(input.Substring(i, m.Index - i));
-                foreach (Token t in Tokens)
-                    builder.Append(t.Process(input, m));
+
+                if (!Options.IsInRange(0, j++, matches.Count()))
+                    builder.Append(m.Value);
+                else
+                {
+                    foreach (Token t in Tokens)
+                        builder.Append(t.Process(input, m));
+                }
                 i = m.Index + m.Length;
             }
 
