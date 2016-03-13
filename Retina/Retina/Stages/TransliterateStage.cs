@@ -174,16 +174,23 @@ namespace Retina.Stages
             if (Pattern.Options.HasFlag(RegexOptions.RightToLeft))
                 matches = matches.Reverse();
 
+            var j = 0;
             foreach (Match m in matches)
             {
                 builder.Append(input.Substring(i, m.Index-i));
-                foreach (char c in m.Value)
+                if (!Options.IsInRange(0, j++, matches.Count()))
+                    builder.Append(m.Value);
+                else
                 {
-                    int j = From.IndexOf(c);
-                    if (j < 0)
-                        builder.Append(c);
-                    else if (n > 0)
-                        builder.Append(To[Math.Min(n - 1, j)]);
+                    int p = 0;
+                    foreach (char c in m.Value)
+                    {
+                        int k = From.IndexOf(c);
+                        if (k < 0 || !Options.IsInRange(1, p++, m.Length))
+                            builder.Append(c);
+                        else if (n > 0)
+                            builder.Append(To[Math.Min(n - 1, k)]);
+                    }
                 }
                 i = m.Index + m.Length;
             }
