@@ -1,3 +1,12 @@
+## 0.8.0
+
+- General program structure: Change loops to generic groups, `+` to an option, and add `{` and `}` as shorthand for looped groups. This also means I've rewritten the configuration parser (which is now a lot more flexible for future extensions), and that configuration syntax has become a bit stricter.
+- General options: Per-line mode with `%`.
+- General options: Limits to restrict individual countable entities (usually matches) in all stage types.
+- Transliteration: `_` can now be used to deleted individual characters from matches.
+- Split: Has been reimplemented instead of using `Regex.Split` which fixes some obscure bugs.
+- Split: `-` omits captured groups from the resulting list.
+
 ## 0.7.3
 
 - General options: `\` now implies `:`.
