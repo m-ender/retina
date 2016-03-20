@@ -1,3 +1,7 @@
+## 0.8.1
+
+- New stage type: Sort (`O`).
+
 ## 0.8.0
 
 - General program structure: Change loops to generic groups, `+` to an option, and add `{` and `}` as shorthand for looped groups. This also means I've rewritten the configuration parser (which is now a lot more flexible for future extensions), and that configuration syntax has become a bit stricter.
