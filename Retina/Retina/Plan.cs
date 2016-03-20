@@ -71,13 +71,14 @@ namespace Retina
                     Options options = new Options(optionString, i < sources.Count ? Modes.Replace : Modes.Match);
 
                     Stage stage = null;
+                    string replacement;
                     switch (options.Mode)
                     {
                     case Modes.Match:
                         stage = new MatchStage(options, regex);
                         break;
                     case Modes.Replace:
-                        string replacement = i < sources.Count ? sources[i++] : "";
+                        replacement = i < sources.Count ? sources[i++] : "";
                         stage = new ReplaceStage(options, regex, replacement);
                         break;
                     case Modes.Split:
@@ -89,6 +90,13 @@ namespace Retina
                         break;
                     case Modes.Transliterate:
                         stage = new TransliterateStage(options, regex);
+                        break;
+                    case Modes.Sort:
+                        if (options.UseSubstitution)
+                            replacement = i < sources.Count ? sources[i++] : "";
+                        else
+                            replacement = "$&";
+                        stage = new SortStage(options, regex, replacement);
                         break;
                     default:
                         throw new NotImplementedException();

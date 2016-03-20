@@ -36,6 +36,11 @@ namespace Retina
 
         // Options for Replace mode
 
+        // Options for Sort mode
+        public bool SortNumerically { get; set; }
+        public bool SortReverse { get; set; }
+        public bool UseSubstitution { get; set; }
+
         public Options(string optionString, Modes defaultMode)
         {
             TrailingLinefeed = true;
@@ -115,6 +120,9 @@ namespace Retina
                     case 'T':
                         Mode = Modes.Transliterate;
                         break;
+                    case 'O':
+                        Mode = Modes.Sort;
+                        break;
 
                     // General options
                     case ';':
@@ -183,6 +191,15 @@ namespace Retina
                         break;
                     case '+':
                         Loop = true;
+                        break;
+                    case '#':
+                        SortNumerically = true;
+                        break;
+                    case '^':
+                        SortReverse = true;
+                        break;
+                    case '$':
+                        UseSubstitution = true;
                         break;
                     default:
                         break;

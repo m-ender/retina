@@ -46,12 +46,14 @@
     <Compile Include="Replace\NamedGroup.cs" />
     <Compile Include="Replace\LastGroup.cs" />
     <Compile Include="Replace\Repetition.cs" />
+    <Compile Include="Replace\Replacer.cs" />
     <Compile Include="Replace\Suffix.cs" />
     <Compile Include="Replace\Prefix.cs" />
     <Compile Include="Replace\EntireMatch.cs" />
     <Compile Include="Replace\EntireInput.cs" />
     <Compile Include="Replace\Literal.cs" />
     <Compile Include="Replace\Token.cs" />
+    <Compile Include="Stages\SortStage.cs" />
     <Compile Include="Stages\TransliterateStage.cs" />
     <Compile Include="Stages\RegexStage.cs" />
     <Compile Include="Stages\GroupStage.cs" />
