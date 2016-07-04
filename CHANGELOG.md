@@ -1,3 +1,7 @@
+## 0.8.2
+
+- General option `*`: dry run (stage or group does not affect the string, but the result can be printed), implies `:`.
+
 ## 0.8.1
 
 - New stage type: Sort (`O`).
