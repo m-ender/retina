@@ -33,8 +33,8 @@ namespace RetinaTest
         [TestMethod]
         public void TestSubstitution()
         {
-            AssertSort(".+", "$.&", "#", "ABC\nAB\nab\nabc\nxyz\nXYZ", "AB\nab\nABC\nabc\nxyz\nXYZ");
-            AssertSort(".(.)", "$1", "#", "J(EM-+Fq_wW,CVDF|%9Q", "|%J(-+W,DFEM9QCVFq_w");
+            AssertSort(".+", "$.&", "$#", "ABC\nAB\nab\nabc\nxyz\nXYZ", "AB\nab\nABC\nabc\nxyz\nXYZ");
+            AssertSort(".(.)", "$1", "$", "J(EM-+Fq_wW,CVDF|%9Q", "|%J(-+W,DFEM9QCVFq_w");
         }
 
         private void AssertSort(string regex, string replacement, string optionsString, string input, string expectedOutput)
