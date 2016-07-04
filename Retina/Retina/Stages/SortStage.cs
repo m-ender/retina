@@ -14,7 +14,7 @@ namespace Retina.Stages
         string ReplacementString { get; set; }
 
         public SortStage(Options options, string pattern, string replacement)
-            : base(options, pattern)
+            : base(options, pattern == "" ? ".+" : pattern)
         {
             ReplacementString = replacement;
         }

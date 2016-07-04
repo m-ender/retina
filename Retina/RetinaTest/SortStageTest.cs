@@ -14,6 +14,9 @@ namespace RetinaTest
         {
             AssertSort(".+", "$&", "", "ABC\nAB\nab\nabc\nxyz\nXYZ", "AB\nABC\nXYZ\nab\nabc\nxyz");
             AssertSort(".", "$&", "", "pHSyRi|.A7", ".7AHRSipy|");
+
+            // Regex should default to ".+"
+            AssertSort("", "$&", "", "ABC\nAB\nab\nabc\nxyz\nXYZ", "AB\nABC\nXYZ\nab\nabc\nxyz");
         }
 
         [TestMethod]
