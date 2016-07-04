@@ -57,7 +57,7 @@ namespace Retina.Stages
                 else
                     Console.Write(result);
 
-            return result;
+            return Options.DryRun ? input : result;
         }
 
         abstract protected StringBuilder Process(string input);

@@ -19,6 +19,7 @@ namespace Retina
         public bool TrailingLinefeed { get; set; }
         public bool PerLine { get; set; }
         public bool Loop { get; set; }
+        public bool DryRun { get; set; }
         public bool IterationSilent { get; set; }
         public bool IterationTrailingLinefeed { get; set; }
         public bool IterationPerLine { get; set; }
@@ -154,6 +155,13 @@ namespace Retina
                             Silent = false;
                             TrailingLinefeed = false;
                         }
+                        break;
+                    case '*': // Implies :
+                        DryRun = true;
+                        if (Loop)
+                            IterationSilent = false;
+                        else
+                            Silent = false;
                         break;
                     case '<':
                         if (currentFlags == null)
