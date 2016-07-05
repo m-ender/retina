@@ -93,7 +93,7 @@ namespace Retina.Stages
                     -                    #     A hyphen to denote a custom range.
                     (?<end>[^\\`]|\\.)   #     A non-backslash or an escaped sequence.
                   |                      #   or:
-                    (?<class>[dHhLlwpo]) #     A built-in character class.
+                    (?<class>[dEOHhLlwpo]) #     A built-in character class.
                   )                      #   Priority is given to custom ranges, such that the built-in classes can 
                                          #   appear as the first character in a range without needing escaping.
                 )
@@ -124,6 +124,8 @@ namespace Retina.Stages
                         switch (t.Groups["class"].Value[0])
                         {
                         case 'd': range.Append("0123456789"); break;
+                        case 'E': range.Append("02468"); break;
+                        case 'O': range.Append("13579"); break;
                         case 'H': range.Append("0123456789ABCDEF"); break;
                         case 'h': range.Append("0123456789abcdef"); break;
                         case 'L': range.Append("ABCDEFGHIJKLMNOPQRSTUVWXYZ"); break;

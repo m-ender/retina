@@ -2,6 +2,7 @@
 
 - General option `*`: dry run (stage or group does not affect the string, but the result can be printed), implies `:`.
 - Default regex for sort stages, `.+`.
+- New character classes in `T` stages, `E` and `O` for even and odd digits.
 
 ## 0.8.1
 

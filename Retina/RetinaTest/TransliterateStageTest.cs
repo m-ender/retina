@@ -90,6 +90,10 @@ namespace RetinaTest
                                   @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~");
             AssertTransliteration(@"p`!-~ ", RegexOptions.None, printableAscii,
                                   @"!""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ");
+            AssertTransliteration(@"E`a-e", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./a1b3c5d7e9:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"O`a-e", RegexOptions.None, printableAscii,
+                                  @" !""#$%&'()*+,-./0a2b4c6d8e:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
 
             // Classes in ranges are ignored:
             AssertTransliteration(@"d-f`123", RegexOptions.None, printableAscii,
