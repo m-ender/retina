@@ -30,6 +30,7 @@ namespace Retina
         // Options for Match mode
         public bool Overlapping { get; set; }
         public bool PrintMatches { get; set; }
+        public bool Unique { get; set; }
 
         // Options for Split mode
         public bool OmitEmpty { get; set; }
@@ -190,6 +191,9 @@ namespace Retina
                         break;
                     case '&':
                         Overlapping = true;
+                        break;
+                    case '@':
+                        Unique = true;
                         break;
                     case '_':
                         OmitEmpty = true;

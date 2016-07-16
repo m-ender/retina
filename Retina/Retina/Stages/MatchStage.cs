@@ -49,41 +49,36 @@ namespace Retina.Stages
                 }
             }
 
+            var matchedStrings = new List<string>();
+
+            int i = 0;
+            foreach (Match match in matches)
+            {
+                if (Options.IsInRange(0, i, matches.Count))
+                {
+                    var matchBuilder = new StringBuilder();
+
+                    int j = 0;
+                    foreach (char c in match.Value)
+                    {
+                        if (Options.IsInRange(1, j, match.Length))
+                            matchBuilder.Append(c);
+                        ++j;
+                    }
+                    matchedStrings.Add(matchBuilder.ToString());
+                }
+                ++i;
+            }
+
+            if (Options.Unique)
+                matchedStrings = matchedStrings.Distinct().ToList();
+
             var builder = new StringBuilder();
 
             if (Options.PrintMatches)
-            {
-                bool first = true;
-                int i = 0;
-                foreach (Match match in matches)
-                {
-                    if (Options.IsInRange(0, i, matches.Count))
-                    {
-                        if (!first) builder.Append("\n");
-                        first = false;
-                        int j = 0;
-                        foreach (char c in match.Value)
-                        {
-                            if (Options.IsInRange(1, j, match.Length))
-                                builder.Append(c);
-                            ++j;
-                        }
-                    }
-                    ++i;
-                }
-            }
+                builder.Append(String.Join("\n", matchedStrings));
             else
-            {
-                int count = 0;
-                int i = 0;
-                foreach (Match match in matches)
-                {
-                    if (Options.IsInRange(0, i, matches.Count))
-                        ++count;
-                    ++i;
-                }
-                builder.Append(count);
-            }
+                builder.Append(matchedStrings.Count);
 
             return builder;
         }
