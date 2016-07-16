@@ -98,6 +98,13 @@ namespace Retina
                             replacement = "$&";
                         stage = new SortStage(options, regex, replacement);
                         break;
+                    case Modes.Deduplicate:
+                        if (options.UseSubstitution)
+                            replacement = i < sources.Count ? sources[i++] : "";
+                        else
+                            replacement = "$&";
+                        stage = new DeduplicateStage(options, regex, replacement);
+                        break;
                     default:
                         throw new NotImplementedException();
                     }

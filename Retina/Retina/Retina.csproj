@@ -53,6 +53,7 @@
     <Compile Include="Replace\EntireInput.cs" />
     <Compile Include="Replace\Literal.cs" />
     <Compile Include="Replace\Token.cs" />
+    <Compile Include="Stages\DeduplicateStage.cs" />
     <Compile Include="Stages\SortStage.cs" />
     <Compile Include="Stages\TransliterateStage.cs" />
     <Compile Include="Stages\RegexStage.cs" />

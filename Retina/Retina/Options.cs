@@ -41,6 +41,8 @@ namespace Retina
         // Options for Sort mode
         public bool SortNumerically { get; set; }
         public bool SortReverse { get; set; }
+
+        // Options for Sort and Deduplicate mode
         public bool UseSubstitution { get; set; }
 
         public Options(string optionString, Modes defaultMode)
@@ -124,6 +126,9 @@ namespace Retina
                         break;
                     case 'O':
                         Mode = Modes.Sort;
+                        break;
+                    case 'D':
+                        Mode = Modes.Deduplicate;
                         break;
 
                     // General options

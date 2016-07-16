@@ -14,6 +14,7 @@ namespace Retina
         Split,
         Replace,
         Transliterate,
-        Sort
+        Sort,
+        Deduplicate
     }
 }

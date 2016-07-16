@@ -4,6 +4,7 @@
 - Default regex for sort stages, `.+`.
 - New character classes in `T` stages, `E` and `O` for even and odd digits.
 - Match stage option `@`: only count/print unique matches (in order of first appearance) *after* applying limits.
+- New stage type: Deduplicate (`D`).
 
 ## 0.8.1
 
