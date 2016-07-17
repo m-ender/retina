@@ -1,11 +1,11 @@
 ## 0.8.2
 
-- General option `*`: dry run (stage or group does not affect the string, but the result can be printed), implies `:`.
-- Default regex for sort stages, `.+`.
-- New character classes in `T` stages, `E` and `O` for even and odd digits.
-- Match stage option `@`: only count/print unique matches (in order of first appearance) *after* applying limits.
 - New stage type: Deduplicate (`D`).
-- New substitution syntax: `$%_`, ``$%` ` and `$%'` now act like `$_`, ``$` `` and `$'` but are limited to the current line. Can be combined with `.` like ``$.%` ``.
+- General options: dry run with `*` (stage or group does not affect the string, but the result can be printed), implies `:`.
+- Sort: default regex `.+`.
+- Transliteration: new character classes `E` and `O` for even and odd digits.
+- Match: only count/print unique matches (in order of first appearance) *after* applying limits with `@`.
+- Replace: new substitution syntax. `$%_`, ``$%` ` and `$%'` now act like `$_`, ``$` `` and `$'` but are limited to the current line. Can be combined with `.` like ``$.%` ``.
 
 ## 0.8.1
 
