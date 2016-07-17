@@ -219,6 +219,16 @@ namespace RetinaTest
             AssertReplacement("(.).+", "$*", RegexOptions.None, "10!", "1111111111");
         }
 
+        [TestMethod]
+        public void TestLineOnly()
+        {
+            AssertReplacement("a", "$%_", RegexOptions.None, "abc\nbab\naba", "abcbc\nbbabb\nabababa");
+            AssertReplacement("a", "$%`", RegexOptions.None, "abc\nbab\naba", "bc\nbbb\nbab");
+            AssertReplacement("a", "$%'", RegexOptions.None, "abc\nbab\naba", "bcbc\nbbb\nbab");
+            AssertReplacement(".", "$.%`", RegexOptions.None, "abc\ndefh\nhijlk", "012\n0123\n01234");
+            AssertReplacement(".", "$.%'", RegexOptions.None, "abc\ndefh\nhijlk", "210\n3210\n43210");
+        }
+
         private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
         {
             var options = new Options("", Modes.Replace);

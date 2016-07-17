@@ -35,7 +35,7 @@ namespace Retina.Replace
                                        # of the chosen substitution element is going to be inserted.
                   (?<count>            # Custom addition: by inserting a #, we get the capture count instead of the result.
                     [#]
-                    (?![$n_`'&])       # This shouldn't work with all substitution elements.
+                    (?![$n_`'&*])      # This shouldn't work with all substitution elements.
                   )
                 |
                   (?<length>
@@ -43,7 +43,13 @@ namespace Retina.Replace
                     (?![$n])           # This shouldn't work with all substitution elements.
                   )
                 )?
-              )                       
+                (?:
+                  (?<lineOnly>         # Stops $_, $` and $' at surrounding linefeeds.
+                    [%]
+                    (?=[_`'])
+                  )
+                )?
+              )
               (?:
                 (?<input>_)            # $_ includes the entire input string.
               |
@@ -85,15 +91,16 @@ namespace Retina.Replace
             foreach (Match t in tokens)
             {
                 bool getLength = t.Groups["length"].Success;
+                bool lineOnly = t.Groups["lineOnly"].Success;
 
                 if (t.Groups["literal"].Success)
                     Tokens.Add(new Literal(t.Groups["literal"].Value));
                 else if (t.Groups["input"].Success)
-                    Tokens.Add(new EntireInput(getLength));
+                    Tokens.Add(new EntireInput(getLength, lineOnly));
                 else if (t.Groups["prefix"].Success)
-                    Tokens.Add(new Prefix(getLength));
+                    Tokens.Add(new Prefix(getLength, lineOnly));
                 else if (t.Groups["suffix"].Success)
-                    Tokens.Add(new Suffix(getLength));
+                    Tokens.Add(new Suffix(getLength, lineOnly));
                 else if (t.Groups["match"].Success)
                     Tokens.Add(new EntireMatch(getLength));
                 else if (t.Groups["last"].Success)
