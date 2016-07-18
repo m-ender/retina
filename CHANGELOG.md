@@ -5,7 +5,7 @@
 - Sort: default regex `.+`.
 - Transliteration: new character classes `E` and `O` for even and odd digits.
 - Match: only count/print unique matches (in order of first appearance) *after* applying limits with `@`.
-- Replace: new substitution syntax. `$%_`, ``$%` ` and `$%'` now act like `$_`, ``$` `` and `$'` but are limited to the current line. Can be combined with `.` like ``$.%` ``.
+- Replace: new substitution syntax. `$%_`, ``$%` `` and `$%'` now act like `$_`, ``$` `` and `$'` but are limited to the current line. Can be combined with `.` like ``$.%` ``.
 
 ## 0.8.1
 
