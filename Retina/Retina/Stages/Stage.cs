@@ -44,7 +44,10 @@ namespace Retina.Stages
 
                     if (!Options.IterationSilent)
                         if (Options.IterationTrailingLinefeed)
-                            output.WriteLine(result);
+                        {
+                            output.Write(result);
+                            output.Write("\n");
+                        }
                         else
                             output.Write(result);
                 } while (lastResult != result);
@@ -54,7 +57,10 @@ namespace Retina.Stages
 
             if (!(Options.Silent ?? true))
                 if (Options.TrailingLinefeed)
-                    output.WriteLine(result);
+                {
+                    output.Write(result);
+                    output.Write("\n");
+                }
                 else
                     output.Write(result);
             

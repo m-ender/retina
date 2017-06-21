@@ -7,11 +7,12 @@ using Retina.Stages;
 namespace RetinaTest
 {
     [TestClass]
-    public class ReplaceStageTest
+    public class ReplaceStageTest : RetinaTestBase
     {
         [TestMethod]
         public void TestBasicReplacement()
         {
+            AssertProgram(new[] { "a*ab", "x" }, "", "\n");
             AssertReplacement("a*ab", "x", RegexOptions.None, "", "");
             AssertReplacement("a*ab", "x", RegexOptions.None, "baaaaabbabaaabaa", "bxbxxaa");
             AssertReplacement(".+", "ab", RegexOptions.None, "ccc", "ab");

@@ -50,10 +50,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="RetinaTestBase.cs" />
     <Compile Include="SortStageTest.cs" />
     <Compile Include="ReplaceStageTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransliterateStageTest.cs" />
+    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Retina\Retina.csproj">

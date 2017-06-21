@@ -9,7 +9,7 @@ using Retina.Stages;
 
 namespace Retina
 {
-    class Interpreter
+    public class Interpreter
     {
         private IList<Stage> Stages;
 
