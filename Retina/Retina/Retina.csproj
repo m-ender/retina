@@ -62,8 +62,8 @@
     <Compile Include="Stages\MatchStage.cs" />
     <Compile Include="Modes.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="Plan.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Interpreter.cs" />
+    <Compile Include="Retina.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stages\ReplaceStage.cs" />
     <Compile Include="Stages\SplitStage.cs" />

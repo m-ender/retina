@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,7 +12,7 @@ namespace Retina.Stages
     {
         public SplitStage(Options options, string pattern) : base(options, pattern) { }
 
-        protected override StringBuilder Process(string input)
+        protected override StringBuilder Process(string input, TextWriter output)
         {
             int i = 0;
 

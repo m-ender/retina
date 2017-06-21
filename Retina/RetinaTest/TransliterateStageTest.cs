@@ -184,7 +184,7 @@ namespace RetinaTest
 
             var stage = new TransliterateStage(options, pattern);
 
-            Assert.AreEqual(expectedOutput, stage.Execute(input).ToString());
+            Assert.AreEqual(expectedOutput, stage.Execute(input, Console.Out).ToString());
         }
     }
 }

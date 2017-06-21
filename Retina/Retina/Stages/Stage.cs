@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,7 +17,7 @@ namespace Retina.Stages
             Options = options;
         }
 
-        public virtual string Execute(string input)
+        public virtual string Execute(string input, TextWriter output)
         {
             // This whole function and the interaction between per-line mode, loops and output
             // feels massively hacky... maybe one day I'll refactor this...
@@ -24,7 +25,7 @@ namespace Retina.Stages
             if (Options.PerLine)
             {
                 Options.PerLine = false;
-                result = String.Join("\n", input.Split(new[] { '\n' }).Select(Execute));
+                result = String.Join("\n", input.Split(new[] { '\n' }).Select(x => Execute(x, output)));
                 Options.PerLine = true;
                 return result;
             }
@@ -37,29 +38,29 @@ namespace Retina.Stages
                 {
                     lastResult = result;
                     if (Options.IterationPerLine)
-                        result = String.Join("\n", lastResult.Split(new[] { '\n' }).Select(x => Process(x).ToString()));
+                        result = String.Join("\n", lastResult.Split(new[] { '\n' }).Select(x => Process(x, output).ToString()));
                     else
-                        result = Process(lastResult).ToString();
+                        result = Process(lastResult, output).ToString();
 
                     if (!Options.IterationSilent)
                         if (Options.IterationTrailingLinefeed)
-                            Console.WriteLine(result);
+                            output.WriteLine(result);
                         else
-                            Console.Write(result);
+                            output.Write(result);
                 } while (lastResult != result);
             }
             else
-                result = Process(input).ToString();
+                result = Process(input, output).ToString();
 
             if (!(Options.Silent ?? true))
                 if (Options.TrailingLinefeed)
-                    Console.WriteLine(result);
+                    output.WriteLine(result);
                 else
-                    Console.Write(result);
-
+                    output.Write(result);
+            
             return Options.DryRun ? input : result;
         }
 
-        abstract protected StringBuilder Process(string input);
+        abstract protected StringBuilder Process(string input, TextWriter output);
     }
 }

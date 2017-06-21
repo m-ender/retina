@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Retina.Replace;
+using System.IO;
 
 namespace Retina.Stages
 {
@@ -19,7 +20,7 @@ namespace Retina.Stages
             ReplacementString = replacement;
         }
 
-        protected override StringBuilder Process(string input)
+        protected override StringBuilder Process(string input, TextWriter output)
         {
             var replacer = new Replacer(Pattern, ReplacementString);
 

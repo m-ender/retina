@@ -12,7 +12,7 @@ namespace Retina.Stages
     {
         public GrepStage(Options options, string pattern) : base(options, pattern) { }
 
-        protected override StringBuilder Process(string input)
+        protected override StringBuilder Process(string input, TextWriter output)
         {
             var stringReader = new StringReader(input);
 

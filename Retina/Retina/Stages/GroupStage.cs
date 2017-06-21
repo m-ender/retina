@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,11 +18,11 @@ namespace Retina.Stages
             Stages = stages;
         }
 
-        protected override StringBuilder Process(string input)
+        protected override StringBuilder Process(string input, TextWriter output)
         {
             string result = input;
             foreach (var stage in Stages)
-                result = stage.Execute(result);
+                result = stage.Execute(result, output);
 
             return new StringBuilder(result);
         }

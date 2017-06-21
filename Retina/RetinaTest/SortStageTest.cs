@@ -48,7 +48,7 @@ namespace RetinaTest
 
             var stage = new SortStage(options, regex, replacement);
 
-            Assert.AreEqual(expectedOutput, stage.Execute(input).ToString());
+            Assert.AreEqual(expectedOutput, stage.Execute(input, Console.Out).ToString());
         }
     }
 }

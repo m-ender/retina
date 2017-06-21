@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,10 +20,10 @@ namespace Retina.Stages
             PatternString = pattern;
         }
 
-        public override string Execute(string input)
+        public override string Execute(string input, TextWriter output)
         {
             Pattern = new Regex(PatternString, Options.RegexOptions);
-            return base.Execute(input);
+            return base.Execute(input, output);
         }
     }
 }

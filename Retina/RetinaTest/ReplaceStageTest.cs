@@ -237,7 +237,7 @@ namespace RetinaTest
 
             var stage = new ReplaceStage(options, regex, replacement);
 
-            Assert.AreEqual(expectedOutput, stage.Execute(input).ToString());
+            Assert.AreEqual(expectedOutput, stage.Execute(input, Console.Out).ToString());
         }
     }
 }
