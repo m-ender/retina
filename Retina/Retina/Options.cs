@@ -47,9 +47,7 @@ namespace Retina
 
         public Options(string optionString, Modes defaultMode)
         {
-            TrailingLinefeed = true;
             IterationSilent = true;
-            IterationTrailingLinefeed = true;
 
             Limits = new List<int>();
             LFlags = new List<LimitFlags>();
@@ -154,12 +152,12 @@ namespace Retina
                         if (Loop)   
                         {
                             IterationSilent = false;
-                            IterationTrailingLinefeed = false;
+                            IterationTrailingLinefeed = true;
                         }
                         else
                         {
                             Silent = false;
-                            TrailingLinefeed = false;
+                            TrailingLinefeed = true;
                         }
                         break;
                     case '*': // Implies :

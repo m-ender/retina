@@ -12,7 +12,7 @@ namespace RetinaTest
         [TestMethod]
         public void TestBasicReplacement()
         {
-            AssertProgram(new[] { "a*ab", "x" }, "", "\n");
+            AssertProgram(new[] { "a*ab", "x" }, "", "");
             AssertReplacement("a*ab", "x", RegexOptions.None, "", "");
             AssertReplacement("a*ab", "x", RegexOptions.None, "baaaaabbabaaabaa", "bxbxxaa");
             AssertReplacement(".+", "ab", RegexOptions.None, "ccc", "ab");
