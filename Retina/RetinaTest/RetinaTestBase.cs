@@ -1,25 +1,25 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Retina;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RetinaTest
 {
     [TestClass]
     public class RetinaTestBase
     {
-        protected void AssertProgram(string[] sources, string input, string expectedOutput)
+        internal void AssertProgram(TestSuite testSuite)
         {
-            var interpreter = new Interpreter(sources.ToList());
-            var actualOutput = new StringWriter();
+            var interpreter = new Interpreter(testSuite.Sources);
 
-            interpreter.Execute(input, actualOutput);
-            
-            Assert.AreEqual(expectedOutput, actualOutput.ToString());
+            foreach (var testCase in testSuite.TestCases)
+            {
+                var actualOutput = new StringWriter();
+                interpreter.Execute(testCase.Input, actualOutput);
+
+                Assert.AreEqual(testCase.Output, actualOutput.ToString());
+            }
         }
     }
 }

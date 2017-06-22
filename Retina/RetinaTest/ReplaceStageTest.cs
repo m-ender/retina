@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Retina;
 using Retina.Stages;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
@@ -12,233 +13,248 @@ namespace RetinaTest
         [TestMethod]
         public void TestBasicReplacement()
         {
-            AssertProgram(new[] { "a*ab", "x" }, "", "");
-            AssertReplacement("a*ab", "x", RegexOptions.None, "", "");
-            AssertReplacement("a*ab", "x", RegexOptions.None, "baaaaabbabaaabaa", "bxbxxaa");
-            AssertReplacement(".+", "ab", RegexOptions.None, "ccc", "ab");
+            AssertProgram(new TestSuite
+            {
+                Sources = { "a*ab", "x" },
+                TestCases = {
+                    { "", "" },
+                    { "baaaaabbabaaabaa", "bxbxxaa" },
+                }
+            });
+
+            AssertProgram(new TestSuite { Sources = { ".+", "ab" }, TestCases = {{ "ccc", "ab" }} });
         }
 
         [TestMethod]
         public void TestEmptyMatch()
         {
-            AssertReplacement("", "x", RegexOptions.None, "abc", "xaxbxcx");
-            AssertReplacement("^", "abc", RegexOptions.None, "", "abc");
-            AssertReplacement("^", "abc", RegexOptions.None, "a", "abca");
-            AssertReplacement("(?=a)", "b", RegexOptions.None, "abaca", "babbacba");
-            AssertReplacement(".*", "ab", RegexOptions.None, "", "ab");
-            AssertReplacement(".*", "ab", RegexOptions.None, "ccc", "abab");
-            AssertReplacement("a*", "x", RegexOptions.None, "aacaccaa", "xxcxxcxcxx");
+            AssertProgram(new TestSuite { Sources = { "", "x" }, TestCases = { { "abc", "xaxbxcx" } } });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { "^", "abc" },
+                TestCases = {
+                    { "", "abc" },
+                    { "a", "abca" },
+                }
+            });
+
+            AssertProgram(new TestSuite { Sources = { "(?=a)", "b" }, TestCases = { { "abaca", "babbacba" } } });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { ".*", "ab" },
+                TestCases = {
+                    { "", "ab" },
+                    { "ccc", "abab" },
+                }
+            });
+
+
+            AssertProgram(new TestSuite { Sources = { "a*", "x" }, TestCases = { { "aacaccaa", "xxcxxcxcxx" } } });
         }
 
         [TestMethod]
         public void TestRTLMatching()
         {
-            AssertReplacement("a+", "x", RegexOptions.RightToLeft, "aacaccaa", "xcxccx");
-            AssertReplacement("a*", "x", RegexOptions.RightToLeft, "aacaccaa", "xxcxxcxcxx");
-            AssertReplacement("(.)+", "$1", RegexOptions.RightToLeft, "abc", "a");
-            AssertReplacement("(.)*", "$1x", RegexOptions.RightToLeft, "abc", "xax");
-            AssertReplacement("(.)(.)", "$2$1", RegexOptions.RightToLeft, "abcde", "acbed");
+            AssertProgram(new TestSuite { Sources = { "r`a+", "x" }, TestCases = { { "aacaccaa", "xcxccx" } } });
+            AssertProgram(new TestSuite { Sources = { "r`a*", "x" }, TestCases = { { "aacaccaa", "xxcxxcxcxx" } } });
+            AssertProgram(new TestSuite { Sources = { "r`(.)+", "$1" }, TestCases = { { "abc", "a" } } });
+            AssertProgram(new TestSuite { Sources = { "r`(.)*", "$1x" }, TestCases = { { "abc", "xax" } } });
+            AssertProgram(new TestSuite { Sources = { "r`(.)(.)", "$2$1" }, TestCases = { { "abcde", "acbed" } } });
         }
 
         [TestMethod]
         public void TestNumberedGroups()
         {
-            AssertReplacement("(.)", "$1$1", RegexOptions.None, "abc", "aabbcc");
-            AssertReplacement("(.)", "$2", RegexOptions.None, "abc", "$2$2$2");
-            AssertReplacement("(.)|(a)", "$2", RegexOptions.None, "abc", "");
-            AssertReplacement("(a)|(.)", "$2", RegexOptions.None, "abc", "bc");
-            AssertReplacement("(.)", "${1}$1", RegexOptions.None, "abc", "aabbcc");
-            AssertReplacement("(.)(.)(.)(.)(.)(.)(.)(.)(.)(.)(.)(.)",
-                              "$111${1}11${11}1${111}$000011",
-                              RegexOptions.None,
-                              "abcdefghijklABCDEFGHIJKL",
-                              "$111a11k1${111}k$111A11K1${111}K");
-            AssertReplacement("(.)+", "$1", RegexOptions.None, "abc", "c");
-            AssertReplacement("(.)*", "$1x", RegexOptions.None, "abc", "cxx");
-            AssertReplacement("(.)+(?<-1>.)", "$1", RegexOptions.None, "abcd", "b");
-            AssertReplacement("(?<2>.)(.)(.)", "$1$2$3", RegexOptions.None, "abc", "bc$3");
-            AssertReplacement("(?<1>.)(.)(.)", "$1$2$3", RegexOptions.None, "abc", "bc$3");
-            AssertReplacement("(?<001>.)(?<01>.)(?<1>.)(.)", "$1$2$3$4", RegexOptions.None, "abcd", "d$2$3$4");
-            AssertReplacement("(?<a>.)(.)(?<b>.)(.)", "$1$2$3$4$5", RegexOptions.None, "abcd", "bdac$5");
+            AssertProgram(new TestSuite { Sources = { "(.)", "$1$1" }, TestCases = { { "abc", "aabbcc" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)", "$2" }, TestCases = { { "abc", "$2$2$2" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)|(a)", "$2" }, TestCases = { { "abc", "" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)|(.)", "$2" }, TestCases = { { "abc", "bc" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)", "${1}$1" }, TestCases = { { "abc", "aabbcc" } } });
+            AssertProgram(new TestSuite {
+                Sources = {
+                    "(.)(.)(.)(.)(.)(.)(.)(.)(.)(.)(.)(.)",
+                    "$111${1}11${11}1${111}$000011" },
+                TestCases = {
+                    { "abcdefghijklABCDEFGHIJKL", "$111a11k1${111}k$111A11K1${111}K" }
+                }
+            });
+            AssertProgram(new TestSuite { Sources = { "(.)+", "$1" }, TestCases = { { "abc", "c" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)*", "$1x" }, TestCases = { { "abc", "cxx" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+(?<-1>.)", "$1" }, TestCases = { { "abcd", "b" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<2>.)(.)(.)", "$1$2$3" }, TestCases = { { "abc", "bc$3" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<1>.)(.)(.)", "$1$2$3" }, TestCases = { { "abc", "bc$3" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<001>.)(?<01>.)(?<1>.)(.)", "$1$2$3$4" }, TestCases = { { "abcd", "d$2$3$4" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)(.)(?<b>.)(.)", "$1$2$3$4$5" }, TestCases = { { "abcd", "bdac$5" } } });
         }
 
         [TestMethod]
         public void TestNamedGroups()
         {
-            AssertReplacement("(?<a>.)", "${a}${a}", RegexOptions.None, "abc", "aabbcc");
-            AssertReplacement("(?<a>.)", "${b}${b}", RegexOptions.None, "abc", "${b}${b}${b}${b}${b}${b}");
-            AssertReplacement("(?<a>.)(.)", "$1$2${a}", RegexOptions.None, "abcd", "baadcc");
-            AssertReplacement("(?<_a1>.)", "${_a1}$1", RegexOptions.None, "abc", "aabbcc");
-            AssertReplacement("(?<a>.)(?<A>.)", "${A}${a}", RegexOptions.None, "abcd", "badc");
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)", "${a}${a}" }, TestCases = { { "abc", "aabbcc" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)", "${b}${b}" }, TestCases = { { "abc", "${b}${b}${b}${b}${b}${b}" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)(.)", "$1$2${a}" }, TestCases = { { "abcd", "baadcc" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<_a1>.)", "${_a1}$1" }, TestCases = { { "abc", "aabbcc" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)(?<A>.)", "${A}${a}" }, TestCases = { { "abcd", "badc" } } });
         }
 
         [TestMethod]
         public void TestDollar()
         {
-            AssertReplacement("(.)", "$1$", RegexOptions.None, "abc", "a$b$c$");
-            AssertReplacement("(.)", "$$1", RegexOptions.None, "abc", "$1$1$1");
-            AssertReplacement("(?<a>.)", "${a}$${a}", RegexOptions.None, "abc", "a${a}b${a}c${a}");
+            AssertProgram(new TestSuite { Sources = { "(.)", "$1$" }, TestCases = { { "abc", "a$b$c$" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)", "$$1" }, TestCases = { { "abc", "$1$1$1" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)", "${a}$${a}" }, TestCases = { { "abc", "a${a}b${a}c${a}" } } });
         }
 
         [TestMethod]
         public void TestEntireMatch()
         {
-            AssertReplacement("..", "$0$&", RegexOptions.None, "abcd", "ababcdcd");
-            AssertReplacement("(.)(.)", "$0$&", RegexOptions.None, "abcd", "ababcdcd");
-            AssertReplacement("(.)(.)", "${0}1$&", RegexOptions.None, "abcd", "ab1abcd1cd");
-            AssertReplacement("(.)(.)", "$01$&", RegexOptions.None, "abcd", "aabccd");
-            AssertReplacement("(?=(.))", "$0$&$1", RegexOptions.None, "abc", "aabbcc");
-            AssertReplacement("(.)(.)", "$0$00$000${0}${00}${000}", RegexOptions.None, "abcd", "ababababababcdcdcdcdcdcd");
+            AssertProgram(new TestSuite { Sources = { "..", "$0$&" }, TestCases = { { "abcd", "ababcdcd" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "$0$&" }, TestCases = { { "abcd", "ababcdcd" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "${0}1$&" }, TestCases = { { "abcd", "ab1abcd1cd" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "$01$&" }, TestCases = { { "abcd", "aabccd" } } });
+            AssertProgram(new TestSuite { Sources = { "(?=(.))", "$0$&$1" }, TestCases = { { "abc", "aabbcc" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "$0$00$000${0}${00}${000}" }, TestCases = { { "abcd", "ababababababcdcdcdcdcdcd" } } });
         }
 
         [TestMethod]
         public void TestSurroundingMatch()
         {
-            AssertReplacement(".", "$`", RegexOptions.None, "abcd", "aababc");
-            AssertReplacement(".", "$'", RegexOptions.None, "abcd", "bcdcdd");
-            AssertReplacement("", "$`$'", RegexOptions.None, "abcd", "abcdaabcdbabcdcabcddabcd");
+            AssertProgram(new TestSuite { Sources = { ".", "$`" }, TestCases = { { "abcd", "aababc" } } });
+            AssertProgram(new TestSuite { Sources = { ".", "$'" }, TestCases = { { "abcd", "bcdcdd" } } });
+            AssertProgram(new TestSuite { Sources = { "", "$`$'" }, TestCases = { { "abcd", "abcdaabcdbabcdcabcddabcd" } } });
         }
 
         [TestMethod]
         public void TestLastCapture()
         {
-            AssertReplacement("(a)|(b)", "$+!", RegexOptions.None, "abab", "!b!!b!");
-            AssertReplacement("(?<a>a)|(b)", "$+!", RegexOptions.None, "abab", "a!!a!!");
-            AssertReplacement("(a)|(?<b>b)", "$+!", RegexOptions.None, "abab", "!b!!b!");
-            AssertReplacement("(?<a>a)|(?<b>b)", "$+!", RegexOptions.None, "abab", "!b!!b!");
+            AssertProgram(new TestSuite { Sources = { "(a)|(b)", "$+!" }, TestCases = { { "abab", "!b!!b!" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>a)|(b)", "$+!" }, TestCases = { { "abab", "a!!a!!" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)|(?<b>b)", "$+!" }, TestCases = { { "abab", "!b!!b!" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>a)|(?<b>b)", "$+!" }, TestCases = { { "abab", "!b!!b!" } } });
         }
 
         [TestMethod]
         public void TestEntireInput()
         {
-            AssertReplacement(".", "$_", RegexOptions.None, "abcd", "abcdabcdabcdabcd");
-            AssertReplacement("", "$_", RegexOptions.None, "abcd", "abcdaabcdbabcdcabcddabcd");
+            AssertProgram(new TestSuite { Sources = { ".", "$_" }, TestCases = { { "abcd", "abcdabcdabcdabcd" } } });
+            AssertProgram(new TestSuite { Sources = { "", "$_" }, TestCases = { { "abcd", "abcdaabcdbabcdcabcddabcd" } } });
         }
 
         [TestMethod]
         public void TestInvalidSyntax()
         {
-            AssertReplacement("(.)(.)", "${", RegexOptions.None, "abcd", "${${");
-            AssertReplacement("(.)(.)", "$}", RegexOptions.None, "abcd", "$}$}");
-            AssertReplacement("(.)(.)", "${}", RegexOptions.None, "abcd", "${}${}");
-            AssertReplacement("(.)(.)", "${$}", RegexOptions.None, "abcd", "${$}${$}");
-            AssertReplacement("(.)(.)", "${{1}}", RegexOptions.None, "abcd", "${{1}}${{1}}");
-            AssertReplacement("(.)(.)", "${$1}", RegexOptions.None, "abcd", "${a}${c}");
-            AssertReplacement("(?<a>.)(.)", "$a", RegexOptions.None, "abcd", "$a$a");
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "${" }, TestCases = { { "abcd", "${${" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "$}" }, TestCases = { { "abcd", "$}$}" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "${}" }, TestCases = { { "abcd", "${}${}" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "${$}" }, TestCases = { { "abcd", "${$}${$}" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "${{1}}" }, TestCases = { { "abcd", "${{1}}${{1}}" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "${$1}" }, TestCases = { { "abcd", "${a}${c}" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)(.)", "$a" }, TestCases = { { "abcd", "$a$a" } } });
         }
 
         [TestMethod]
         public void TestLinefeedEscape()
         {
-            AssertReplacement("(.)(?<n>.)", "n$n${n}", RegexOptions.None, "abcd", "n\nbn\nd");
-            AssertReplacement("(.)(.)", "n$n${n}", RegexOptions.None, "abcd", "n\n${n}n\n${n}");
+            AssertProgram(new TestSuite { Sources = { "(.)(?<n>.)", "n$n${n}" }, TestCases = { { "abcd", "n\nbn\nd" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)(.)", "n$n${n}" }, TestCases = { { "abcd", "n\n${n}n\n${n}" } } });
         }
 
         [TestMethod]
         public void TestCaptureCount()
         {
-            AssertReplacement("(.)+", "#$#1", RegexOptions.None, "abcd\ndef", "#4\n#3");
-            AssertReplacement("(..)+", "#$#1", RegexOptions.None, "abcd\ndef", "#2\n#1f");
-            AssertReplacement("()(.)*", "$#2", RegexOptions.None, "abcd\ndef", "40\n30");
-            AssertReplacement("(a)+(?<1>b)+", "$#1", RegexOptions.None, "aaabbcabbb", "5c4");
+            AssertProgram(new TestSuite { Sources = { "(.)+", "#$#1" }, TestCases = { { "abcd\ndef", "#4\n#3" } } });
+            AssertProgram(new TestSuite { Sources = { "(..)+", "#$#1" }, TestCases = { { "abcd\ndef", "#2\n#1f" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$#2" }, TestCases = { { "abcd\ndef", "40\n30" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)+(?<1>b)+", "$#1" }, TestCases = { { "aaabbcabbb", "5c4" } } });
 
             // Curly braces should also work:
-            AssertReplacement("(.)+", "#$#{1}", RegexOptions.None, "abcd\ndef", "#4\n#3");
-            AssertReplacement("()(.)*", "$#{2}", RegexOptions.None, "abcd\ndef", "40\n30");
-            AssertReplacement("(a)+(?<1>b)+", "$#{1}$#{01}$#{001}", RegexOptions.None, "aaabbcabbb", "555c444");
-            AssertReplacement("(?<foo>a)+(?<bar>b)+", "$#{foo}$#{bar}", RegexOptions.None, "aaabbcabbb", "32c13");
+            AssertProgram(new TestSuite { Sources = { "(.)+", "#$#{1}" }, TestCases = { { "abcd\ndef", "#4\n#3" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$#{2}" }, TestCases = { { "abcd\ndef", "40\n30" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)+(?<1>b)+", "$#{1}$#{01}$#{001}" }, TestCases = { { "aaabbcabbb", "555c444" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<foo>a)+(?<bar>b)+", "$#{foo}$#{bar}" }, TestCases = { { "aaabbcabbb", "32c13" } } });
 
             // $# not followed by a valid group should be taken literally:
-            AssertReplacement("(.)+", "$#2$#{2}$#$#}", RegexOptions.None, "abcd", "$#2$#{2}$#$#}");
-            AssertReplacement("(?<a>.)+", "$#a$#{b}$#{", RegexOptions.None, "abcd", "$#a$#{b}$#{");
+            AssertProgram(new TestSuite { Sources = { "(.)+", "$#2$#{2}$#$#}" }, TestCases = { { "abcd", "$#2$#{2}$#$#}" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)+", "$#a$#{b}$#{" }, TestCases = { { "abcd", "$#a$#{b}$#{" } } });
 
             // $#0 is useless but should also work:
-            AssertReplacement("(.)+", "$#0$#{0}$#{00}", RegexOptions.None, "abcd\ndef", "111\n111");
+            AssertProgram(new TestSuite { Sources = { "(.)+", "$#0$#{0}$#{00}" }, TestCases = { { "abcd\ndef", "111\n111" } } });
 
             // $#+ should work
-            AssertReplacement("()(.)*", "$#+", RegexOptions.None, "abcd\ndef", "40\n30");
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$#+" }, TestCases = { { "abcd\ndef", "40\n30" } } });
         }
 
         [TestMethod]
         public void TestCaptureLength()
         {
-            AssertReplacement(".+", ".$.0", RegexOptions.None, "abcd\ndef", ".4\n.3");
-            AssertReplacement("(.)+", ".$.1", RegexOptions.None, "abcd\ndef", ".1\n.1");
-            AssertReplacement("(.+)", ".$.1", RegexOptions.None, "abcd\ndef", ".4\n.3");
-            AssertReplacement("()(.*)", "$.2", RegexOptions.None, "abcd\ndef", "40\n30");
+            AssertProgram(new TestSuite { Sources = { ".+", ".$.0" }, TestCases = { { "abcd\ndef", ".4\n.3" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+", ".$.1" }, TestCases = { { "abcd\ndef", ".1\n.1" } } });
+            AssertProgram(new TestSuite { Sources = { "(.+)", ".$.1" }, TestCases = { { "abcd\ndef", ".4\n.3" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.*)", "$.2" }, TestCases = { { "abcd\ndef", "40\n30" } } });
 
             // Curly braces should also work:
-            AssertReplacement(".+", ".$.{0}", RegexOptions.None, "abcd\ndef", ".4\n.3");
-            AssertReplacement("(.+)", ".$.{1}", RegexOptions.None, "abcd\ndef", ".4\n.3");
-            AssertReplacement("()(.*)", "$.{2}", RegexOptions.None, "abcd\ndef", "40\n30");
-            AssertReplacement("(?<foo>a+)(?<bar>b+)", "$.{foo}$.{bar}", RegexOptions.None, "aaabbcabbb", "32c13");
+            AssertProgram(new TestSuite { Sources = { ".+", ".$.{0}" }, TestCases = { { "abcd\ndef", ".4\n.3" } } });
+            AssertProgram(new TestSuite { Sources = { "(.+)", ".$.{1}" }, TestCases = { { "abcd\ndef", ".4\n.3" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.*)", "$.{2}" }, TestCases = { { "abcd\ndef", "40\n30" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<foo>a+)(?<bar>b+)", "$.{foo}$.{bar}" }, TestCases = { { "aaabbcabbb", "32c13" } } });
 
             // Make sure $`, $', $_, $& and $+ work:
-            AssertReplacement("a", "$.`", RegexOptions.None, ";!~&a@#", ";!~&4@#");
-            AssertReplacement("a", "$.'", RegexOptions.None, ";!~&a@#", ";!~&2@#");
-            AssertReplacement("a", "$._", RegexOptions.None, ";!~&a@#", ";!~&7@#");
-            AssertReplacement("a+", "$.&", RegexOptions.None, ";!~&aaa@#", ";!~&3@#");
-            AssertReplacement("()(.*)", "$.+", RegexOptions.None, "abcd\ndef", "40\n30");
+            AssertProgram(new TestSuite { Sources = { "a", "$.`" }, TestCases = { { ";!~&a@#", ";!~&4@#" } } });
+            AssertProgram(new TestSuite { Sources = { "a", "$.'" }, TestCases = { { ";!~&a@#", ";!~&2@#" } } });
+            AssertProgram(new TestSuite { Sources = { "a", "$._" }, TestCases = { { ";!~&a@#", ";!~&7@#" } } });
+            AssertProgram(new TestSuite { Sources = { "a+", "$.&" }, TestCases = { { ";!~&aaa@#", ";!~&3@#" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.*)", "$.+" }, TestCases = { { "abcd\ndef", "40\n30" } } });
 
             // An entirely unmatched group should result in an empty string, not 0:
-            AssertReplacement("a|(b)", "$.1", RegexOptions.None, "::a::b::", "::::1::");
-            AssertReplacement("()(.)*", "$.2", RegexOptions.None, "abcd\ndef", "1\n1");
-            AssertReplacement("()(.)*", "$.+", RegexOptions.None, "abcd\ndef", "1\n1");
+            AssertProgram(new TestSuite { Sources = { "a|(b)", "$.1" }, TestCases = { { "::a::b::", "::::1::" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$.2" }, TestCases = { { "abcd\ndef", "1\n1" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$.+" }, TestCases = { { "abcd\ndef", "1\n1" } } });
 
             // $. not followed by a valid group be taken literally:
-            AssertReplacement("(.+)", "$.2$.{2}$.$.}", RegexOptions.None, "abcd", "$.2$.{2}$.$.}");
-            AssertReplacement("(?<a>.+)", "$.a$.{b}$.{", RegexOptions.None, "abcd", "$.a$.{b}$.{");
+            AssertProgram(new TestSuite { Sources = { "(.+)", "$.2$.{2}$.$.}" }, TestCases = { { "abcd", "$.2$.{2}$.$.}" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.+)", "$.a$.{b}$.{" }, TestCases = { { "abcd", "$.a$.{b}$.{" } } });
         }
 
         [TestMethod]
         public void TestCharacterRepetition()
         {
-            AssertReplacement("(.)+", "15$*_", RegexOptions.None, "abc", "_______________");
-            AssertReplacement("(.)+", "xyz$*_", RegexOptions.None, "abc", "xy");
-            AssertReplacement(@"\d+", "$0$*1", RegexOptions.None, "3 12 4", "111 111111111111 1111");
-            AssertReplacement(".+", "$0$*1", RegexOptions.None, "3 12 4", "111");
-            AssertReplacement(".+", "$0$*1", RegexOptions.None, "abc10def", "1111111111");
-            AssertReplacement(".+", "$0$*1", RegexOptions.None, "abc0def", "");
-            AssertReplacement("(.)+", "$#1$*1", RegexOptions.None, "abcd\ndef", "1111\n111");
-            AssertReplacement("(..)+", "$#1$*1", RegexOptions.None, "abcd\ndef", "11\n1f");
-            AssertReplacement("(?<a>.)+", "$#{a}$*1", RegexOptions.None, "abcd\ndef", "1111\n111");
-            AssertReplacement("$", " $`$*1", RegexOptions.None, "12 123", "12 123 111111111111");
-            AssertReplacement("$", " $_$*1", RegexOptions.None, "12 123", "12 123 111111111111");
-            AssertReplacement("^", "$'$*1 ", RegexOptions.None, "12 123", "111111111111 12 123");
+            AssertProgram(new TestSuite { Sources = { "(.)+", "15$*_" }, TestCases = { { "abc", "_______________" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+", "xyz$*_" }, TestCases = { { "abc", "xy" } } });
+            AssertProgram(new TestSuite { Sources = { @"\d+", "$0$*1" }, TestCases = { { "3 12 4", "111 111111111111 1111" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$0$*1" }, TestCases = { { "3 12 4", "111" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$0$*1" }, TestCases = { { "abc10def", "1111111111" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$0$*1" }, TestCases = { { "abc0def", "" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+", "$#1$*1" }, TestCases = { { "abcd\ndef", "1111\n111" } } });
+            AssertProgram(new TestSuite { Sources = { "(..)+", "$#1$*1" }, TestCases = { { "abcd\ndef", "11\n1f" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)+", "$#{a}$*1" }, TestCases = { { "abcd\ndef", "1111\n111" } } });
+            AssertProgram(new TestSuite { Sources = { "$", " $`$*1" }, TestCases = { { "12 123", "12 123 111111111111" } } });
+            AssertProgram(new TestSuite { Sources = { "$", " $_$*1" }, TestCases = { { "12 123", "12 123 111111111111" } } });
+            AssertProgram(new TestSuite { Sources = { "^", "$'$*1 " }, TestCases = { { "12 123", "111111111111 12 123" } } });
 
-            AssertReplacement(".+", "$0$*$", RegexOptions.None, "5", "$$$$$");
-            AssertReplacement(".+", @"$0$*\", RegexOptions.None, "5", @"\\\\\");
-            AssertReplacement(".+", "$0$**", RegexOptions.None, "5", "*****");
+            AssertProgram(new TestSuite { Sources = { ".+", "$0$*$" }, TestCases = { { "5", "$$$$$" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", @"$0$*\" }, TestCases = { { "5", @"\\\\\" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$0$**" }, TestCases = { { "5", "*****" } } });
 
             // $* can be nested:
-            AssertReplacement(".+", "2$*3$*_", RegexOptions.None, "abc", "_________________________________"); // 2 --> 33 --> thirty-three underscores
-            AssertReplacement(".+", "2$*_$*1", RegexOptions.None, "abc", "");
+            AssertProgram(new TestSuite { Sources = { ".+", "2$*3$*_" }, TestCases = { { "abc", "_________________________________" } } }); // 2 --> 33 --> thirty-three underscores
+            AssertProgram(new TestSuite { Sources = { ".+", "2$*_$*1" }, TestCases = { { "abc", "" } } });
 
             // $* as the first token implies $&. $* as the last token implies 1.
-            AssertReplacement("(.).+", "$*:", RegexOptions.None, "10!", "::::::::::");
-            AssertReplacement(".+", "5$*", RegexOptions.None, "a3c", "11111");
-            AssertReplacement("(.).+", "$*", RegexOptions.None, "10!", "1111111111");
+            AssertProgram(new TestSuite { Sources = { "(.).+", "$*:" }, TestCases = { { "10!", "::::::::::" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "5$*" }, TestCases = { { "a3c", "11111" } } });
+            AssertProgram(new TestSuite { Sources = { "(.).+", "$*" }, TestCases = { { "10!", "1111111111" } } });
         }
 
         [TestMethod]
         public void TestLineOnly()
         {
-            AssertReplacement("a", "$%_", RegexOptions.None, "abc\nbab\naba", "abcbc\nbbabb\nabababa");
-            AssertReplacement("a", "$%`", RegexOptions.None, "abc\nbab\naba", "bc\nbbb\nbab");
-            AssertReplacement("a", "$%'", RegexOptions.None, "abc\nbab\naba", "bcbc\nbbb\nbab");
-            AssertReplacement(".", "$.%`", RegexOptions.None, "abc\ndefh\nhijlk", "012\n0123\n01234");
-            AssertReplacement(".", "$.%'", RegexOptions.None, "abc\ndefh\nhijlk", "210\n3210\n43210");
-        }
-
-        private void AssertReplacement(string regex, string replacement, RegexOptions rgxOptions, string input, string expectedOutput)
-        {
-            var options = new Options("", Modes.Replace);
-            options.RegexOptions = rgxOptions;
-            options.Silent = true;
-
-            var stage = new ReplaceStage(options, regex, replacement);
-
-            Assert.AreEqual(expectedOutput, stage.Execute(input, Console.Out).ToString());
+            AssertProgram(new TestSuite { Sources = { "a", "$%_" }, TestCases = { { "abc\nbab\naba", "abcbc\nbbabb\nabababa" } } });
+            AssertProgram(new TestSuite { Sources = { "a", "$%`" }, TestCases = { { "abc\nbab\naba", "bc\nbbb\nbab" } } });
+            AssertProgram(new TestSuite { Sources = { "a", "$%'" }, TestCases = { { "abc\nbab\naba", "bcbc\nbbb\nbab" } } });
+            AssertProgram(new TestSuite { Sources = { ".", "$.%`" }, TestCases = { { "abc\ndefh\nhijlk", "012\n0123\n01234" } } });
+            AssertProgram(new TestSuite { Sources = { ".", "$.%'" }, TestCases = { { "abc\ndefh\nhijlk", "210\n3210\n43210" } } });
         }
     }
 }
