@@ -130,5 +130,20 @@ namespace RetinaTest
                 TestCases = { { "Hello, World!", " !,HWdellloor\n !,HWdellloor" } }
             });
         }
+
+        [TestMethod]
+        public void TestNestedOutput()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"G`", @"::G`" },
+                TestCases = { { "Hello, World!", "Hello, World!Hello, World!" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"::G`", @"G`" },
+                TestCases = { { "Hello, World!", "Hello, World!Hello, World!Hello, World!" } }
+            });
+        }
     }
 }
