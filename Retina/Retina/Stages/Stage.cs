@@ -10,61 +10,20 @@ namespace Retina.Stages
 {
     public abstract class Stage
     {
-        public Options Options { get; set; }
+        public Configuration Config { get; set; }
 
-        public Stage(Options options)
+        public Stage(Configuration config)
         {
-            Options = options;
+            Config = config;
         }
 
         public virtual string Execute(string input, TextWriter output)
         {
-            // This whole function and the interaction between per-line mode, loops and output
-            // feels massively hacky... maybe one day I'll refactor this...
             string result;
-            if (Options.PerLine)
-            {
-                Options.PerLine = false;
-                result = String.Join("\n", input.Split(new[] { '\n' }).Select(x => Execute(x, output)));
-                Options.PerLine = true;
-                return result;
-            }
 
-            if (Options.Loop)
-            {
-                result = input;
-                string lastResult;
-                do
-                {
-                    lastResult = result;
-                    if (Options.IterationPerLine)
-                        result = String.Join("\n", lastResult.Split(new[] { '\n' }).Select(x => Process(x, output).ToString()));
-                    else
-                        result = Process(lastResult, output).ToString();
-
-                    if (!Options.IterationSilent)
-                        if (Options.IterationTrailingLinefeed)
-                        {
-                            output.Write(result);
-                            output.Write("\n");
-                        }
-                        else
-                            output.Write(result);
-                } while (lastResult != result);
-            }
-            else
-                result = Process(input, output).ToString();
-
-            if (!(Options.Silent ?? true))
-                if (Options.TrailingLinefeed)
-                {
-                    output.Write(result);
-                    output.Write("\n");
-                }
-                else
-                    output.Write(result);
-            
-            return Options.DryRun ? input : result;
+            result = Process(input, output).ToString();
+                        
+            return result;
         }
 
         abstract protected StringBuilder Process(string input, TextWriter output);

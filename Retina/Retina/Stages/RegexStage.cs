@@ -13,16 +13,16 @@ namespace Retina.Stages
         public string PatternString { get; set; }
         public Regex Pattern { get; set; }
 
-        protected RegexStage(Options options) : base(options) { }
+        protected RegexStage(Configuration config) : base(config) { }
 
-        public RegexStage(Options options, string pattern) : this(options)
+        public RegexStage(Configuration config, string pattern) : this(config)
         {
             PatternString = pattern;
         }
 
         public override string Execute(string input, TextWriter output)
         {
-            Pattern = new Regex(PatternString, Options.RegexOptions);
+            Pattern = new Regex(PatternString, Config.RegexOptions);
             return base.Execute(input, output);
         }
     }

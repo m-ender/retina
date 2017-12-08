@@ -90,8 +90,8 @@ namespace RetinaTest
         [TestMethod]
         public void TestUniqueMatches()
         {
-            AssertProgram(new TestSuite { Sources = { @"!@`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"r!@`." }, TestCases = { { "abacbcedef", "f\ne\nd\nc\nb\na" } } });
+            AssertProgram(new TestSuite { Sources = { @"!=`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"r!=`." }, TestCases = { { "abacbcedef", "f\ne\nd\nc\nb\na" } } });
         }
 
         [TestMethod]
