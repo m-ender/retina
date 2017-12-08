@@ -87,8 +87,24 @@ namespace Retina
                     |
                         (?<closeGroup>[)}])                 # ) or } ends a group stage.
                     |
-                        (?<compoundStage>[+:;%*])           # These options introduce a compound stage, which is wrapped around
+                        (?<compoundStage>                   # These options introduce a compound stage, which is wrapped around
                                                             # the current one to modify its behavior.
+                            [+%*]
+                        |
+                            (?=[:;\\])                      # Output stages can be introduced with either : or ; (print only if
+                                                            # changed), and take an optional parameter \, indicating that a
+                                                            # trailing linefeed should be printed. \ on its own is also valid as
+                                                            # a shorthand for :\.
+                            (?<compoundOutput>
+                                (?<printOnlyIfChanged>)
+                                ;
+                                (?<trailingLF>\\)?
+                            |
+                                :?
+                                (?<trailingLF>\\)?
+                            )
+                        )
+                                                            
                     |
                         (?<end>`)                           # An unescaped backtick ends the configuration string.
                         (?<remainder>.*)                    # The remainder is used as the regex (or input or substitution 
@@ -177,8 +193,17 @@ namespace Retina
                         }
                         else if (t.Groups["compoundStage"].Success)
                         {
-                            compoundStack.Push(new Tuple<char, Configuration>(t.Groups["compoundStage"].Value[0], config));
-                            config = new Configuration();
+                            if (t.Groups["compoundOutput"].Success)
+                            {
+                                config.PrintOnlyIfChanged = t.Groups["printOnlyIfChanged"].Success;
+                                config.TrailingLinefeed = t.Groups["trailingLF"].Success;
+                                compoundStack.Push(new Tuple<char, Configuration>(':', config));
+                            }
+                            else
+                            {
+                                compoundStack.Push(new Tuple<char, Configuration>(t.Groups["compoundStage"].Value[0], config));
+                                config = new Configuration();
+                            }
                         }
                         else
                         {
@@ -357,8 +382,6 @@ namespace Retina
                         
                         break;
                     case ':':
-                    case ';':
-                        compoundConfig.PrintOnlyIfChanged = (compoundType == ';');
                         InheritConfig(stage, compoundConfig);
                         stage = new OutputStage(compoundConfig, stage);
                         break;
