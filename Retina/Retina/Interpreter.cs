@@ -364,7 +364,6 @@ namespace Retina
                         break;
                     case '*':
                         InheritConfig(stage, compoundConfig);
-                        stage = new OutputStage(compoundConfig, stage);
                         stage = new DryRunStage(compoundConfig, stage);
                         break;
                     case '+':
