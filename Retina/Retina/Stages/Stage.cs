@@ -17,15 +17,6 @@ namespace Retina.Stages
             Config = config;
         }
 
-        public virtual string Execute(string input, TextWriter output)
-        {
-            string result;
-
-            result = Process(input, output).ToString();
-                        
-            return result;
-        }
-
-        abstract protected StringBuilder Process(string input, TextWriter output);
+        abstract public string Execute(string input, TextWriter output);
     }
 }

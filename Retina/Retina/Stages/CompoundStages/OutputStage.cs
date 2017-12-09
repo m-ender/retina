@@ -17,7 +17,7 @@ namespace Retina.Stages
             ChildStage = childStage;
         }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        public override string Execute(string input, TextWriter output)
         {
             string result = ChildStage.Execute(input, output);
 
@@ -28,7 +28,7 @@ namespace Retina.Stages
                     output.Write("\n");
             }
 
-            return new StringBuilder(result);
+            return result;
         }
     }
 }

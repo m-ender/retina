@@ -18,13 +18,13 @@ namespace Retina.Stages
             Stages = stages;
         }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        public override string Execute(string input, TextWriter output)
         {
             string result = input;
             foreach (var stage in Stages)
                 result = stage.Execute(result, output);
 
-            return new StringBuilder(result);
+            return result;
         }
     }
 }

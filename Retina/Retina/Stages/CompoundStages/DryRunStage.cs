@@ -17,11 +17,11 @@ namespace Retina.Stages
             ChildStage = childStage;
         }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        public override string Execute(string input, TextWriter output)
         {
             ChildStage.Execute(input, output);
 
-            return new StringBuilder(input);
+            return input;
         }
     }
 }

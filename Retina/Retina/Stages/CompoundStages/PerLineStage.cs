@@ -17,13 +17,13 @@ namespace Retina.Stages
             ChildStage = childStage;
         }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        public override string Execute(string input, TextWriter output)
         {
             string[] lines = input.Split(new[] { '\n' });
             IEnumerable<string> resultLines = lines.Select(x => ChildStage.Execute(x, output));
             string result = String.Join("\n", resultLines);
             
-            return new StringBuilder(result);
+            return result;
         }
     }
 }

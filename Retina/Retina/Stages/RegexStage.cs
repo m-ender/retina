@@ -23,7 +23,10 @@ namespace Retina.Stages
         public override string Execute(string input, TextWriter output)
         {
             Pattern = new Regex(PatternString, Config.RegexOptions);
-            return base.Execute(input, output);
+
+            return Process(input, output).ToString();
         }
+
+        abstract protected StringBuilder Process(string input, TextWriter output);
     }
 }
