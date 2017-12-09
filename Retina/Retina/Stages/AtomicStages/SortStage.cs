@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Retina.Stages
 {
-    public class SortStage : RegexStage
+    public class SortStage : AtomicStage
     {
         string ReplacementString { get; set; }
 

@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Retina.Stages
 {
-    public class ReplaceStage : RegexStage
+    public class ReplaceStage : AtomicStage
     {
         string ReplacementString { get; set; }
 

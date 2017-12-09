@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Retina.Stages
 {
-    class DeduplicateStage : RegexStage
+    class DeduplicateStage : AtomicStage
     {
         string ReplacementString { get; set; }
 

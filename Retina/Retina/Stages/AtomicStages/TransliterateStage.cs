@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    public class TransliterateStage : RegexStage
+    public class TransliterateStage : AtomicStage
     {
         public string Replacement { get; set; }
 

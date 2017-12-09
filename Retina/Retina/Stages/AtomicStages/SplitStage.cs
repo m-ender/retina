@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    class SplitStage : RegexStage
+    class SplitStage : AtomicStage
     {
         public SplitStage(Configuration config, string pattern) : base(config, pattern) { }
 

@@ -63,7 +63,7 @@
     <Compile Include="Stages\CompoundStages\LoopStage.cs" />
     <Compile Include="Stages\CompoundStages\OutputStage.cs" />
     <Compile Include="Stages\CompoundStages\PerLineStage.cs" />
-    <Compile Include="Stages\RegexStage.cs" />
+    <Compile Include="Stages\AtomicStage.cs" />
     <Compile Include="Stages\CompoundStages\GroupStage.cs" />
     <Compile Include="Stages\AtomicStages\GrepStage.cs" />
     <Compile Include="Stages\AtomicStages\MatchStage.cs" />

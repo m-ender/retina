@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    class MatchStage : RegexStage
+    class MatchStage : AtomicStage
     {
         public MatchStage(Configuration config, string pattern) : base(config, pattern) { }
 

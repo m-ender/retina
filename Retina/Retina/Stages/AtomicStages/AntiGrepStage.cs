@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
-    class AntiGrepStage : RegexStage
+    class AntiGrepStage : AtomicStage
     {
         public AntiGrepStage(Configuration config, string pattern) : base(config, pattern) { }
 
