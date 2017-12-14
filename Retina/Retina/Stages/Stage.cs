@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Retina.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace Retina.Stages
 {
     public abstract class Stage
     {
-        public Configuration Config { get; set; }
+        public Config Config { get; set; }
 
-        public Stage(Configuration config)
+        public Stage(Config config)
         {
             Config = config;
         }

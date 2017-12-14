@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Retina.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace Retina.Stages
         private List<char?> From { get; set; }
         private List<char?> To { get; set; }
 
-        public TransliterateStage(Configuration config, string pattern) : base(config)
+        public TransliterateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+            : base(config)
         {
 
             var fromBuilder = new List<char?>();
@@ -23,7 +25,7 @@ namespace Retina.Stages
 
             int otherIndexInFrom = -1;
             bool otherReversedInFrom = false;
-            string remainder = ParseCharacterSet(fromBuilder, pattern, out otherIndexInFrom, out otherReversedInFrom);
+            string remainder = ParseCharacterSet(fromBuilder, patterns[0], out otherIndexInFrom, out otherReversedInFrom);
             
             int otherIndexInTo = -1;
             bool otherReversedInTo = false;
@@ -55,7 +57,11 @@ namespace Retina.Stages
                 To.Add(null);
             }
 
-            PatternString = remainder.Length == 0 ? @"[\s\S]+" : remainder;
+            patterns[0] = remainder.Length == 0 ? @"[\s\S]+" : remainder;
+
+            RegexSources = patterns;
+            SubstitutionSources = substitutions;
+            SeparatorSubstitutionSource = separatorSubstitution;
         }
 
         private char ParseCharacterToken(string token)

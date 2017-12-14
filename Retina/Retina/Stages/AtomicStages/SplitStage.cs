@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Retina.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace Retina.Stages
 {
     class SplitStage : AtomicStage
     {
-        public SplitStage(Configuration config, string pattern) : base(config, pattern) { }
+        public SplitStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+            : base(config, patterns, substitutions, separatorSubstitution) { }
 
         protected override StringBuilder Process(string input, TextWriter output)
         {

@@ -6,22 +6,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Retina.Replace;
 using System.IO;
+using Retina.Configuration;
 
 namespace Retina.Stages
 {
     public class ReplaceStage : AtomicStage
     {
-        string ReplacementString { get; set; }
-
-        public ReplaceStage(Configuration config, string pattern, string replacement)
-            : base(config, pattern)
-        {
-            ReplacementString = replacement;
-        }
+        public ReplaceStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+            : base(config, patterns, substitutions, separatorSubstitution) { }
 
         protected override StringBuilder Process(string input, TextWriter output)
         {
-            var replacer = new Replacer(Pattern, ReplacementString);
+            var replacer = new Replacer(Pattern, Substitution);
 
             var builder = new StringBuilder();
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Retina.Stages;
+using Retina.Configuration;
 
 namespace Retina
 {
@@ -28,7 +29,7 @@ namespace Retina
             // one in front of the '(' and one in front of the ')'. We use this stack
             // to keep track of the '(' config until we get to the ')' config, where
             // we can merge the two into one.
-            var groupConfig = new Stack<Configuration>();
+            var groupConfig = new Stack<Config>();
             
             // Within each stage, we'll also need to keep track of a stack of compound
             // stages that will eventually be wrapped around that stage. This is because
@@ -37,7 +38,7 @@ namespace Retina
             // only need to be applied once we get to the ')', so like the '(' config,
             // we need to remember the compounds we've already seen. That's what this
             // messy stack of stacks is for.
-            var groupCompoundStack = new Stack<Stack<Tuple<char, Configuration>>>();
+            var groupCompoundStack = new Stack<Stack<Tuple<char, Config>>>();
 
             // A global option that affects whether the whole program will be wrapped
             // in an output stage or not.
@@ -48,9 +49,11 @@ namespace Retina
             {
                 string pattern = sources[i++];
 
-                Modes mode = i < sources.Count ? Modes.Replace : Modes.Match;
+                Modes mode = i < sources.Count ? Modes.Replace : Modes.Count;
+                bool useSubstitution = false;
+                int patternCount = 1;
 
-                Configuration config = new Configuration();
+                Config config = new Config();
 
                 // Compound stages will be wrapped around this stage once we're done
                 // constructing it. However, they will be process from right to left
@@ -58,7 +61,7 @@ namespace Retina
                 // type of compound stage as the character that represents it, together
                 // with the configuration that was immediately left of it.
                 // Groups will enter this stack at the point of their closing ')'.
-                var compoundStack = new Stack<Tuple<char, Configuration>>();
+                var compoundStack = new Stack<Tuple<char, Config>>();
 
                 // Backticks indicate a leading configuration string.
                 if (pattern.Contains("`"))
@@ -104,14 +107,26 @@ namespace Retina
                                 (?<trailingLF>\\)?
                             )
                         )
-                                                            
+                    |
+                        (?<multiPattern>                    # A # followed by an integer indicates that this stage contains
+                                                            # multiple patterns (and multiple substitutions if applicable).
+                                                            # The sign indicates how those patterns are used.
+                            [#]
+                            (?<patternCount>
+                                -?[1-9]\d*
+                            )
+                        )
                     |
                         (?<end>`)                           # An unescaped backtick ends the configuration string.
                         (?<remainder>.*)                    # The remainder is used as the regex (or input or substitution 
                                                             # for some configurations).
                     |
-                        .                                   # All other characters are read individually and represent 
+                        (?<flag>
+                            !.                              # ! marks a 2-character flag.
+                        |
+                            .                               # All other characters are read individually and represent 
                                                             # various options.
+                        )
                     )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
                     MatchCollection tokens = configTokenizer.Matches(pattern);
@@ -164,15 +179,17 @@ namespace Retina
 
                             if (t.Groups["openGroup"].Value == "{")
                             {
-                                compoundStack.Push(new Tuple<char, Configuration>('+', config));
-                                config = new Configuration();
+                                compoundStack.Push(new Tuple<char, Config>('+', config));
+                                config = new Config();
                             }
 
                             groupConfig.Push(config);
-                            config = new Configuration();
+                            config = new Config();
                             groupCompoundStack.Push(compoundStack);
-                            compoundStack = new Stack<Tuple<char, Configuration>>();
-                            mode = i < sources.Count ? Modes.Replace : Modes.Match;
+                            compoundStack = new Stack<Tuple<char, Config>>();
+                            mode = i < sources.Count ? Modes.Replace : Modes.Count;
+                            useSubstitution = false;
+                            patternCount = 1;
                             stageStack.Push(new List<Stage>());
                         }
                         else if (t.Groups["closeGroup"].Success)
@@ -183,13 +200,15 @@ namespace Retina
 
                             if (t.Groups["openGroup"].Value == "}")
                             {
-                                compoundStack.Push(new Tuple<char, Configuration>('+', config));
-                                config = new Configuration();
+                                compoundStack.Push(new Tuple<char, Config>('+', config));
+                                config = new Config();
                             }
 
-                            compoundStack.Push(new Tuple<char, Configuration>(')', config));
-                            config = new Configuration();
-                            mode = i < sources.Count ? Modes.Replace : Modes.Match;
+                            compoundStack.Push(new Tuple<char, Config>(')', config));
+                            config = new Config();
+                            mode = i < sources.Count ? Modes.Replace : Modes.Count;
+                            useSubstitution = false;
+                            patternCount = 1;
                         }
                         else if (t.Groups["compoundStage"].Success)
                         {
@@ -197,110 +216,150 @@ namespace Retina
                             {
                                 config.PrintOnlyIfChanged = t.Groups["printOnlyIfChanged"].Success;
                                 config.TrailingLinefeed = t.Groups["trailingLF"].Success;
-                                compoundStack.Push(new Tuple<char, Configuration>(':', config));
+                                compoundStack.Push(new Tuple<char, Config>(':', config));
                             }
                             else
                             {
-                                compoundStack.Push(new Tuple<char, Configuration>(t.Groups["compoundStage"].Value[0], config));
-                                config = new Configuration();
+                                compoundStack.Push(new Tuple<char, Config>(t.Groups["compoundStage"].Value[0], config));
+                                config = new Config();
                             }
+                            mode = i < sources.Count ? Modes.Replace : Modes.Count;
+                            useSubstitution = false;
+                            patternCount = 1;
                         }
-                        else
+                        else if (t.Groups["multiPattern"].Success)
                         {
-                            switch (t.Value[0])
+                            patternCount = int.Parse(t.Groups["patternCount"].Value);
+                        }
+                        else if (t.Groups["flag"].Success)
+                        {
+                            char flag = t.Groups["flag"].Value[0];
+                            if (flag == '!')
                             {
-                            // Parse RegexOptions
-                            case 'c':
-                                config.RegexOptions ^= RegexOptions.CultureInvariant;
-                                break;
-                            case 'e':
-                                config.RegexOptions ^= RegexOptions.ECMAScript;
-                                break;
-                            case 'i':
-                                config.RegexOptions ^= RegexOptions.IgnoreCase;
-                                break;
-                            case 'm':
-                                config.RegexOptions ^= RegexOptions.Multiline;
-                                break;
-                            case 'n':
-                                config.RegexOptions ^= RegexOptions.ExplicitCapture;
-                                break;
-                            case 'r':
-                                config.RegexOptions ^= RegexOptions.RightToLeft;
-                                break;
-                            case 's':
-                                config.RegexOptions ^= RegexOptions.Singleline;
-                                break;
-                            case 'x':
-                                config.RegexOptions ^= RegexOptions.IgnorePatternWhitespace;
-                                break;
+                                // Handle 2-character flags.
+                                flag = t.Groups["flag"].Value[1];
+                                switch (flag)
+                                {
+                                // Mode-specific configuration
+                                case '_':
+                                    config.OmitEmpty = true;
+                                    break;
+                                // TODO: Conflicts with negative limits.
+                                case '-':
+                                    config.OmitGroups = true;
+                                    break;
+                                default:
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                // Handle 1-character flags.
+                                switch (flag)
+                                {
+                                // Parse RegexOptions
+                                case 'c':
+                                    config.RegexOptions |= RegexOptions.CultureInvariant;
+                                    break;
+                                case 'e':
+                                    config.RegexOptions |= RegexOptions.ECMAScript;
+                                    break;
+                                case 'i':
+                                    config.RegexOptions |= RegexOptions.IgnoreCase;
+                                    break;
+                                case 'm':
+                                    config.RegexOptions |= RegexOptions.Multiline;
+                                    break;
+                                case 'n':
+                                    config.RegexOptions |= RegexOptions.ExplicitCapture;
+                                    break;
+                                case 'r':
+                                    config.RegexOptions |= RegexOptions.RightToLeft;
+                                    break;
+                                case 's':
+                                    config.RegexOptions |= RegexOptions.Singleline;
+                                    break;
+                                case 'x':
+                                    config.RegexOptions |= RegexOptions.IgnorePatternWhitespace;
+                                    break;
 
-                            // Parse Mode
-                            case 'M':
-                                mode = Modes.Match;
-                                break;
-                            case 'R':
-                                mode = Modes.Replace;
-                                break;
-                            case 'G':
-                                mode = Modes.Grep;
-                                break;
-                            case 'A':
-                                mode = Modes.AntiGrep;
-                                break;
-                            case 'S':
-                                mode = Modes.Split;
-                                break;
-                            case 'T':
-                                mode = Modes.Transliterate;
-                                break;
-                            case 'O':
-                                mode = Modes.Sort;
-                                break;
-                            case 'D':
-                                mode = Modes.Deduplicate;
-                                break;
+                                // Parse custom regex modifiers
+                                case 'a':
+                                    config.Anchored = true;
+                                    break;
+                                case 'p':
+                                    config.UniqueMatches = UniqueMatches.KeepLast;
+                                    break;
+                                case 'q':
+                                    config.UniqueMatches = UniqueMatches.KeepFirst;
+                                    break;
+                                case 'v':
+                                    config.Overlaps = Overlaps.OverlappingSimple;
+                                    break;
+                                case 'w':
+                                    config.Overlaps = Overlaps.OverlappingAll;
+                                    break;
 
-                            // Global configuration
-                            case '.':
-                                silent = true;
-                                break;
+                                // Parse Mode
+                                case 'C':
+                                    mode = Modes.Count;
+                                    break;
+                                case 'M':
+                                    mode = Modes.Match;
+                                    break;
+                                case 'R':
+                                    mode = Modes.Replace;
+                                    break;
+                                case 'G':
+                                    mode = Modes.Grep;
+                                    break;
+                                case 'A':
+                                    mode = Modes.AntiGrep;
+                                    break;
+                                case 'S':
+                                    mode = Modes.Split;
+                                    break;
+                                case 'T':
+                                    mode = Modes.Transliterate;
+                                    break;
+                                case 'O':
+                                    mode = Modes.Sort;
+                                    break;
+                                case 'D':
+                                    mode = Modes.Deduplicate;
+                                    break;
 
-                            // Configuration for compound stages
-                            case '\\':
-                                config.TrailingLinefeed = true;
-                                break;
+                                // Global configuration
+                                case '.':
+                                    silent = true;
+                                    break;
 
-                            // General configuration for atomic stages
-                            case '&':
-                                config.Overlapping = true;
-                                break;
-                            case '=':
-                                config.Unique = true;
-                                break;
-                            case '$':
-                                config.UseSubstitution = true;
-                                break;
+                                // Flags affecting how subsequent lines are read
+                                case '$':
+                                    useSubstitution = true;
+                                    break;
 
-                            // Mode-specific configuration
-                            case '!':
-                                config.PrintMatches = true;
-                                break;
-                            case '_':
-                                config.OmitEmpty = true;
-                                break;
-                            // TODO: Conflicts with negative limits.
-                            case '-':
-                                config.OmitGroups = true;
-                                break;
-                            case '#':
-                                config.SortNumerically = true;
-                                break;
-                            case '^':
-                                config.SortReverse = true;
-                                break;
-                            default:
-                                break;
+                                // Configuration for compound stages
+                                case '\\':
+                                    config.TrailingLinefeed = true;
+                                    break;
+
+                                // General configuration for atomic stages
+                                case '&':
+                                    config.Random = true;
+                                    break;
+                                case '=':
+                                    config.InvertMatches = true;
+                                    break;
+                                case '^':
+                                    config.Reverse = true;
+                                    break;
+                                case '@':
+                                    config.InputAsRegex = true;
+                                    break;
+                                default:
+                                    break;
+                                }
                             }
                         }
                     }
@@ -308,43 +367,74 @@ namespace Retina
                     if (!terminated)
                         throw new Exception("Source contains only escaped backticks.");
                 }
+
+                if (mode == Modes.Replace)
+                    useSubstitution = true;
                 
                 Stage stage = null;
-                string replacement;
+                var patterns = new List<string>();
+                var substitutions = new List<string>();
+
+                patterns.Add(pattern);
+
+                string substitution = "$&";
+                if (mode == Modes.Replace || useSubstitution)
+                    substitution = i < sources.Count ? sources[i++] : "";
+                substitutions.Add(substitution);
+
+                if (Math.Abs(patternCount) > 1)
+                {
+                    if (config.InputAsRegex)
+                        throw new Exception("Can't use @ in conjunction with #.");
+
+                    config.Greedy = patternCount < 0;
+                    for (int k = 1; k < Math.Abs(patternCount); ++k)
+                    {
+                        if (i == sources.Count)
+                            throw new Exception("Not enough lines to reach pattern count");
+
+                        patterns.Add(sources[i++]);
+
+                        substitution = "$&";
+                        if (!config.InvertMatches && useSubstitution)
+                            substitution = i < sources.Count ? sources[i++] : "";
+                        substitutions.Add(substitution);
+                    }
+                }
+
+                string separatorSubstitution = "$&";
+
+                if (config.InvertMatches && useSubstitution)
+                    separatorSubstitution = i < sources.Count ? sources[i++] : "";
+
                 switch (mode)
                 {
+                case Modes.Count:
+                    stage = new CountStage(config, patterns, substitutions, separatorSubstitution);
+                    break;
                 case Modes.Match:
-                    stage = new MatchStage(config, pattern);
+                    stage = new MatchStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.Replace:
-                    replacement = i < sources.Count ? sources[i++] : "";
-                    stage = new ReplaceStage(config, pattern, replacement);
+                    stage = new ReplaceStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.Split:
-                    stage = new SplitStage(config, pattern);
+                    stage = new SplitStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.Grep:
-                    stage = new GrepStage(config, pattern);
+                    stage = new GrepStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.AntiGrep:
-                    stage = new AntiGrepStage(config, pattern);
+                    stage = new AntiGrepStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.Transliterate:
-                    stage = new TransliterateStage(config, pattern);
+                    stage = new TransliterateStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.Sort:
-                    if (config.UseSubstitution)
-                        replacement = i < sources.Count ? sources[i++] : "";
-                    else
-                        replacement = "$&";
-                    stage = new SortStage(config, pattern, replacement);
+                    stage = new SortStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 case Modes.Deduplicate:
-                    if (config.UseSubstitution)
-                        replacement = i < sources.Count ? sources[i++] : "";
-                    else
-                        replacement = "$&";
-                    stage = new DeduplicateStage(config, pattern, replacement);
+                    stage = new DeduplicateStage(config, patterns, substitutions, separatorSubstitution);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -354,12 +444,12 @@ namespace Retina
                     || i >= sources.Count && stageStack.Count > 1)
                 {
                     if (compoundStack.Count == 0)
-                        compoundStack.Push(new Tuple<char, Configuration>(')', new Configuration()));
+                        compoundStack.Push(new Tuple<char, Config>(')', new Config()));
 
                     var compoundStage = compoundStack.Pop();
 
                     char compoundType = compoundStage.Item1;
-                    Configuration compoundConfig = compoundStage.Item2;
+                    Config compoundConfig = compoundStage.Item2;
 
                     switch (compoundType)
                     {
@@ -410,21 +500,21 @@ namespace Retina
                 if (!(stages.Last() is OutputStage) && !silent)
                 {
                     Stage stage = stages.Last();
-                    stage = new OutputStage(new Configuration(), stage);
+                    stage = new OutputStage(new Config(), stage);
                     stages.RemoveAt(stages.Count - 1);
                     stages.Add(stage);
                 }
-                StageTree = new GroupStage(new Configuration(), stages);
+                StageTree = new GroupStage(new Config(), stages);
             }
         }
 
-        private static void InheritConfig(IList<Stage> stages, Configuration config)
+        private static void InheritConfig(IList<Stage> stages, Config config)
         {
             foreach (var stage in stages)
                 InheritConfig(stage, config);
         }
 
-        private static void InheritConfig(Stage stage, Configuration config)
+        private static void InheritConfig(Stage stage, Config config)
         {
             stage.Config.Inherit(config);
             if (stage is GroupStage)

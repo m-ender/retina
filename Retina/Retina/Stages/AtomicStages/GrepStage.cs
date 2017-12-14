@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Retina.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace Retina.Stages
 {
     class GrepStage : AtomicStage
     {
-        public GrepStage(Configuration config, string pattern) : base(config, pattern) { }
+        public GrepStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+            : base(config, patterns, substitutions, separatorSubstitution) { }
 
         protected override StringBuilder Process(string input, TextWriter output)
         {

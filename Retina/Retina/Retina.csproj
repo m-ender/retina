@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Limit.cs" />
-    <Compile Include="LimitFlags.cs" />
+    <Compile Include="Configuration\Overlaps.cs" />
+    <Compile Include="Configuration\Limit.cs" />
+    <Compile Include="Configuration\UniqueMatches.cs" />
+    <Compile Include="MatchContext.cs" />
     <Compile Include="Replace\NumberedGroup.cs" />
     <Compile Include="Replace\NamedGroup.cs" />
     <Compile Include="Replace\LastGroup.cs" />
@@ -57,18 +59,20 @@
     <Compile Include="Replace\Token.cs" />
     <Compile Include="Stages\AtomicStages\DeduplicateStage.cs" />
     <Compile Include="Stages\AtomicStages\AntiGrepStage.cs" />
+    <Compile Include="Stages\AtomicStages\CountStage.cs" />
     <Compile Include="Stages\AtomicStages\SortStage.cs" />
     <Compile Include="Stages\AtomicStages\TransliterateStage.cs" />
     <Compile Include="Stages\CompoundStages\DryRunStage.cs" />
     <Compile Include="Stages\CompoundStages\LoopStage.cs" />
+    <Compile Include="Stages\CompoundStages\MatchMaskStage.cs" />
     <Compile Include="Stages\CompoundStages\OutputStage.cs" />
     <Compile Include="Stages\CompoundStages\PerLineStage.cs" />
     <Compile Include="Stages\AtomicStage.cs" />
     <Compile Include="Stages\CompoundStages\GroupStage.cs" />
     <Compile Include="Stages\AtomicStages\GrepStage.cs" />
     <Compile Include="Stages\AtomicStages\MatchStage.cs" />
-    <Compile Include="Modes.cs" />
-    <Compile Include="Configuration.cs" />
+    <Compile Include="Configuration\Modes.cs" />
+    <Compile Include="Configuration\Config.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="Retina.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

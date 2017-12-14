@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Retina.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Retina.Stages
     {
         public Stage ChildStage { get; set; }
 
-        public PerLineStage(Configuration config, Stage childStage)
+        public PerLineStage(Config config, Stage childStage)
             : base(config)
         {
             ChildStage = childStage;

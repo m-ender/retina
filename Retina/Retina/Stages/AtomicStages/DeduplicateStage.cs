@@ -7,22 +7,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Retina.Replace;
 using System.IO;
+using Retina.Configuration;
 
 namespace Retina.Stages
 {
     class DeduplicateStage : AtomicStage
     {
-        string ReplacementString { get; set; }
-
-        public DeduplicateStage(Configuration config, string pattern, string replacement)
-            : base(config, pattern == "" ? ".+" : pattern)
-        {
-            ReplacementString = replacement;
-        }
+        public DeduplicateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+            : base(config, patterns, substitutions, separatorSubstitution) { }
 
         protected override StringBuilder Process(string input, TextWriter output)
         {
-            var replacer = new Replacer(Pattern, ReplacementString);
+            var replacer = new Replacer(Pattern, Substitution);
 
             int i = 0;
 

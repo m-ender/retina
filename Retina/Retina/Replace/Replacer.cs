@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Retina.Replace
 {
-    class Replacer
+    public class Replacer
     {
         public Regex Pattern { get; set; }
         public List<Token> Tokens { get; set; }

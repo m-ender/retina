@@ -7,22 +7,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Retina.Replace;
 using System.IO;
+using Retina.Configuration;
 
 namespace Retina.Stages
 {
     public class SortStage : AtomicStage
     {
-        string ReplacementString { get; set; }
-
-        public SortStage(Configuration config, string pattern, string replacement)
-            : base(config, pattern == "" ? ".+" : pattern)
-        {
-            ReplacementString = replacement;
-        }
+        public SortStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+            : base(config, patterns, substitutions, separatorSubstitution) { }
 
         protected override StringBuilder Process(string input, TextWriter output)
         {
-            var replacer = new Replacer(Pattern, ReplacementString);
+            var replacer = new Replacer(Pattern, Substitution);
 
             int i = 0;
 
@@ -58,7 +54,7 @@ namespace Retina.Stages
             else
                 sortedMatches = sortableMatches.OrderBy(m => replacer.Process(input, m), StringComparer.Ordinal);
 
-            if (Config.SortReverse)
+            if (Config.Reverse)
                 sortedMatches = sortedMatches.Reverse();
 
             var builder = new StringBuilder(delimiters[0]);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Retina.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Retina.Stages
     {
         public List<Stage> Stages { get; set; }
 
-        public GroupStage(Configuration config, List<Stage> stages) 
+        public GroupStage(Config config, List<Stage> stages) 
             : base(config)
         {
             Stages = stages;
