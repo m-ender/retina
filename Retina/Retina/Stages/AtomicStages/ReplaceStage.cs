@@ -1,47 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Retina.Replace;
 using System.IO;
 using Retina.Configuration;
+using Retina.Extensions;
 
 namespace Retina.Stages
 {
     public class ReplaceStage : AtomicStage
     {
-        public ReplaceStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
-            : base(config, patterns, substitutions, separatorSubstitution) { }
+        public ReplaceStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
+            : base(config, patterns, substitutions, separatorSubstitutionSource) { }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        protected override string Process(string input, TextWriter output)
         {
-            var replacer = new Replacer(Pattern, Substitution);
+            // TODO:
+            // - Potential further limits (on characters, I suppose)
+            // - Reverse option
+            // - Random option
+            
+            var separators = Separators.Select(s => s.Match.Value);
+            var matchReplacements = Matches.Select(s => s.Replacement);
 
-            var builder = new StringBuilder();
-
-            int i = 0;
-
-            IEnumerable<Match> matches = from Match m in Pattern.Matches(input)
-                                         orderby m.Index, m.Length
-                                         select m;
-
-            int j = 0;
-            foreach (Match m in matches)
-            {
-                builder.Append(input.Substring(i, m.Index - i));
-
-                if (!Config.GetLimit(0).IsInRange(j++, matches.Count()))
-                    builder.Append(m.Value);
-                else
-                    builder.Append(replacer.Process(input, m));
-                i = m.Index + m.Length;
-            }
-
-            builder.Append(input.Substring(i));
-
-            return builder;
+            return separators.Riffle(matchReplacements);
         }
     }
 }

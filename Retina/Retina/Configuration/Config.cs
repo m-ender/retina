@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Retina.Configuration
 {
@@ -47,10 +45,14 @@ namespace Retina.Configuration
         // Configuration for Output stages
         public bool TrailingLinefeed { get; set; }
         public bool PrintOnlyIfChanged { get; set; }
+        public bool PrePrint { get; set; }
 
         // Configuration for Split mode
         public bool OmitEmpty { get; set; }
         public bool OmitGroups { get; set; }
+
+        // Configuration for Sort mode
+        public bool SortNumerically { get; set; }
         
         public Config()
         {
@@ -74,6 +76,16 @@ namespace Retina.Configuration
         public Limit GetLimit(int i)
         {
             return i < Limits.Count ? Limits[i] : new Limit();
+        }
+
+        public string FormatAsList(IEnumerable list)
+        {
+            var builder = new StringBuilder();
+            builder.Append(ListStart);
+            builder.Append(String.Join(ListSeparator, list));
+            builder.Append(ListEnd);
+
+            return builder.ToString();
         }
     }
 }

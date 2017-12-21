@@ -1,11 +1,11 @@
 ﻿using Retina.Configuration;
+using Retina.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
@@ -16,7 +16,7 @@ namespace Retina.Stages
         private List<char?> From { get; set; }
         private List<char?> To { get; set; }
 
-        public TransliterateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
+        public TransliterateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
             : base(config)
         {
 
@@ -61,7 +61,7 @@ namespace Retina.Stages
 
             RegexSources = patterns;
             SubstitutionSources = substitutions;
-            SeparatorSubstitutionSource = separatorSubstitution;
+            SeparatorSubstitutionSource = separatorSubstitutionSource;
         }
 
         private char ParseCharacterToken(string token)
@@ -183,44 +183,38 @@ namespace Retina.Stages
             return remainder;
         }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        protected override string Process(string input, TextWriter output)
         {
-            var builder = new StringBuilder();
+            int overallChr = 0;
 
-            int i = 0;
-
-            var matches = Pattern.Matches(input).Cast<Match>();
-            if (Pattern.Options.HasFlag(RegexOptions.RightToLeft))
-                matches = matches.Reverse();
-
-            int j = 0;
-            foreach (Match m in matches)
+            var values = Matches.Select(m =>
             {
-                builder.Append(input.Substring(i, m.Index-i));
-                if (!Config.GetLimit(0).IsInRange(j++, matches.Count()))
-                    builder.Append(m.Value);
-                else
+                var builder = new StringBuilder();
+                int chr = 0;
+                foreach (char c in m.Replacement)
                 {
-                    int p = 0;
-                    foreach (char c in m.Value)
+                    int k = From.IndexOf(c);
+                    if (k < 0
+                        || !Config.GetLimit(1).IsInRange(chr, m.Replacement.Length)
+                        || !Config.GetLimit(2).IsInRange(overallChr, m.Replacement.Length))
                     {
-                        int k = From.IndexOf(c);
-                        if (k < 0 || !Config.GetLimit(1).IsInRange(p++, m.Length))
-                            builder.Append(c);
-                        else
-                        {
-                            char? target = To[Math.Min(To.Count - 1, k)];
-                            if (target != null)
-                                builder.Append(target);
-                        }
+                        builder.Append(c);
                     }
+                    else
+                    {
+                        char? target = To[Math.Min(To.Count - 1, k)];
+                        if (target != null)
+                            builder.Append(target);
+                    }
+                    ++chr;
+                    ++overallChr;
                 }
-                i = m.Index + m.Length;
-            }
+                return builder.ToString();
+            });
 
-            builder.Append(input.Substring(i));
+            var separators = Separators.Select(s => s.Match.Value);
 
-            return builder;
+            return separators.Riffle(values);
         }
     }
 }

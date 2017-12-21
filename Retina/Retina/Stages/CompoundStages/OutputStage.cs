@@ -20,16 +20,27 @@ namespace Retina.Stages
 
         public override string Execute(string input, TextWriter output)
         {
-            string result = ChildStage.Execute(input, output);
-
-            if (!Config.PrintOnlyIfChanged || input != result)
+            if (Config.PrePrint)
             {
-                output.Write(result);
+                output.Write(input);
                 if (Config.TrailingLinefeed)
                     output.Write("\n");
-            }
 
-            return result;
+                return ChildStage.Execute(input, output);
+            }
+            else
+            {
+                string result = ChildStage.Execute(input, output);
+
+                if (!Config.PrintOnlyIfChanged || input != result)
+                {
+                    output.Write(result);
+                    if (Config.TrailingLinefeed)
+                        output.Write("\n");
+                }
+
+                return result;
+            }
         }
     }
 }

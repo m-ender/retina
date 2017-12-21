@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Retina.Stages;
 using Retina.Configuration;
 
@@ -94,16 +92,20 @@ namespace Retina
                                                             # the current one to modify its behavior.
                             [+%*]
                         |
-                            (?=[:;\\])                      # Output stages can be introduced with either : or ; (print only if
+                            (?=[<>;\\])                     # Output stages can be introduced with <, >, or ; (post-print only if
                                                             # changed), and take an optional parameter \, indicating that a
                                                             # trailing linefeed should be printed. \ on its own is also valid as
-                                                            # a shorthand for :\.
+                                                            # a shorthand for >\.
                             (?<compoundOutput>
                                 (?<printOnlyIfChanged>)
                                 ;
                                 (?<trailingLF>\\)?
                             |
-                                :?
+                                (?<prePrint>)
+                                <
+                                (?<trailingLF>\\)?
+                            |
+                                >?
                                 (?<trailingLF>\\)?
                             )
                         )
@@ -216,7 +218,8 @@ namespace Retina
                             {
                                 config.PrintOnlyIfChanged = t.Groups["printOnlyIfChanged"].Success;
                                 config.TrailingLinefeed = t.Groups["trailingLF"].Success;
-                                compoundStack.Push(new Tuple<char, Config>(':', config));
+                                config.PrePrint = t.Groups["prePrint"].Success;
+                                compoundStack.Push(new Tuple<char, Config>('>', config));
                             }
                             else
                             {
@@ -322,7 +325,12 @@ namespace Retina
                                 case 'T':
                                     mode = Modes.Transliterate;
                                     break;
+                                case 'N':
+                                    config.SortNumerically = true;
+                                    mode = Modes.Sort;
+                                    break;
                                 case 'O':
+                                    config.SortNumerically = false;
                                     mode = Modes.Sort;
                                     break;
                                 case 'D':
@@ -378,7 +386,7 @@ namespace Retina
                 patterns.Add(pattern);
 
                 string substitution = "$&";
-                if (mode == Modes.Replace || useSubstitution)
+                if (!config.InvertMatches && useSubstitution)
                     substitution = i < sources.Count ? sources[i++] : "";
                 substitutions.Add(substitution);
 
@@ -402,39 +410,39 @@ namespace Retina
                     }
                 }
 
-                string separatorSubstitution = "$&";
+                string separatorSubstitutionSource = "$&";
 
                 if (config.InvertMatches && useSubstitution)
-                    separatorSubstitution = i < sources.Count ? sources[i++] : "";
+                    separatorSubstitutionSource = i < sources.Count ? sources[i++] : "";
 
                 switch (mode)
                 {
                 case Modes.Count:
-                    stage = new CountStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new CountStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Match:
-                    stage = new MatchStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new MatchStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Replace:
-                    stage = new ReplaceStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new ReplaceStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Split:
-                    stage = new SplitStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new SplitStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Grep:
-                    stage = new GrepStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new GrepStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.AntiGrep:
-                    stage = new AntiGrepStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new AntiGrepStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Transliterate:
-                    stage = new TransliterateStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new TransliterateStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Sort:
-                    stage = new SortStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new SortStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Deduplicate:
-                    stage = new DeduplicateStage(config, patterns, substitutions, separatorSubstitution);
+                    stage = new DeduplicateStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -471,7 +479,7 @@ namespace Retina
                                 compoundStack.Push(compound);
                         
                         break;
-                    case ':':
+                    case '>':
                         InheritConfig(stage, compoundConfig);
                         stage = new OutputStage(compoundConfig, stage);
                         break;

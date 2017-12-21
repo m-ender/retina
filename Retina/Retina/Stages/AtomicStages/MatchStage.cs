@@ -1,11 +1,7 @@
 ﻿using Retina.Configuration;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
@@ -16,7 +12,11 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            return String.Join("\n", Matches.Select(m => m.Match.Value));
+            // TODO:
+            // - Potential further limits (on characters, I suppose)
+            // - Reverse option
+            // - Random option
+            return Config.FormatAsList(Matches.Select(m => m.Replacement));
         }
     }
 }

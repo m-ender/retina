@@ -3,43 +3,40 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Retina.Stages
 {
     class AntiGrepStage : AtomicStage
     {
-        public AntiGrepStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution) 
-            : base(config, patterns, substitutions, separatorSubstitution) { }
+        public AntiGrepStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource) 
+            : base(config, patterns, substitutions, separatorSubstitutionSource) { }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        protected override string Process(string input, TextWriter output)
         {
-            var stringReader = new StringReader(input);
+            // TODO:
+            // - Reverse?
+            // - Random?
+            // - Maybe limit on final lines.
+            // - Maybe an option to use a different line separator.
 
-            var builder = new StringBuilder();
+            var values = Matches.Select(s => s.Replacement);
 
-            var lines = input.Split(new[] { '\n' });
-            var matches = lines.Select(line => Pattern.IsMatch(line)).ToList();
+            List<string> separators = Separators.Select(s => s.Match.Value).ToList();
 
-            var matchCount = matches.Count(isMatch => isMatch);
+            // Effectively surround the input with a pair of linefeeds, so that all
+            // lines are surrounded by linefeeds on both ends.
+            separators[0] = "\n" + separators[0];
+            separators[separators.Count - 1] += "\n";
 
-            bool first = true;
-            int i = 0;
-            int j = 0;
-            foreach (var line in lines)
-            {
-                if (!(matches[i] && Config.GetLimit(0).IsInRange(j++, matchCount)))
-                {
-                    if (!first) builder.Append("\n");
-                    first = false;
-                    builder.Append(line);
-                }
-                ++i;
-            }
+            // Any line that appears at the boundary of a separator was touched by a match,
+            // so we remove it.
+            var greppedSeparators = separators.Select(s => new Regex(@"^.+|.+\z").Replace(s, ""));
 
-            return builder;
+            var result = String.Join("", greppedSeparators);
+
+            // Discard the linefeeds we inserted earlier.
+            return result.Substring(1, result.Length - 2);
         }
     }
 }

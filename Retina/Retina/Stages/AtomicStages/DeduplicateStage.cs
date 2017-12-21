@@ -1,77 +1,35 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Retina.Replace;
 using System.IO;
 using Retina.Configuration;
+using Retina.Extensions;
 
 namespace Retina.Stages
 {
     class DeduplicateStage : AtomicStage
     {
-        public DeduplicateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitution)
-            : base(config, patterns, substitutions, separatorSubstitution) { }
+        public DeduplicateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
+            : base(config, patterns, substitutions, separatorSubstitutionSource) { }
 
-        protected override StringBuilder Process(string input, TextWriter output)
+        protected override string Process(string input, TextWriter output)
         {
-            var replacer = new Replacer(Pattern, Substitution);
-
-            int i = 0;
-
-            IEnumerable<Match> matches = from Match m in Pattern.Matches(input)
-                                         orderby m.Index, m.Length
-                                         select m;
-
-            var delimiters = new List<string>();
-            var matchStrings = new List<string>();
-            var testStrings = new List<string>();
-
-            int j = 0;
-            foreach (Match m in matches)
-            {
-                if (Config.GetLimit(0).IsInRange(j++, matches.Count()))
-                {
-                    delimiters.Add(input.Substring(i, m.Index - i));
-
-                    matchStrings.Add(m.Value);
-                    testStrings.Add(replacer.Process(input, m));
-
-                    i = m.Index + m.Length;
-                }
-            }
-
-            delimiters.Add(input.Substring(i));
-
+            // TODO:
+            // - Reverse option
+            // - Random option?
+            // - Maybe a numeric parameter to keep multiple copies?
             var stringSet = new HashSet<string>();
 
-            BitArray keep = new BitArray(testStrings.Count);
+            var values = Matches.Select(m =>
+                {
+                    var result = stringSet.Contains(m.Replacement) ? "" : m.Match.Value;
+                    stringSet.Add(m.Replacement);
+                    return result;
+                });
 
-            bool rtl = Config.RegexOptions.HasFlag(RegexOptions.RightToLeft);
-            int start = rtl ? testStrings.Count - 1 : 0;
-            int end = rtl ? -1 : testStrings.Count;
-            int step = rtl ? -1 : 1;
+            var separators = Separators.Select(s => s.Match.Value);
 
-            for (int k = start; k != end; k += step)
-            {
-                keep[k] = !stringSet.Contains(testStrings[k]);
-                stringSet.Add(testStrings[k]);
-            }
 
-            var builder = new StringBuilder(delimiters[0]);
-
-            j = 0;
-            foreach (string m in matchStrings)
-            {
-                if (keep[j])
-                    builder.Append(m);
-                builder.Append(delimiters[++j]);
-            }
-
-            return builder;
+            return separators.Riffle(values);
         }
     }
 }
