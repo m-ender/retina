@@ -64,6 +64,7 @@
     <Compile Include="GroupTest.cs" />
     <Compile Include="LoopTest.cs" />
     <Compile Include="OutputStageTest.cs" />
+    <Compile Include="CountStageTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Retina\Retina.csproj">

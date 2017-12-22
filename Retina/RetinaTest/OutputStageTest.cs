@@ -38,14 +38,14 @@ namespace RetinaTest
             // : on the last stage should be swallowed by implicit print.
             AssertProgram(new TestSuite
             {
-                Sources = { "G`", ":G`" },
+                Sources = { "G`", ">G`" },
                 TestCases = { { "Hello, World!", "Hello, World!" } }
             });
 
             // : anywhere else should print the intermediate result of that stage
             AssertProgram(new TestSuite
             {
-                Sources = { ":O`.", "G`" },
+                Sources = { ">O`.", "G`" },
                 TestCases = { { "Hello, World!", " !,HWdellloor !,HWdellloor" } }
             });
         }
@@ -136,12 +136,12 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"G`", @"::G`" },
+                Sources = { @"G`", @">>G`" },
                 TestCases = { { "Hello, World!", "Hello, World!Hello, World!" } }
             });
             AssertProgram(new TestSuite
             {
-                Sources = { @"::G`", @"G`" },
+                Sources = { @">>G`", @"G`" },
                 TestCases = { { "Hello, World!", "Hello, World!Hello, World!Hello, World!" } }
             });
         }

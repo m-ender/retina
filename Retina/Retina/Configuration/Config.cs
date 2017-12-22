@@ -78,7 +78,7 @@ namespace Retina.Configuration
             return i < Limits.Count ? Limits[i] : new Limit();
         }
 
-        public string FormatAsList(IEnumerable list)
+        public string FormatAsList(IEnumerable<string> list)
         {
             var builder = new StringBuilder();
             builder.Append(ListStart);

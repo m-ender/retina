@@ -25,17 +25,17 @@ namespace RetinaTest
         [TestMethod]
         public void TestWithoutCapturingGroups()
         {
-            AssertProgram(new TestSuite { Sources = { @"S-`(\W)+" }, TestCases = { { "Hello, World!", "Hello\nWorld\n" } } });
-            AssertProgram(new TestSuite { Sources = { @"S-`(.o)(.)" }, TestCases = { { "Hello, World!", "Hel\n \nld!" } } });
-            AssertProgram(new TestSuite { Sources = { @"S-`(\b|l)" }, TestCases = { { "Hello, World!", "\nHe\n\no\n, \nWor\nd\n!" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!-`(\W)+" }, TestCases = { { "Hello, World!", "Hello\nWorld\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!-`(.o)(.)" }, TestCases = { { "Hello, World!", "Hel\n \nld!" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!-`(\b|l)" }, TestCases = { { "Hello, World!", "\nHe\n\no\n, \nWor\nd\n!" } } });
         }
 
         [TestMethod]
         public void TestWithoutEmptySegments()
         {
-            AssertProgram(new TestSuite { Sources = { @"S_`(\W)+" }, TestCases = { { "Hello, World!", "Hello\n \nWorld\n!" } } });
-            AssertProgram(new TestSuite { Sources = { @"S_`(.o)(.)" }, TestCases = { { "Hello, World!", "Hel\nlo\n,\n \nWo\nr\nld!" } } });
-            AssertProgram(new TestSuite { Sources = { @"S_`(\b|l)" }, TestCases = { { "Hello, World!", "\nHe\nl\nl\no\n\n, \n\nWor\nl\nd\n\n!" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!_`(\W)+" }, TestCases = { { "Hello, World!", "Hello\n \nWorld\n!" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!_`(.o)(.)" }, TestCases = { { "Hello, World!", "Hel\nlo\n,\n \nWo\nr\nld!" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!_`(\b|l)" }, TestCases = { { "Hello, World!", "\nHe\nl\nl\no\n\n, \n\nWor\nl\nd\n\n!" } } });
         }
     }
 }

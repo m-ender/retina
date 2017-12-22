@@ -27,16 +27,16 @@ namespace RetinaTest
         }
 
         [TestMethod]
-        public void TestNumericalSorting()
+        public void TestNumericSorting()
         {
-            AssertProgram(new TestSuite { Sources = { "O#`.+" }, TestCases = { { "15ABC\nA1B16\nab0\n-a2bc\n-1xyz\nX-24YZ", "X-24YZ\n-1xyz\nab0\nA1B16\n-a2bc\n15ABC" } } });
-            AssertProgram(new TestSuite { Sources = { "O#`." }, TestCases = { { "06*/50,(3-", "0*/0,(-356" } } });
+            AssertProgram(new TestSuite { Sources = { "N`.+" }, TestCases = { { "15ABC\nA1B16\nab0\n-a2bc\n-1xyz\nX-24YZ", "X-24YZ\n-1xyz\nab0\nA1B16\n-a2bc\n15ABC" } } });
+            AssertProgram(new TestSuite { Sources = { "N`." }, TestCases = { { "06*/50,(3-", "0*/0,(-356" } } });
         }
 
         [TestMethod]
         public void TestSubstitution()
         {
-            AssertProgram(new TestSuite { Sources = { "O$#`.+", "$.&" }, TestCases = { { "ABC\nAB\nab\nabc\nxyz\nXYZ", "AB\nab\nABC\nabc\nxyz\nXYZ" } } });
+            AssertProgram(new TestSuite { Sources = { "N$`.+", "$.&" }, TestCases = { { "ABC\nAB\nab\nabc\nxyz\nXYZ", "AB\nab\nABC\nabc\nxyz\nXYZ" } } });
             AssertProgram(new TestSuite { Sources = { "O$`.(.)", "$1" }, TestCases = { { "J(EM-+Fq_wW,CVDF|%9Q", "|%J(-+W,DFEM9QCVFq_w" } } });
         }
     }

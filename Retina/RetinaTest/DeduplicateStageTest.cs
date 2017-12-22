@@ -16,8 +16,8 @@ namespace RetinaTest
         [TestMethod]
         public void TestRTLMatching()
         {
-            AssertProgram(new TestSuite { Sources = { @"Dr`." }, TestCases = { { "abacbcedef", "abcdef" } } });
-            AssertProgram(new TestSuite { Sources = { @"Dr`\w+" }, TestCases = { { "abc def abc ab ghi def", "  abc ab ghi def" } } });
+            AssertProgram(new TestSuite { Sources = { @"Dr`." }, TestCases = { { "abacbcedef", "abcedf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Dr`\w+" }, TestCases = { { "abc def abc ab ghi def", "abc def  ab ghi " } } });
         }
 
         [TestMethod]

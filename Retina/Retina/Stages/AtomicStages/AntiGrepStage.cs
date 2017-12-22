@@ -31,12 +31,17 @@ namespace Retina.Stages
 
             // Any line that appears at the boundary of a separator was touched by a match,
             // so we remove it.
-            var greppedSeparators = separators.Select(s => new Regex(@"^.+|.+\z").Replace(s, ""));
+            // This always discards the leading dummy line, but keeps the trailing dummy line.
+            var greppedSeparators = separators.Select(s => new Regex(@"^.*\n|.*\z").Replace(s, ""));
 
             var result = String.Join("", greppedSeparators);
 
-            // Discard the linefeeds we inserted earlier.
-            return result.Substring(1, result.Length - 2);
+            // Discard the trailing dummy line unless it's the only one left
+            // (a single empty line is not distinguishable from zero empty lines).
+            if (result.Length > 0)
+                return result.Substring(0, result.Length - 1);
+            else
+                return "";
         }
     }
 }

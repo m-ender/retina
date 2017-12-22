@@ -18,7 +18,30 @@ namespace Retina.Stages
             // - Random option?
             // - OmitGroups (or rather, include them in the first place)
             // - OmitEmpty
-            return Config.FormatAsList(Separators.Select(s => s.Replacement));
+            var result = new List<string>();
+
+            for (int i = 0; i < Separators.Count; ++i)
+            {
+                var sep = Separators[i].Match.Value;
+                if (!Config.OmitEmpty || sep != "")
+                    result.Add(sep);
+
+                if (i == Matches.Count)
+                    break;
+                
+                if (!Config.OmitGroups)
+                {
+                    var match = Matches[i].Match;
+                    var groups = Matches[i].Regex.GetGroupNumbers().Skip(1);
+
+                    foreach (var num in groups)
+                        if (match.Groups[num].Success && Config.GetLimit(2).IsInRange(num - 1, groups.Last()))
+                            result.Add(match.Groups[num].Value);
+                }
+
+            }
+
+            return Config.FormatAsList(result);
         }
     }
 }

@@ -7,44 +7,11 @@ namespace RetinaTest
     public class MatchStageTest : RetinaTestBase
     {
         [TestMethod]
-        public void TestBasicCounting()
-        {
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"\w+" },
-                TestCases = {
-                    { "Hello, World!", "2" },
-                    { "(~^.^)~", "0" },
-                    { "ab cd ef gh ij kl mn op qr st uv wx yz", "13" },
-                }
-            });
-
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"" },
-                TestCases = {
-                    { "", "1" },
-                    { "abc", "4" },
-                }
-            });
-
-            AssertProgram(new TestSuite
-            {
-                Sources = { @".*" },
-                TestCases = {
-                    { "", "1" },
-                    { "abc", "2" },
-                    { "abc\n\ndef", "5" },
-                }
-            });
-        }
-
-        [TestMethod]
         public void TestBasicPrinting()
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"!`\w+" },
+                Sources = { @"M`\w+" },
                 TestCases = {
                     { "abc!", "abc" },
                     { "Hello, World!", "Hello\nWorld" },
@@ -54,7 +21,7 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"!`\b\w*" },
+                Sources = { @"M`\b\w*" },
                 TestCases = {
                     { "abc!", "abc\n" },
                     { "Hello, World!", "Hello\n\nWorld\n" },
@@ -68,20 +35,20 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"r!`\w+" },
+                Sources = { @"Mr`\w+" },
                 TestCases = {
                     { "abc!", "abc" },
-                    { "Hello, World!", "World\nHello" },
+                    { "Hello, World!", "Hello\nWorld" },
                     { "(~^.^)~", "" },
                 }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"r!`\w*\b" },
+                Sources = { @"Mr`\w*\b" },
                 TestCases = {
-                    { "abc!", "abc\n" },
-                    { "Hello, World!", "World\n\nHello\n" },
+                    { "abc!", "\nabc" },
+                    { "Hello, World!", "\nHello\n\nWorld" },
                     { "(~^.^)~", "" },
                 }
             });
@@ -90,15 +57,18 @@ namespace RetinaTest
         [TestMethod]
         public void TestUniqueMatches()
         {
-            AssertProgram(new TestSuite { Sources = { @"!=`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"r!=`." }, TestCases = { { "abacbcedef", "f\ne\nd\nc\nb\na" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mq`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mp`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mqr`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mpr`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
         }
 
         [TestMethod]
         public void TestOverlappingMatches()
         {
-            AssertProgram(new TestSuite { Sources = { @"!&`.+" }, TestCases = { { "abcd", "abcd\nbcd\ncd\nd" } } });
-            AssertProgram(new TestSuite { Sources = { @"r!&`.+" }, TestCases = { { "abcd", "abcd\nabc\nab\na" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mv`.+" }, TestCases = { { "abcd", "abcd\nbcd\ncd\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mrv`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mw`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd\nb\nbc\nbcd\nc\ncd\nd" } } });
         }
     }
 }

@@ -34,6 +34,9 @@ namespace Retina.Stages
 
         public override string Execute(string input, TextWriter output)
         {
+            Matches = new List<MatchContext>();
+            Separators = new List<MatchContext>();
+
             if (Config.InputAsRegex)
             {
                 // Swap input with first regex. There should be only one regex anyway.
@@ -137,7 +140,7 @@ namespace Retina.Stages
                     {
                         for (int length = 0; length <= input.Length - startPos; ++length)
                         {
-                            var matchContext = GetMatch(input, startPos);
+                            var matchContext = GetMatch(input, startPos, length);
                             if (matchContext.Match.Success)
                                 RecordMatch(matchContext);
                         }
@@ -149,7 +152,7 @@ namespace Retina.Stages
                     {
                         for (int length = 0; length <= startPos; ++length)
                         {
-                            var matchContext = GetMatch(input, startPos);
+                            var matchContext = GetMatch(input, startPos, length);
                             if (matchContext.Match.Success)
                                 RecordMatch(matchContext);
                         }
@@ -166,7 +169,7 @@ namespace Retina.Stages
         {
             Limit matchLimit = Config.GetLimit(0);
             int matchCount = Matches.Count;
-            for (int i = matchCount; i >= 0; --i)
+            for (int i = matchCount-1; i >= 0; --i)
                 if (!matchLimit.IsInRange(i, matchCount))
                     Matches.RemoveAt(i);
         }
@@ -342,7 +345,7 @@ namespace Retina.Stages
             }
         }
 
-        private string WrapRegex (string pattern, string prefix, string suffix)
+        private string WrapRegex (string prefix, string pattern, string suffix)
         {
             return String.Format(
                 "{0}(?:{1}{2}){3}",

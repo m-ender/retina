@@ -14,22 +14,23 @@ namespace Retina.Extensions
             using (var value = values.GetEnumerator())
             using (var separator = separators.GetEnumerator())
             {
-                if (value.MoveNext())
+                if (!value.MoveNext())
+                    return "";
+
+                result.Append(value.Current);
+
+                while (value.MoveNext())
                 {
-                    result.Append(value.Current);
+                    if (!separator.MoveNext())
+                        throw new ArgumentException("There are not enough separators!");
 
-                    while (value.MoveNext())
-                    {
-                        if (!separator.MoveNext())
-                            throw new ArgumentException("There are not enough separators!");
-
-                        result.Append(separator.Current)
-                              .Append(value.Current);
-                    }
-
-                    if (separator.MoveNext())
-                        throw new ArgumentException("There are too many separators!");
+                    result.Append(separator.Current)
+                          .Append(value.Current);
                 }
+
+                if (separator.MoveNext())
+                    throw new ArgumentException("There are too many separators!");
+
             }
 
             return result.ToString();
