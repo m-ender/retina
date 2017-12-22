@@ -196,7 +196,7 @@ namespace Retina.Stages
                     int k = From.IndexOf(c);
                     if (k < 0
                         || !Config.GetLimit(1).IsInRange(chr, m.Replacement.Length)
-                        || !Config.GetLimit(2).IsInRange(overallChr, m.Replacement.Length))
+                        || !Config.GetLimit(2).IsInRange(overallChr, input.Length))
                     {
                         builder.Append(c);
                     }
