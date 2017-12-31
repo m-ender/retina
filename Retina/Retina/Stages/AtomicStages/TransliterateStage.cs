@@ -1,5 +1,4 @@
 ﻿using Retina.Configuration;
-using Retina.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -185,36 +184,39 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            int overallChr = 0;
+            var mutableInput = new StringBuilder(input);
+            var toDelete = new HashSet<int>();
 
-            var values = Matches.Select(m =>
+            Matches.ForEach(m =>
             {
-                var builder = new StringBuilder();
-                int chr = 0;
-                foreach (char c in m.Replacement)
+                for (int i = 0; i < m.Match.Length; ++i)
                 {
-                    int k = From.IndexOf(c);
+                    int iStr = i + m.Match.Index;
+
+                    int k = From.IndexOf(mutableInput[iStr]);
                     if (k < 0
-                        || !Config.GetLimit(1).IsInRange(chr, m.Replacement.Length)
-                        || !Config.GetLimit(2).IsInRange(overallChr, input.Length))
+                     || !Config.GetLimit(1).IsInRange(i, m.Match.Length)
+                     || !Config.GetLimit(2).IsInRange(iStr, input.Length))
                     {
-                        builder.Append(c);
+                        continue;
                     }
+
+                    char? target = To[Math.Min(To.Count - 1, k)];
+                    if (target == null)
+                        toDelete.Add(iStr);
                     else
-                    {
-                        char? target = To[Math.Min(To.Count - 1, k)];
-                        if (target != null)
-                            builder.Append(target);
-                    }
-                    ++chr;
-                    ++overallChr;
+                        mutableInput[iStr] = (char)target;
                 }
-                return builder.ToString();
             });
 
-            var separators = Separators.Select(s => s.Match.Value);
+            var sortedDeletions = toDelete.ToList();
+            sortedDeletions.Sort();
+            sortedDeletions.Reverse();
 
-            return separators.Riffle(values);
+            foreach (int i in sortedDeletions)
+                mutableInput.Remove(i, 1);
+
+            return mutableInput.ToString();
         }
     }
 }
