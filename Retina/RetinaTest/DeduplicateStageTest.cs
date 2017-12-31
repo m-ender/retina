@@ -25,5 +25,13 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite { Sources = { @"D$`(\w)\w*", "$1" }, TestCases = { { "abc def abc ab ghi def", "abc def   ghi " } } });
         }
+
+        [TestMethod]
+        public void TestDefaultRegex()
+        {
+            AssertProgram(new TestSuite { Sources = { @"D`" }, TestCases = { { "abc\ndef\nabc\nab\nghi\ndef", "abc\ndef\n\nab\nghi\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"Dr`" }, TestCases = { { "abc\ndef\nabc\nab\nghi\ndef", "abc\ndef\n\nab\nghi\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"D$`", "$.&" }, TestCases = { { "abc\ndef\nabc\nab\nghi\ndef", "abc\n\n\nab\n\n" } } });
+        }
     }
 }

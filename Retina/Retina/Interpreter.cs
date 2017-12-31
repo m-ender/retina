@@ -415,6 +415,24 @@ namespace Retina
                 if (config.InvertMatches && useSubstitution)
                     separatorSubstitutionSource = i < sources.Count ? sources[i++] : "";
 
+                if (!config.InvertMatches
+                 && patternCount == 1 
+                 && patterns[0] == "")
+                {
+                    switch (mode)
+                    {
+                    case Modes.Deduplicate:
+                        patterns[0] = "(?m:^.*$)";
+                        break;
+                    case Modes.Sort:
+                        patterns[0] = "(?m:^.*$)";
+                        break;
+                    case Modes.Transliterate:
+                        patterns[0] = @"\A(?s:.*)\z";
+                        break;
+                    }
+                }
+
                 switch (mode)
                 {
                 case Modes.Count:
