@@ -139,7 +139,7 @@ namespace Retina.Replace
                     else
                         lastToken = new EntireMatch();
 
-                    char character = t.Groups["repeat"].Length > 0 ? t.Groups["repeat"].Value[0] : '1';
+                    char character = t.Groups["repeat"].Length > 0 ? t.Groups["repeat"].Value[0] : '_';
                     Tokens.Add(new Repetition(character, lastToken));
                 }
                 else

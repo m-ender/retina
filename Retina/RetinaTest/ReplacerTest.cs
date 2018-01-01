@@ -242,10 +242,10 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { ".+", "2$*3$*_" }, TestCases = { { "abc", "_________________________________" } } }); // 2 --> 33 --> thirty-three underscores
             AssertProgram(new TestSuite { Sources = { ".+", "2$*_$*1" }, TestCases = { { "abc", "" } } });
 
-            // $* as the first token implies $&. $* as the last token implies 1.
+            // $* as the first token implies $&. $* as the last token implies _.
             AssertProgram(new TestSuite { Sources = { "(.).+", "$*:" }, TestCases = { { "10!", "::::::::::" } } });
-            AssertProgram(new TestSuite { Sources = { ".+", "5$*" }, TestCases = { { "a3c", "11111" } } });
-            AssertProgram(new TestSuite { Sources = { "(.).+", "$*" }, TestCases = { { "10!", "1111111111" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "5$*" }, TestCases = { { "a3c", "_____" } } });
+            AssertProgram(new TestSuite { Sources = { "(.).+", "$*" }, TestCases = { { "10!", "__________" } } });
         }
 
         [TestMethod]
