@@ -15,11 +15,13 @@ namespace Retina.Stages
         {
             // TODO:
             // - Potential further limits (on characters, I suppose)
-            // - Reverse option
             // - Random option
             
             var separators = Separators.Select(s => s.Match.Value);
             var matchReplacements = Matches.Select(s => s.Replacement);
+
+            if (Config.Reverse)
+                matchReplacements = matchReplacements.Reverse();
 
             return separators.Riffle(matchReplacements);
         }

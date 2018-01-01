@@ -38,5 +38,13 @@ namespace RetinaTest
                 }
             });
         }
+
+        [TestMethod]
+        public void TestOverlappingMatches()
+        {
+            AssertProgram(new TestSuite { Sources = { @"Cv`.+" }, TestCases = { { "abcd", "4" } } });
+            AssertProgram(new TestSuite { Sources = { @"Cw`.+" }, TestCases = { { "abcd", "10" } } });
+            AssertProgram(new TestSuite { Sources = { @"Cw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "6" } } });
+        }
     }
 }
