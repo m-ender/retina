@@ -67,7 +67,8 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"Mrv`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd" } } });
             AssertProgram(new TestSuite { Sources = { @"Mw`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd\nb\nbc\nbcd\nc\ncd\nd" } } });
             AssertProgram(new TestSuite { Sources = { @"Mrw`.+" }, TestCases = { { "abcd", "a\nab\nb\nabc\nbc\nc\nabcd\nbcd\ncd\nd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh", "cd\ncd2ef\nef" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "cd\ncd2ef\ncd2ef3gh\nef\nef3gh\ngh" } } });
+            AssertProgram(new TestSuite { Sources = { @"Mrw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "cd\ncd2ef\nef\ncd2ef3gh\nef3gh\ngh" } } });
         }
     }
 }
