@@ -33,7 +33,7 @@ namespace Retina.Configuration
         // How to treat repeated matches.
         public UniqueMatches UniqueMatches { get; set; }
         // Require the regex to cover the entire input.
-        public bool Anchored { get; set; }
+        public Anchoring Anchoring { get; set; }
 
         // General options which are interpreted differently by various stage types.
         public bool Reverse { get; set; }

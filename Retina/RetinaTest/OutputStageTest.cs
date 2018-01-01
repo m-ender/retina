@@ -35,18 +35,30 @@ namespace RetinaTest
         [TestMethod]
         public void TestExplicitOutput()
         {
-            // : on the last stage should be swallowed by implicit print.
+            // > on the last stage should be swallowed by implicit print.
             AssertProgram(new TestSuite
             {
                 Sources = { "G`", ">G`" },
                 TestCases = { { "Hello, World!", "Hello, World!" } }
             });
 
-            // : anywhere else should print the intermediate result of that stage
+            // > anywhere else should print the intermediate result of that stage
             AssertProgram(new TestSuite
             {
                 Sources = { ">O`.", "G`" },
                 TestCases = { { "Hello, World!", " !,HWdellloor !,HWdellloor" } }
+            });
+        }
+
+        [TestMethod]
+        public void TestPrePrint()
+        {
+            // < prints before the stage changes the string and does not replace
+            // the implicit output.
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"<`\W", "" },
+                TestCases = { { "Hello, World!", "Hello, World!HelloWorld" } }
             });
         }
 
@@ -81,20 +93,7 @@ namespace RetinaTest
         [TestMethod]
         public void TestTrailingLinefeed()
         {
-            // :\
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"G`", @":\G`" },
-                TestCases = { { "Hello, World!", "Hello, World!\n" } }
-            });
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"G`", @"\G`" },
-                TestCases = { { "Hello, World!", "Hello, World!\n" } }
-            });
-
-
-            // \ as a shorthand for :\
+            // >\
             AssertProgram(new TestSuite
             {
                 Sources = { @":\G`", @"G`" },
@@ -102,8 +101,28 @@ namespace RetinaTest
             });
             AssertProgram(new TestSuite
             {
+                Sources = { @"G`", @":\G`" },
+                TestCases = { { "Hello, World!", "Hello, World!\n" } }
+            });
+
+
+            // \ as a shorthand for >\
+            AssertProgram(new TestSuite
+            {
                 Sources = { @"\G`", @"G`" },
                 TestCases = { { "Hello, World!", "Hello, World!\nHello, World!" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"G`", @"\G`" },
+                TestCases = { { "Hello, World!", "Hello, World!\n" } }
+            });
+
+            // <\
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"<\`\W", "" },
+                TestCases = { { "Hello, World!", "Hello, World!\nHelloWorld" } }
             });
 
 
@@ -143,6 +162,18 @@ namespace RetinaTest
             {
                 Sources = { @">>G`", @"G`" },
                 TestCases = { { "Hello, World!", "Hello, World!Hello, World!Hello, World!" } }
+            });
+            
+            // The order of a preprint and a regular output stage shouldn't matter.
+            AssertProgram(new TestSuite
+            {
+                Sources = { @".<>`\W", "" },
+                TestCases = { { "Hello, World!", "Hello, World!HelloWorld" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @".><`\W", "" },
+                TestCases = { { "Hello, World!", "Hello, World!HelloWorld" } }
             });
         }
     }

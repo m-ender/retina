@@ -20,6 +20,17 @@ namespace RetinaTest
                 Sources = {
                     @"{`ab",
                     @"c",
+                    @")`ac",
+                    @"b"
+                },
+                TestCases = { { "aaaaaaaab", "b" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = {
+                    @"(`ab",
+                    @"c",
                     @"}`ac",
                     @"b"
                 },

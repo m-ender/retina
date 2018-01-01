@@ -45,8 +45,15 @@ namespace Retina.Stages
                 RegexSources[0] = temp;
             }
 
-            if (Config.Anchored)
+            switch (Config.Anchoring)
+            {
+            case Anchoring.String:
                 RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"\A", s, @"\z"));
+                break;
+            case Anchoring.Line:
+                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"(?m:^)", s, @"(?m:$)"));
+                break;
+            }
 
             Regices = RegexSources.ConvertAll(source => new Regex(source, Config.RegexOptions));
 

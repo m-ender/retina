@@ -200,7 +200,7 @@ namespace Retina
                                 throw new Exception("Stage configuration cannot contain both '(' and ')'.");
                             hasCloseParenthesis = true;
 
-                            if (t.Groups["openGroup"].Value == "}")
+                            if (t.Groups["closeGroup"].Value == "}")
                             {
                                 compoundStack.Push(new Tuple<char, Config>('+', config));
                                 config = new Config();
@@ -224,8 +224,8 @@ namespace Retina
                             else
                             {
                                 compoundStack.Push(new Tuple<char, Config>(t.Groups["compoundStage"].Value[0], config));
-                                config = new Config();
                             }
+                            config = new Config();
                             mode = i < sources.Count ? Modes.Replace : Modes.Count;
                             useSubstitution = false;
                             patternCount = 1;
@@ -288,7 +288,10 @@ namespace Retina
 
                                 // Parse custom regex modifiers
                                 case 'a':
-                                    config.Anchored = true;
+                                    config.Anchoring = Anchoring.String;
+                                    break;
+                                case 'l':
+                                    config.Anchoring = Anchoring.Line;
                                     break;
                                 case 'p':
                                     config.UniqueMatches = UniqueMatches.KeepLast;
@@ -525,7 +528,7 @@ namespace Retina
                 // If the final stage isn't already an output stage, and the
                 // silent flag wasn't set, wrap it in an output stage.
                 List<Stage> stages = stageStack.Pop();
-                if (!(stages.Last() is OutputStage) && !silent)
+                if (!(stages.Last() is OutputStage && !stages.Last().Config.PrePrint) && !silent)
                 {
                     Stage stage = stages.Last();
                     stage = new OutputStage(new Config(), stage);

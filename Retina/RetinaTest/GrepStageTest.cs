@@ -15,11 +15,11 @@ namespace RetinaTest
         }
 
         [TestMethod]
-        public void TestBasicAntiGrep()
+        public void TestMatchAcrossLines()
         {
-            AssertProgram(new TestSuite { Sources = { @"A`" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "" } } });
-            AssertProgram(new TestSuite { Sources = { @"A`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n\n" } } });
-            AssertProgram(new TestSuite { Sources = { @"A`\w" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n!!!\n\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"Gs`.+" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\nabc\n!!!\n\ndef\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"G`\n" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\nabc\n!!!\n\ndef\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"G`\w\n" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "abc\n!!!\ndef\n" } } });
         }
     }
 }

@@ -53,22 +53,5 @@ namespace RetinaTest
                 }
             });
         }
-
-        [TestMethod]
-        public void TestUniqueMatches()
-        {
-            AssertProgram(new TestSuite { Sources = { @"Mq`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mp`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mqr`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mpr`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
-        }
-
-        [TestMethod]
-        public void TestOverlappingMatches()
-        {
-            AssertProgram(new TestSuite { Sources = { @"Mv`.+" }, TestCases = { { "abcd", "abcd\nbcd\ncd\nd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mrv`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mw`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd\nb\nbc\nbcd\nc\ncd\nd" } } });
-        }
     }
 }
