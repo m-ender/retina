@@ -14,10 +14,7 @@ namespace Retina.Stages
         {
             // TODO:
             // - Further limits (on final list)
-            // - Reverse option
             // - Random option?
-            // - OmitGroups (or rather, include them in the first place)
-            // - OmitEmpty
             var result = new List<string>();
 
             for (int i = 0; i < Separators.Count; ++i)
@@ -40,6 +37,9 @@ namespace Retina.Stages
                 }
 
             }
+
+            if (Config.Reverse)
+                result.Reverse();
 
             return Config.FormatAsList(result);
         }

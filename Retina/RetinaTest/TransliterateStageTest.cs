@@ -124,6 +124,15 @@ namespace RetinaTest
             AssertTransliteration(@"T`abc", @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`defghijklmnopqrstuvwxyz{|}~");
         }
 
+        [TestMethod]
+        public void TestOverlappingMatches()
+        {
+            AssertTransliteration(@"Tv`!d`@!d`\d+", @" !""#$%&'()*+,-./!!!!!!!!!!:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Trv`_d!`d!@`\d+", @" !""#$%&'()*+,-./!!!!!!!!!!:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Tw`_d`d`[0123]+", @" !""#$%&'()*+,-./4787456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Trw`_d`d`[0123]+", @" !""#$%&'()*+,-./4787456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        }
+
         // Applies the transliteration to all printable ASCII characters
         private void AssertTransliteration(string source, string expectedOutput)
         {

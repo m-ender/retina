@@ -244,11 +244,11 @@ namespace Retina.Stages
                         patterns = RegexSources.ConvertAll(s => new Regex(WrapRegex(
                             String.Format("\\G(?=(?s:.{{{0}}}(?<_suffix>.*)))", length),
                             s,
-                            @"(?=\k<_suffix>\z)"
+                            @"(?=\k<_suffix>(?<-_suffix>)\z)"
                         ), Config.RegexOptions));
                     else
                         patterns = RegexSources.ConvertAll(s => new Regex(WrapRegex(
-                            @"(?<=\A\k<_suffix>)",
+                            @"(?<=\A(?<-_suffix>)\k<_suffix>)",
                             s,
                             String.Format("(?<=(?s:(?<_suffix>.*).{{{0}}}))\\G", length)
                         ), Config.RegexOptions));
@@ -309,11 +309,11 @@ namespace Retina.Stages
                         patternString = WrapRegex(
                             String.Format("\\G(?=(?s:.{{{0}}}(?<_suffix>.*)))", length),
                             patternString,
-                            @"(?=\k<_suffix>\z)"
+                            @"(?=\k<_suffix>(?<-_suffix>)\z)"
                         );
                     else
                         patternString = WrapRegex(
-                            @"(?<=\A\k<_suffix>)",
+                            @"(?<=\A(?<-_suffix>)\k<_suffix>)",
                             patternString,
                             String.Format("(?<=(?s:(?<_suffix>.*).{{{0}}}))\\G", length)
                         );

@@ -3,6 +3,7 @@ using System.Linq;
 using System.IO;
 using Retina.Configuration;
 using Retina.Extensions;
+using System.Text;
 
 namespace Retina.Stages
 {
@@ -18,18 +19,33 @@ namespace Retina.Stages
             // - Random option?
             // - Maybe a numeric parameter to keep multiple copies?
             var stringSet = new HashSet<string>();
+            var toDelete = new HashSet<int>();
 
-            var values = Matches.Select(m =>
+            IEnumerable<MatchContext> matches = Matches;
+            if (Config.Reverse)
+                matches = matches.Reverse();
+
+            foreach(var m in matches)
+            {
+                if (stringSet.Contains(m.Replacement))
                 {
-                    var result = stringSet.Contains(m.Replacement) ? "" : m.Match.Value;
-                    stringSet.Add(m.Replacement);
-                    return result;
-                });
+                    for (int i = 0; i < m.Match.Length; ++i)
+                    {
+                        toDelete.Add(i + m.Match.Index);
+                    }
+                }
+                stringSet.Add(m.Replacement);
+            };
+                        
+            var sortedDeletions = toDelete.ToList();
+            sortedDeletions.Sort();
+            sortedDeletions.Reverse();
 
-            var separators = Separators.Select(s => s.Match.Value);
+            var mutableInput = new StringBuilder(input);
+            foreach (int i in sortedDeletions)
+                mutableInput.Remove(i, 1);
 
-
-            return separators.Riffle(values);
+            return mutableInput.ToString();
         }
     }
 }

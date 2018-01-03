@@ -36,25 +36,31 @@
 
         public bool IsInRange(int value, int count)
         {
+            bool result;
+
             int begin = Begin < 0 ? count + Begin : Begin;
             int end = End < 0 ? count + End : End;
 
             if (begin > end)
-                return false;
-
-            if (begin == end && value == begin)
-                return true;
-
-            int step = Step == 0 ? end - begin : Step;
-
-            // This can only happen if begin == end.
-            if (step == 0)
-                step = 1;
-            
-            if (step > 0)
-                return (value >= begin) && (value <= end) && ((value - begin) % step == 0);
+                result = false;
+            else if (begin == end && value == begin)
+                result = true;
             else
-                return (value >= begin) && (value <= end) && ((end - value) % step == 0);
+            {
+                int step = Step == 0 ? end - begin : Step;
+
+                // This can only happen if begin == end.
+                if (step == 0)
+                    step = 1;
+
+                if (step > 0)
+                    result = (value >= begin) && (value <= end) && ((value - begin) % step == 0);
+                else
+                    result = (value >= begin) && (value <= end) && ((end - value) % step == 0);
+            }
+
+            // Invert the result if Negated is true.
+            return Negated ^ result;
         }
     }
 }
