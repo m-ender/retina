@@ -33,7 +33,5 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"^`\w+", "$.&" }, TestCases = { { "<a,bc;def>", "<3,2;1>" } } });
 
         }
-
-        // TODO: Test stage-specific stuff like overlapping matches, missing substitution etc.
     }
 }

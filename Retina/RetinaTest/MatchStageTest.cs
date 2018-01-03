@@ -116,5 +116,19 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"M^w`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "gh\nef3gh\nef\ncd2ef3gh\ncd2ef\ncd" } } });
             AssertProgram(new TestSuite { Sources = { @"M^rw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "gh\nef3gh\ncd2ef3gh\nef\ncd2ef\ncd" } } });
         }
+
+        [TestMethod]
+        public void TestReplacement()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"M$`\w+" , "$.&,$&" },
+                TestCases = {
+                    { "abc!", "3,abc" },
+                    { "Hello, World!", "5,Hello\n5,World" },
+                    { "(~^.^)~", "" },
+                }
+            });
+        }
     }
 }

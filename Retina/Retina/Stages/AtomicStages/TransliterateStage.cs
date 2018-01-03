@@ -184,6 +184,11 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
+            // TODO:
+            // - Random
+            // - An option to transliterate each character at most once
+            // - Alice-style transliteration
+
             var mutableInput = new StringBuilder(input);
             var toDelete = new HashSet<int>();
 
