@@ -15,9 +15,9 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Reverse option
             // - Random option?
             // - Maybe a numeric parameter to keep multiple copies?
+            // - Limit on characters to be deleted.
             var stringSet = new HashSet<string>();
             var toDelete = new HashSet<int>();
 

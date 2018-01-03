@@ -21,5 +21,18 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"A`\n" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "" } } });
             AssertProgram(new TestSuite { Sources = { @"A`\w\n" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n" } } });
         }
+
+        [TestMethod]
+        public void TestOverlappingMatches()
+        {
+            AssertProgram(new TestSuite { Sources = { @"Asw`b...|c" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n\ndef\n" } } });
+        }
+
+        [TestMethod]
+        public void TestReverse()
+        {
+            AssertProgram(new TestSuite { Sources = { @"A^`\w" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n\n!!!\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"A^sw`b...|c" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\ndef\n\n" } } });
+        }
     }
 }

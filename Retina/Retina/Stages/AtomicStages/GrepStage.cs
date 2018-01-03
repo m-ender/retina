@@ -1,5 +1,6 @@
 ﻿using Retina.Configuration;
 using Retina.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,22 +22,33 @@ namespace Retina.Stages
             // - Maybe limit on final lines.
             // - Maybe an option to use a different line separator.
 
-            var values = Matches.Select(s => s.Replacement);
+            var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
+            {
+                line = m.Value,
+                start = m.Index,
+                end = m.Index + m.Length
+            }).ToList();
 
-            var separators = Separators.Select(s => s.Match.Value).ToList();
+            var linesToKeep = new HashSet<int>();
 
-            // Effectively surround the input with a pair of linefeeds, so that all
-            // lines are surrounded by linefeeds on both ends.
-            separators[0] = "\n" + separators[0];
-            separators[separators.Count - 1] += "\n";
+            foreach (var m in Matches)
+            {
+                int i = 0;
+                while (lines[i].end < m.Match.Index)
+                    ++i;
+                while (i < lines.Count && lines[i].start <= m.Match.Index + m.Match.Length)
+                {
+                    linesToKeep.Add(i);
+                    ++i;
+                }
+            }
 
-            // Any line that appears completely in a separator did not contain a match, so we remove it.
-            var greppedSeparators = separators.Select(s => new Regex("\n.*(?=\n)").Replace(s, ""));
+            lines = linesToKeep.OrderBy(i => i).Select(i => lines[i]).ToList();
+            
+            if (Config.Reverse)
+                lines.Reverse();
 
-            var result = greppedSeparators.Riffle(values);
-
-            // Discard the linefeeds we inserted earlier.
-            return result.Substring(1, result.Length - 2);
+            return String.Join("\n", lines.Select(l => l.line));
         }
     }
 }

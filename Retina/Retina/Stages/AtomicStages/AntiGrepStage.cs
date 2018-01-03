@@ -15,33 +15,30 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Reverse?
             // - Random?
             // - Maybe limit on final lines.
             // - Maybe an option to use a different line separator.
 
-            var values = Matches.Select(s => s.Replacement);
+            var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
+            {
+                line = m.Value,
+                start = m.Index,
+                end = m.Index + m.Length
+            }).ToList();
+            
+            foreach (var m in Matches)
+            {
+                int i = 0;
+                while (lines[i].end < m.Match.Index)
+                    ++i;
+                while (i < lines.Count && lines[i].start <= m.Match.Index + m.Match.Length)
+                    lines.RemoveAt(i);
+            }
 
-            List<string> separators = Separators.Select(s => s.Match.Value).ToList();
+            if (Config.Reverse)
+                lines.Reverse();
 
-            // Effectively surround the input with a pair of linefeeds, so that all
-            // lines are surrounded by linefeeds on both ends.
-            separators[0] = "\n" + separators[0];
-            separators[separators.Count - 1] += "\n";
-
-            // Any line that appears at the boundary of a separator was touched by a match,
-            // so we remove it.
-            // This always discards the leading dummy line, but keeps the trailing dummy line.
-            var greppedSeparators = separators.Select(s => new Regex(@"^.*\n|.*\z").Replace(s, ""));
-
-            var result = String.Join("", greppedSeparators);
-
-            // Discard the trailing dummy line unless it's the only one left
-            // (a single empty line is not distinguishable from zero empty lines).
-            if (result.Length > 0)
-                return result.Substring(0, result.Length - 1);
-            else
-                return "";
+            return String.Join("\n", lines.Select(l => l.line));
         }
     }
 }
