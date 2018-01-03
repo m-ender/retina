@@ -206,5 +206,33 @@ namespace RetinaTest
                 TestCases = { { "ab12cd21ef", "abab\n____________\ncdcd\n_____________________\nefef" } }
             });
         }
+
+        [TestMethod]
+        public void TestInvertMatches()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"M=`[a-z]+" },
+                TestCases = { { "ab12cd34ef", "\n12\n34\n" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"M=$`[a-z]+", "$.`,$.&" },
+                TestCases = { { "ab12cd34ef", "0,0\n2,2\n6,2\n10,0" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"M#3=`[a-z]+", @"\W+", @"\d+" },
+                TestCases = { { "ab12()cd34[]ef56{}gh", "\n12\ncd\n[]\n56\ngh" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"M#3=$`[a-z]+", @"\W+", @"\d+", "$.`,$.&" },
+                TestCases = { { "ab12()cd34[]ef56{}gh", "0,0\n2,2\n6,2\n10,2\n14,2\n18,2" } }
+            });
+        }
     }
 }
