@@ -52,7 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AntiGrepStageTest.cs" />
-    <Compile Include="CustomModifiersTest.cs" />
+    <Compile Include="GeneralOptionsTest.cs" />
     <Compile Include="ReplacerTest.cs" />
     <Compile Include="RetinaTestBase.cs" />
     <Compile Include="SortStageTest.cs" />

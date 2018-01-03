@@ -37,12 +37,14 @@ namespace Retina.Stages
             Matches = new List<MatchContext>();
             Separators = new List<MatchContext>();
 
+            // We need to restore this if InputAsRegex is used.
+            string tempRegexSource = RegexSources[0];
+
             if (Config.InputAsRegex)
             {
                 // Swap input with first regex. There should be only one regex anyway.
-                string temp = input;
-                input = RegexSources[0];
-                RegexSources[0] = temp;
+                RegexSources[0] = input;
+                input = tempRegexSource;
             }
 
             switch (Config.Anchoring)
@@ -74,7 +76,12 @@ namespace Retina.Stages
             foreach (var matchContext in Matches)
                 matchContext.Replacement = matchContext.Replacer.Process(input, matchContext.Match);
 
-            return Process(input, output);
+            string result = Process(input, output);
+
+            // Restore the first regex source, in case we're using InputAsRegex
+            RegexSources[0] = tempRegexSource;
+
+            return result;
         }
 
         // Fills MatchContexts, taking into account Config.Overlaps and Config.Unique, as well as multi-pattern setups.
@@ -267,11 +274,11 @@ namespace Retina.Stages
                 // For RTL matching, we have to pick the right-most match.
                 if (!Config.RegexOptions.HasFlag(RegexOptions.RightToLeft))
                     return matches.Aggregate((curMin, m) =>
-                        (m.Match.Index < curMin.Match.Index) ? m : curMin
+                        (!curMin.Match.Success || m.Match.Success && m.Match.Index < curMin.Match.Index) ? m : curMin
                     );
                 else
                     return matches.Aggregate((curMin, m) =>
-                        (m.Match.Index + m.Match.Length > curMin.Match.Index + curMin.Match.Length) ? m : curMin
+                        (!curMin.Match.Success || m.Match.Success && m.Match.Index + m.Match.Length > curMin.Match.Index + curMin.Match.Length) ? m : curMin
                     );
             }
             else
