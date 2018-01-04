@@ -310,8 +310,8 @@ namespace Retina
                                 case 'C':
                                     mode = Modes.Count;
                                     break;
-                                case 'M':
-                                    mode = Modes.Match;
+                                case 'L':
+                                    mode = Modes.List;
                                     break;
                                 case 'R':
                                     mode = Modes.Replace;
@@ -441,8 +441,8 @@ namespace Retina
                 case Modes.Count:
                     stage = new CountStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
-                case Modes.Match:
-                    stage = new MatchStage(config, patterns, substitutions, separatorSubstitutionSource);
+                case Modes.List:
+                    stage = new ListStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Replace:
                     stage = new ReplaceStage(config, patterns, substitutions, separatorSubstitutionSource);

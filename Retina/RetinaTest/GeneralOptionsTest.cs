@@ -11,7 +11,7 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"Ma`\d+" },
+                Sources = { @"La`\d+" },
                 TestCases = {
                     { "123", "123" },
                     { "123\n456", "" },
@@ -21,7 +21,7 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mma`\d+" },
+                Sources = { @"Lma`\d+" },
                 TestCases = {
                     { "123", "123" },
                     { "123\n456", "" },
@@ -32,7 +32,7 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Ml`\d+" },
+                Sources = { @"Ll`\d+" },
                 TestCases = {
                     { "123", "123" },
                     { "123\na789b\n456", "123\n456" },
@@ -42,7 +42,7 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mml`\d+" },
+                Sources = { @"Lml`\d+" },
                 TestCases = {
                     { "123", "123" },
                     { "123\na789b\n456", "123\n456" },
@@ -54,21 +54,21 @@ namespace RetinaTest
         [TestMethod]
         public void TestUniqueMatches()
         {
-            AssertProgram(new TestSuite { Sources = { @"Mq`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mp`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mqr`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mpr`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lq`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lp`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lqr`." }, TestCases = { { "abacbcedef", "a\nb\nc\nd\ne\nf" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lpr`." }, TestCases = { { "abacbcedef", "a\nb\nc\ne\nd\nf" } } });
         }
 
         [TestMethod]
         public void TestOverlappingMatches()
         {
-            AssertProgram(new TestSuite { Sources = { @"Mv`.+" }, TestCases = { { "abcd", "abcd\nbcd\ncd\nd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mrv`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mw`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd\nb\nbc\nbcd\nc\ncd\nd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mrw`.+" }, TestCases = { { "abcd", "a\nab\nb\nabc\nbc\nc\nabcd\nbcd\ncd\nd" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "cd\ncd2ef\ncd2ef3gh\nef\nef3gh\ngh" } } });
-            AssertProgram(new TestSuite { Sources = { @"Mrw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "cd\ncd2ef\nef\ncd2ef3gh\nef3gh\ngh" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lv`.+" }, TestCases = { { "abcd", "abcd\nbcd\ncd\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lrv`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lw`.+" }, TestCases = { { "abcd", "a\nab\nabc\nabcd\nb\nbc\nbcd\nc\ncd\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lrw`.+" }, TestCases = { { "abcd", "a\nab\nb\nabc\nbc\nc\nabcd\nbcd\ncd\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "cd\ncd2ef\ncd2ef3gh\nef\nef3gh\ngh" } } });
+            AssertProgram(new TestSuite { Sources = { @"Lrw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "cd\ncd2ef\nef\ncd2ef3gh\nef3gh\ngh" } } });
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"M@`ab(12\pq" },
+                Sources = { @"L@`ab(12\pq" },
                 TestCases = {
                     { @"\w+", "ab\n12\npq" },
                     { @"\W", "(\n\\" },
@@ -89,49 +89,49 @@ namespace RetinaTest
         public void TestMultiplePatternsCyclic()
         {
             AssertProgram(new TestSuite {
-                Sources = { @"M#3`[a-z]+", @"\d+", @"\W+" },
+                Sources = { @"L#3`[a-z]+", @"\d+", @"\W+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n12\n()\ncd\n34\n[]\nef\n56\n{}\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"M#3`[a-z]+", @"\W+", @"\d+" },
+                Sources = { @"L#3`[a-z]+", @"\W+", @"\d+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n()\n34\nef\n{}" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mr#3`[a-z]+", @"\d+", @"\W+" },
+                Sources = { @"Lr#3`[a-z]+", @"\d+", @"\W+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "12\ncd\n[]\n56\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mr#3`[a-z]+", @"\W+", @"\d+" },
+                Sources = { @"Lr#3`[a-z]+", @"\W+", @"\d+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n12\n()\ncd\n34\n[]\nef\n56\n{}\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mv#2`.", @".." },
+                Sources = { @"Lv#2`.", @".." },
                 TestCases = { { "abcd", "a\nbc\nc" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mv#2`..", @"." },
+                Sources = { @"Lv#2`..", @"." },
                 TestCases = { { "abcd", "ab\nb\ncd\nd" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mw#2`.", @".." },
+                Sources = { @"Lw#2`.", @".." },
                 TestCases = { { "abcd", "a\nab\nb\nbc\nc\ncd\nd" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mw#2`..", @"." },
+                Sources = { @"Lw#2`..", @"." },
                 TestCases = { { "abcd", "ab\nb\nbc\nc\ncd\nd" } }
             });
         }
@@ -141,49 +141,49 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"M#-3`[a-z]+", @"\d+", @"\W+" },
+                Sources = { @"L#-3`[a-z]+", @"\d+", @"\W+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n12\n()\ncd\n34\n[]\nef\n56\n{}\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"M#-3`\d+", @"[a-z]+", @"\W+" },
+                Sources = { @"L#-3`\d+", @"[a-z]+", @"\W+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n12\n()\ncd\n34\n[]\nef\n56\n{}\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mr#-3`[a-z]+", @"\d+", @"\W+" },
+                Sources = { @"Lr#-3`[a-z]+", @"\d+", @"\W+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n12\n()\ncd\n34\n[]\nef\n56\n{}\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mr#-3`\d+", @"[a-z]+", @"\W+" },
+                Sources = { @"Lr#-3`\d+", @"[a-z]+", @"\W+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "ab\n12\n()\ncd\n34\n[]\nef\n56\n{}\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mv#-2`.", @".." },
+                Sources = { @"Lv#-2`.", @".." },
                 TestCases = { { "abcd", "a\nb\nc\nd" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mv#-2`..", @"." },
+                Sources = { @"Lv#-2`..", @"." },
                 TestCases = { { "abcd", "ab\nbc\ncd\nd" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mw#-2`.", @".." },
+                Sources = { @"Lw#-2`.", @".." },
                 TestCases = { { "abcd", "a\nab\nb\nbc\nc\ncd\nd" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"Mw#-2`..", @"." },
+                Sources = { @"Lw#-2`..", @"." },
                 TestCases = { { "abcd", "a\nab\nb\nbc\nc\ncd\nd" } }
             });
         }
@@ -192,7 +192,7 @@ namespace RetinaTest
         public void TestMultiplePatternsModifiers()
         {
             AssertProgram(new TestSuite {
-                Sources = { @"M#2i`[a-m]+", @"[n-z]+" },
+                Sources = { @"L#2i`[a-m]+", @"[n-z]+" },
                 TestCases = { { "HelloWorld", "Hell\noWor\nld" } }
             });
         }
@@ -202,7 +202,7 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"M#2$`[a-z]+", "$&$&", @"\d+", "$*" },
+                Sources = { @"L#2$`[a-z]+", "$&$&", @"\d+", "$*" },
                 TestCases = { { "ab12cd21ef", "abab\n____________\ncdcd\n_____________________\nefef" } }
             });
         }
@@ -212,25 +212,25 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"M=`[a-z]+" },
+                Sources = { @"L=`[a-z]+" },
                 TestCases = { { "ab12cd34ef", "\n12\n34\n" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"M=$`[a-z]+", "$.`,$.&" },
+                Sources = { @"L=$`[a-z]+", "$.`,$.&" },
                 TestCases = { { "ab12cd34ef", "0,0\n2,2\n6,2\n10,0" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"M#3=`[a-z]+", @"\W+", @"\d+" },
+                Sources = { @"L#3=`[a-z]+", @"\W+", @"\d+" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "\n12\ncd\n[]\n56\ngh" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @"M#3=$`[a-z]+", @"\W+", @"\d+", "$.`,$.&" },
+                Sources = { @"L#3=$`[a-z]+", @"\W+", @"\d+", "$.`,$.&" },
                 TestCases = { { "ab12()cd34[]ef56{}gh", "0,0\n2,2\n6,2\n10,2\n14,2\n18,2" } }
             });
         }

@@ -61,7 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestSuite.cs" />
     <Compile Include="TransliterateStageTest.cs" />
-    <Compile Include="MatchStageTest.cs" />
+    <Compile Include="ListStageTest.cs" />
     <Compile Include="SplitStageTest.cs" />
     <Compile Include="GrepStageTest.cs" />
     <Compile Include="DeduplicateStageTest.cs" />

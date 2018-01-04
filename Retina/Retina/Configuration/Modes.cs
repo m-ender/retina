@@ -3,7 +3,7 @@
     public enum Modes
     {
         Count,
-        Match,
+        List,
         Grep,
         AntiGrep,
         Split,
