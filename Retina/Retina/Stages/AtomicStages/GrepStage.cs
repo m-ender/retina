@@ -17,9 +17,7 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Reverse?
             // - Random?
-            // - Maybe limit on final lines.
             // - Maybe an option to use a different line separator.
 
             var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
@@ -45,10 +43,7 @@ namespace Retina.Stages
 
             lines = linesToKeep.OrderBy(i => i).Select(i => lines[i]).ToList();
             
-            {
-                int i = 0;
-                lines = lines.FindAll(_ => Config.GetLimit(1).IsInRange(i++, lines.Count));
-            }
+            lines = lines.Where((_, i) => Config.GetLimit(1).IsInRange(i, lines.Count)).ToList();
 
             if (Config.Reverse)
                 lines.Reverse();

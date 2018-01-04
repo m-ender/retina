@@ -35,11 +35,8 @@ namespace Retina.Stages
                             result.Add(match.Groups[num].Value);
                 }
             }
-
-            {
-                int i = 0;
-                result = result.FindAll(_ => Config.GetLimit(1).IsInRange(i++, result.Count));
-            }
+            
+            result = result.Where((_, i) => Config.GetLimit(1).IsInRange(i, result.Count)).ToList();
 
             if (Config.Reverse)
                 result.Reverse();

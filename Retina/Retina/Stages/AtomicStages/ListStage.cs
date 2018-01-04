@@ -14,10 +14,9 @@ namespace Retina.Stages
         {
             // TODO:
             // - Random option
-            var values = Matches.Select(m => {
-                int i = 0;
-                return new string(m.Replacement.Where(_ => Config.GetLimit(1).IsInRange(i++, m.Replacement.Length)).ToArray());
-            });
+            var values = Matches.Select(m => new string(
+                m.Replacement.Where((_, i) => Config.GetLimit(1).IsInRange(i, m.Replacement.Length)).ToArray()
+            ));
             
             if (Config.Reverse)
                 values = values.Reverse();

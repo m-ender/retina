@@ -16,7 +16,6 @@ namespace Retina.Stages
         {
             // TODO:
             // - Random?
-            // - Maybe limit on final lines.
             // - Maybe an option to use a different line separator.
 
             var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
@@ -34,11 +33,8 @@ namespace Retina.Stages
                 while (i < lines.Count && lines[i].start <= m.Match.Index + m.Match.Length)
                     lines.RemoveAt(i);
             }
-
-            {
-                int i = 0;
-                lines = lines.FindAll(_ => Config.GetLimit(1).IsInRange(i++, lines.Count));
-            }
+            
+            lines = lines.Where((_, i) => Config.GetLimit(1).IsInRange(i, lines.Count)).ToList();
 
             if (Config.Reverse)
                 lines.Reverse();
