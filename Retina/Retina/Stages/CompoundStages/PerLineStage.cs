@@ -21,7 +21,14 @@ namespace Retina.Stages
         public override string Execute(string input, TextWriter output)
         {
             string[] lines = input.Split(new[] { '\n' });
-            IEnumerable<string> resultLines = lines.Select(x => ChildStage.Execute(x, output));
+
+            IEnumerable<string> resultLines = lines.Select((x, i) => {
+                if (Config.GetLimit(0).IsInRange(i, lines.Length))
+                    return ChildStage.Execute(x, output);
+                else
+                    return x;
+            });
+
             string result = String.Join("\n", resultLines);
             
             return result;
