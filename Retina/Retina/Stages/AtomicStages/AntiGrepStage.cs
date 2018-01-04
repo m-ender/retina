@@ -35,6 +35,11 @@ namespace Retina.Stages
                     lines.RemoveAt(i);
             }
 
+            {
+                int i = 0;
+                lines = lines.FindAll(_ => Config.GetLimit(1).IsInRange(i++, lines.Count));
+            }
+
             if (Config.Reverse)
                 lines.Reverse();
 

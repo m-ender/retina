@@ -17,7 +17,6 @@ namespace Retina.Stages
             // TODO:
             // - Random option?
             // - Maybe a numeric parameter to keep multiple copies?
-            // - Limit on characters to be deleted.
             var stringSet = new HashSet<string>();
             var toDelete = new HashSet<int>();
 
@@ -31,7 +30,8 @@ namespace Retina.Stages
                 {
                     for (int i = 0; i < m.Match.Length; ++i)
                     {
-                        toDelete.Add(i + m.Match.Index);
+                        if (Config.GetLimit(1).IsInRange(i, m.Match.Length))
+                            toDelete.Add(i + m.Match.Index);
                     }
                 }
                 stringSet.Add(m.Replacement);

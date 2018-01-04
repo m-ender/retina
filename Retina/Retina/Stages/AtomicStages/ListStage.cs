@@ -13,10 +13,12 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Potential further limits (on characters, I suppose)
             // - Random option
-            var values = Matches.Select(m => m.Replacement);
-
+            var values = Matches.Select(m => {
+                int i = 0;
+                return new string(m.Replacement.Where(_ => Config.GetLimit(1).IsInRange(i++, m.Replacement.Length)).ToArray());
+            });
+            
             if (Config.Reverse)
                 values = values.Reverse();
 

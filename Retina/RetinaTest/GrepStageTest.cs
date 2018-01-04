@@ -34,5 +34,12 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"G^`" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\ndef\n\n!!!\nabc\n" } } });
             AssertProgram(new TestSuite { Sources = { @"G^sw`b...|c" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "!!!\nabc" } } });
         }
+
+        [TestMethod]
+        public void TestLineLimit()
+        {
+            AssertProgram(new TestSuite { Sources = { @"G, 1,`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "!!!\ndef" } } });
+            AssertProgram(new TestSuite { Sources = { @"G^, 1,`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "def\n!!!" } } });
+        }
     }
 }

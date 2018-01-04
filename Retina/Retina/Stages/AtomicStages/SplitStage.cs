@@ -13,7 +13,6 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Further limits (on final list)
             // - Random option?
             var result = new List<string>();
 
@@ -35,12 +34,16 @@ namespace Retina.Stages
                         if (match.Groups[num].Success && Config.GetLimit(2).IsInRange(num - 1, groups.Last()))
                             result.Add(match.Groups[num].Value);
                 }
+            }
 
+            {
+                int i = 0;
+                result = result.FindAll(_ => Config.GetLimit(1).IsInRange(i++, result.Count));
             }
 
             if (Config.Reverse)
                 result.Reverse();
-
+            
             return Config.FormatAsList(result);
         }
     }

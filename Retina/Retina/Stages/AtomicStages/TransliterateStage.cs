@@ -188,9 +188,11 @@ namespace Retina.Stages
             // - Random
             // - An option to transliterate each character at most once
             // - Alice-style transliteration
+            // - figure out additional limits
 
             var mutableInput = new StringBuilder(input);
             var toDelete = new HashSet<int>();
+
 
             Matches.ForEach(m =>
             {
@@ -199,12 +201,8 @@ namespace Retina.Stages
                     int iStr = i + m.Match.Index;
 
                     int k = From.IndexOf(mutableInput[iStr]);
-                    if (k < 0
-                     || !Config.GetLimit(1).IsInRange(i, m.Match.Length)
-                     || !Config.GetLimit(2).IsInRange(iStr, input.Length))
-                    {
+                    if (k < 0 || !Config.GetLimit(1).IsInRange(i, m.Match.Length))
                         continue;
-                    }
 
                     char? target = To[Math.Min(To.Count - 1, k)];
                     if (target == null)

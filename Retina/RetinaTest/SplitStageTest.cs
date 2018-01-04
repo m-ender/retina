@@ -59,5 +59,12 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"S^w`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "4ij\n\n\n\n\n\nab1" } } });
             AssertProgram(new TestSuite { Sources = { @"S^rw`(?<=\d).+(?=\d)" }, TestCases = { { "ab1cd2ef3gh4ij", "4ij\n\n\n\n\n\nab1" } } });
         }
+
+        [TestMethod]
+        public void TestOutputLimit()
+        {
+            AssertProgram(new TestSuite { Sources = { @"S!_, 1,-2`(\W)+" }, TestCases = { { "Hello, World!", " \nWorld" } } });
+            AssertProgram(new TestSuite { Sources = { @"S!_^, 2,`(\W)+" }, TestCases = { { "Hello, World!", "!\nWorld" } } });
+        }
     }
 }

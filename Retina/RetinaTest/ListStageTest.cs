@@ -130,5 +130,49 @@ namespace RetinaTest
                 }
             });
         }
+
+        [TestMethod]
+        public void TestCharacterLimit()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"L, 1,3`\w+" },
+                TestCases = {
+                    { "abc!", "bc" },
+                    { "Hello, World!", "ell\norl" },
+                    { "(~^.^)~", "" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"L, 1,-2`\w+" },
+                TestCases = {
+                    { "abc!", "b" },
+                    { "Hello, World!", "ell\norl" },
+                    { "(~^.^)~", "" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"L$, 1,5`\w+", "$&$&" },
+                TestCases = {
+                    { "abc!", "bcabc" },
+                    { "Hello, World!", "elloH\norldW" },
+                    { "(~^.^)~", "" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"L$, 1,-5`\w+", "$&$&" },
+                TestCases = {
+                    { "abc!", "b" },
+                    { "Hello, World!", "elloH\norldW" },
+                    { "(~^.^)~", "" },
+                }
+            });
+        }
     }
 }

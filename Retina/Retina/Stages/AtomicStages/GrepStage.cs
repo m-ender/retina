@@ -45,6 +45,11 @@ namespace Retina.Stages
 
             lines = linesToKeep.OrderBy(i => i).Select(i => lines[i]).ToList();
             
+            {
+                int i = 0;
+                lines = lines.FindAll(_ => Config.GetLimit(1).IsInRange(i++, lines.Count));
+            }
+
             if (Config.Reverse)
                 lines.Reverse();
 

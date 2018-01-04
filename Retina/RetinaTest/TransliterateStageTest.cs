@@ -133,6 +133,13 @@ namespace RetinaTest
             AssertTransliteration(@"Trw`_d`d`[0123]+", @" !""#$%&'()*+,-./4787456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
         }
 
+        [TestMethod]
+        public void TestLocalCharacterLimit()
+        {
+            AssertTransliteration(@"T, 3,5`p`_`\w+", @" !""#$%&'()*+,-./0126789:;<=>?@ABCGHIJKLMNOPQRSTUVWXYZ[\]^_`abcghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"T, 3,-4`p`_`\w+", @" !""#$%&'()*+,-./012789:;<=>?@ABCXYZ[\]^_`abcxyz{|}~");
+        }
+
         // Applies the transliteration to all printable ASCII characters
         private void AssertTransliteration(string source, string expectedOutput)
         {

@@ -55,5 +55,14 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"D^w`.." }, TestCases = { { "abc,ab,bc", ",ab,bc" } } });
             AssertProgram(new TestSuite { Sources = { @"D^w`.." }, TestCases = { { "ab,bc,abc", ",,abc" } } });
         }
+
+        [TestMethod]
+        public void TestCharacterLimit()
+        {
+            AssertProgram(new TestSuite { Sources = { @"D, ,,`\w+" }, TestCases = { { "abc def abc ab ghi def", "abc def b ab ghi e" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"Dw, 1,`.." }, TestCases = { { "abc,ab,bc", "abc,a,b" } } });
+            AssertProgram(new TestSuite { Sources = { @"Dw, 1,`.." }, TestCases = { { "ab,bc,abc", "ab,bc,a" } } });
+        }
     }
 }

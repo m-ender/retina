@@ -31,7 +31,13 @@ namespace RetinaTest
         public void TestReverse()
         {
             AssertProgram(new TestSuite { Sources = { @"^`\w+", "$.&" }, TestCases = { { "<a,bc;def>", "<3,2;1>" } } });
+        }
 
+        [TestMethod]
+        public void TestCharacterLimit()
+        {
+            AssertProgram(new TestSuite { Sources = { @", 2,6`\w+", "$&$&" }, TestCases = { { "Hello, World!", "lloHe, rldWo!" } } });
+            AssertProgram(new TestSuite { Sources = { @", 2,-4`\w+", "$&$&" }, TestCases = { { "Hello, World!", "lloHe, rldWo!" } } });
         }
     }
 }
