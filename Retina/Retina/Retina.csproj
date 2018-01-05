@@ -62,6 +62,7 @@
     <Compile Include="Stages\AtomicStages\DeduplicateStage.cs" />
     <Compile Include="Stages\AtomicStages\AntiGrepStage.cs" />
     <Compile Include="Stages\AtomicStages\CountStage.cs" />
+    <Compile Include="Stages\AtomicStages\PositionStage.cs" />
     <Compile Include="Stages\AtomicStages\SortStage.cs" />
     <Compile Include="Stages\AtomicStages\TransliterateStage.cs" />
     <Compile Include="Stages\CompoundStages\DryRunStage.cs" />

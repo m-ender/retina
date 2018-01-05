@@ -377,6 +377,9 @@ namespace Retina
                                 case 'D':
                                     mode = Modes.Deduplicate;
                                     break;
+                                case 'I':
+                                    mode = Modes.Position;
+                                    break;
 
                                 // Global configuration
                                 case '.':
@@ -498,12 +501,13 @@ namespace Retina
                     stage = new TransliterateStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Sort:
-                    if (!config.InvertMatches && patternCount == 1 && patterns[0] == "")
-                        patterns[0] = "(?m:^).*";
                     stage = new SortStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Deduplicate:
                     stage = new DeduplicateStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    break;
+                case Modes.Position:
+                    stage = new PositionStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 default:
                     throw new NotImplementedException();

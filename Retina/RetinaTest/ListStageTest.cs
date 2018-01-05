@@ -7,7 +7,7 @@ namespace RetinaTest
     public class ListStageTest : RetinaTestBase
     {
         [TestMethod]
-        public void TestBasicPrinting()
+        public void TestBasicList()
         {
             AssertProgram(new TestSuite
             {

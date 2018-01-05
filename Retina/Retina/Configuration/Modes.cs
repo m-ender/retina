@@ -11,5 +11,6 @@
         Transliterate,
         Sort,
         Deduplicate,
+        Position,
     }
 }
