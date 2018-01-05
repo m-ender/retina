@@ -380,6 +380,9 @@ namespace Retina
                                 case 'I':
                                     mode = Modes.Position;
                                     break;
+                                case 'V':
+                                    mode = Modes.Reverse;
+                                    break;
 
                                 // Global configuration
                                 case '.':
@@ -466,9 +469,8 @@ namespace Retina
                     switch (mode)
                     {
                     case Modes.Deduplicate:
-                        patterns[0] = "(?m:^.*$)";
-                        break;
                     case Modes.Sort:
+                    case Modes.Reverse:
                         patterns[0] = "(?m:^.*$)";
                         break;
                     case Modes.Transliterate:
@@ -508,6 +510,9 @@ namespace Retina
                     break;
                 case Modes.Position:
                     stage = new PositionStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    break;
+                case Modes.Reverse:
+                    stage = new ReverseStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 default:
                     throw new NotImplementedException();

@@ -12,5 +12,6 @@
         Sort,
         Deduplicate,
         Position,
+        Reverse,
     }
 }
