@@ -138,6 +138,18 @@ namespace Retina
                         (?<remainder>.*)                    # The remainder is used as the regex (or input or substitution 
                                                             # for some configurations).
                     |
+                        (?<flag>P)                          # Padding stages take an optional character or string argument.
+                        (?<padString>
+                            ""                              # Strings are surrounded by double quotes and, these can be
+                                                            # escaped inside the string by doubling them.
+                            (?<string>
+                                (?:[^""]|"""")*
+                            )
+                            ""
+                        |
+                            '(?<char>.)                     # Characters are preceded by single quotes.
+                        )?
+                    |
                         (?<flag>
                             !.                              # ! marks a 2-character flag.
                         |
@@ -383,6 +395,14 @@ namespace Retina
                                 case 'V':
                                     mode = Modes.Reverse;
                                     break;
+                                case 'P':
+                                    if (t.Groups["padString"].Success)
+                                        if (t.Groups["char"].Success)
+                                            config.PadString = t.Groups["char"].Value;
+                                        else if (t.Groups["string"].Success)
+                                            config.PadString = t.Groups["string"].Value.Replace("\"\"", "\"");
+                                    mode = Modes.Pad;
+                                    break;
 
                                 // Global configuration
                                 case '.':
@@ -513,6 +533,9 @@ namespace Retina
                     break;
                 case Modes.Reverse:
                     stage = new ReverseStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    break;
+                case Modes.Pad:
+                    stage = new PadStage(config, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 default:
                     throw new NotImplementedException();

@@ -63,6 +63,7 @@
     <Compile Include="Stages\AtomicStages\AntiGrepStage.cs" />
     <Compile Include="Stages\AtomicStages\CountStage.cs" />
     <Compile Include="Stages\AtomicStages\PositionStage.cs" />
+    <Compile Include="Stages\AtomicStages\PadStage.cs" />
     <Compile Include="Stages\AtomicStages\ReverseStage.cs" />
     <Compile Include="Stages\AtomicStages\SortStage.cs" />
     <Compile Include="Stages\AtomicStages\TransliterateStage.cs" />

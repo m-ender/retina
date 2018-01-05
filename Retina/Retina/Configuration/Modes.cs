@@ -13,5 +13,6 @@
         Deduplicate,
         Position,
         Reverse,
+        Pad,
     }
 }

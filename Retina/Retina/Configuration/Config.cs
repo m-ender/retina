@@ -53,13 +53,19 @@ namespace Retina.Configuration
 
         // Configuration for Sort mode
         public bool SortNumerically { get; set; }
+
+        // Configuration for Pad mode
+        public string PadString { get; set; }
         
         public Config()
         {
             Limits = new List<Limit>();
+
             ListStart = "";
             ListEnd = "";
             ListSeparator = "\n";
+
+            PadString = " ";
         }
 
         public void Inherit(Config other)
