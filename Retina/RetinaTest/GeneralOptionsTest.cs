@@ -234,5 +234,27 @@ namespace RetinaTest
                 TestCases = { { "ab12()cd34[]ef56{}gh", "0,0\n2,2\n6,2\n10,2\n14,2\n18,2" } }
             });
         }
+
+        [TestMethod]
+        public void TestListFormatting()
+        {
+            AssertProgram(new TestSuite { Sources = { @"L[{`." }, TestCases = { { "abcd", "{a\nb\nc\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"L]}`." }, TestCases = { { "abcd", "a\nb\nc\nd}" } } });
+            AssertProgram(new TestSuite { Sources = { @"L|``." }, TestCases = { { "abcd", "a`b`c`d" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"L[[|,]]`." }, TestCases = { { "abcd", "[a,b,c,d]" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"L['{`." }, TestCases = { { "abcd", "{a\nb\nc\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"L]'}`." }, TestCases = { { "abcd", "a\nb\nc\nd}" } } });
+            AssertProgram(new TestSuite { Sources = { @"L|'``." }, TestCases = { { "abcd", "a`b`c`d" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"L['[|',]']`." }, TestCases = { { "abcd", "[a,b,c,d]" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"L[""{""""{""`." }, TestCases = { { "abcd", "{\"{a\nb\nc\nd" } } });
+            AssertProgram(new TestSuite { Sources = { @"L]""}""""}""`." }, TestCases = { { "abcd", "a\nb\nc\nd}\"}" } } });
+            AssertProgram(new TestSuite { Sources = { @"L|""`""""`""`." }, TestCases = { { "abcd", "a`\"`b`\"`c`\"`d" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"L['[|"", ""]']`." }, TestCases = { { "abcd", "[a, b, c, d]" } } });
+        }
     }
 }

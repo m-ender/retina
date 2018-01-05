@@ -122,7 +122,7 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"L$`\w+" , "$.&,$&" },
+                Sources = { @"L$`\w+", "$.&,$&" },
                 TestCases = {
                     { "abc!", "3,abc" },
                     { "Hello, World!", "5,Hello\n5,World" },
@@ -173,6 +173,12 @@ namespace RetinaTest
                     { "(~^.^)~", "" },
                 }
             });
+        }
+
+        [TestMethod]
+        public void TestListFormatting()
+        {
+            AssertProgram(new TestSuite { Sources = { @"L['[|"", ""]']`." }, TestCases = { { "abcd", "[a, b, c, d]" } } });
         }
     }
 }

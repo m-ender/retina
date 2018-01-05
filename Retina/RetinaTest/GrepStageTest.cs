@@ -41,5 +41,11 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"G, 1,`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "!!!\ndef" } } });
             AssertProgram(new TestSuite { Sources = { @"G^, 1,`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "def\n!!!" } } });
         }
+
+        [TestMethod]
+        public void TestListFormatting()
+        {
+            AssertProgram(new TestSuite { Sources = { @"G['[|"", ""]']`." }, TestCases = { { "abc\ndef\nghi", "[abc, def, ghi]" } } });
+        }
     }
 }

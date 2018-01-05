@@ -9,6 +9,7 @@ namespace RetinaTest
         [TestMethod]
         public void TestBasicAntiGrep()
         {
+            AssertProgram(new TestSuite { Sources = { @"A`" }, TestCases = { { "abc", "" } } });
             AssertProgram(new TestSuite { Sources = { @"A`" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "" } } });
             AssertProgram(new TestSuite { Sources = { @"A`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n\n" } } });
             AssertProgram(new TestSuite { Sources = { @"A`\w" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n!!!\n\n" } } });
@@ -40,6 +41,12 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite { Sources = { @"Am, 1,`^$" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "!!!\ndef" } } });
             AssertProgram(new TestSuite { Sources = { @"Am^, 1,`^$" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "def\n!!!" } } });
+        }
+
+        [TestMethod]
+        public void TestListFormatting()
+        {
+            AssertProgram(new TestSuite { Sources = { @"A['[|"", ""]']`!" }, TestCases = { { "abc\ndef\nghi", "[abc, def, ghi]" } } });
         }
     }
 }

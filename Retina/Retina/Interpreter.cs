@@ -84,6 +84,21 @@ namespace Retina
                             )
                         )
                     |
+                        (?<listFormat>                      # [, | and ] followed by a character or string determines the
+                                                            # start, delimiter or end of list-like output, respectively.
+                            [|[\]]
+                            (?:
+                                ""                          # Strings are surrounded by double quotes and, these can be
+                                                            # escaped inside the string by doubling them.
+                                (?<string>
+                                    (?:[^""]|"""")*
+                                )
+                                ""
+                            |
+                                '?(?<char>.)                 # Characters are preceded by single quotes.
+                            )
+                        )
+                    |
                         (?<openGroup>[({])                  # ( or { starts a new group stage.
                     |
                         (?<closeGroup>[)}])                 # ) or } ends a group stage.
@@ -140,18 +155,24 @@ namespace Retina
 
                     foreach (Match t in tokens)
                     {
-                        if (t.Groups["limit"].Success)
+                        if (t.Groups["end"].Success)
+                        {
+                            pattern = t.Groups["remainder"].Value;
+                            terminated = true;
+                            break;
+                        }
+                        else if (t.Groups["limit"].Success)
                         {
                             Limit limit;
                             if (t.Groups["l1"].Success)
                                 limit = new Limit(int.Parse(t.Groups["ln"].Value));
-                            else if(t.Groups["l2"].Success)
+                            else if (t.Groups["l2"].Success)
                             {
                                 int m = t.Groups["lm"].Success ? int.Parse(t.Groups["lm"].Value) : 0;
                                 int n = t.Groups["ln"].Success ? int.Parse(t.Groups["ln"].Value) : -1;
                                 limit = new Limit(m, n);
                             }
-                            else if(t.Groups["l3"].Success)
+                            else if (t.Groups["l3"].Success)
                             {
                                 int m = t.Groups["lm"].Success ? int.Parse(t.Groups["lm"].Value) : 0;
                                 int k = t.Groups["lk"].Success ? int.Parse(t.Groups["lk"].Value) : 0;
@@ -164,14 +185,31 @@ namespace Retina
                             }
 
                             limit.Negated = t.Groups["lneg"].Success;
-                            
+
                             config.Limits.Add(limit);
                         }
-                        else if (t.Groups["end"].Success)
+                        else if (t.Groups["listFormat"].Success)
                         {
-                            pattern = t.Groups["remainder"].Value;
-                            terminated = true;
-                            break;
+                            string value = "";
+                            if (t.Groups["char"].Success)
+                                value = t.Groups["char"].Value;
+                            else if (t.Groups["string"].Success)
+                                value = t.Groups["string"].Value.Replace("\"\"", "\"");
+
+                            switch (t.Groups["listFormat"].Value[0])
+                            {
+                            case '[':
+                                config.ListStart = value;
+                                break;
+                            case '|':
+                                config.ListSeparator = value;
+                                break;
+                            case ']':
+                                config.ListEnd = value;
+                                break;
+                            default:
+                                throw new Exception("List format is none of [|]. This shouldn't happen.");
+                            }
                         }
                         else if (t.Groups["openGroup"].Success)
                         {

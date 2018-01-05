@@ -66,5 +66,11 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"S!_, 1,-2`(\W)+" }, TestCases = { { "Hello, World!", " \nWorld" } } });
             AssertProgram(new TestSuite { Sources = { @"S!_^, 2,`(\W)+" }, TestCases = { { "Hello, World!", "!\nWorld" } } });
         }
+
+        [TestMethod]
+        public void TestListFormatting()
+        {
+            AssertProgram(new TestSuite { Sources = { @"S['[|"", ""]']!_`" }, TestCases = { { "abcd", "[a, b, c, d]" } } });
+        }
     }
 }

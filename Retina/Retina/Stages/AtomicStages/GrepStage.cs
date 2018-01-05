@@ -48,7 +48,7 @@ namespace Retina.Stages
             if (Config.Reverse)
                 lines.Reverse();
 
-            return String.Join("\n", lines.Select(l => l.line));
+            return Config.FormatAsList(lines.Select(l => l.line));
         }
     }
 }

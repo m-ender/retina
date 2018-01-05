@@ -28,7 +28,7 @@ namespace Retina.Stages
             foreach (var m in Matches)
             {
                 int i = 0;
-                while (lines[i].end < m.Match.Index)
+                while (i < lines.Count && lines[i].end < m.Match.Index)
                     ++i;
                 while (i < lines.Count && lines[i].start <= m.Match.Index + m.Match.Length)
                     lines.RemoveAt(i);
@@ -39,7 +39,7 @@ namespace Retina.Stages
             if (Config.Reverse)
                 lines.Reverse();
 
-            return String.Join("\n", lines.Select(l => l.line));
+            return Config.FormatAsList(lines.Select(l => l.line));
         }
     }
 }
