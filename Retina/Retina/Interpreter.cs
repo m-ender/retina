@@ -376,6 +376,11 @@ namespace Retina
                                     mode = Modes.Split;
                                     break;
                                 case 'T':
+                                    config.CyclicTransliteration = false;
+                                    mode = Modes.Transliterate;
+                                    break;
+                                case 'Y':
+                                    config.CyclicTransliteration = true;
                                     mode = Modes.Transliterate;
                                     break;
                                 case 'N':

@@ -56,6 +56,9 @@ namespace Retina.Configuration
 
         // Configuration for Pad mode
         public string PadString { get; set; }
+
+        // Configuration for Transliterate mode
+        public bool CyclicTransliteration { get; set; }
         
         public Config()
         {

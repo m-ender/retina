@@ -140,6 +140,14 @@ namespace RetinaTest
             AssertTransliteration(@"T, 3,-4`p`_`\w+", @" !""#$%&'()*+,-./012789:;<=>?@ABCXYZ[\]^_`abcxyz{|}~");
         }
 
+        [TestMethod]
+        public void TestCyclicTransliteration()
+        {
+            AssertProgram(new TestSuite { Sources = { @"Y`ab`" }, TestCases = { { "aaaabbbbabab", "" } } });
+            AssertProgram(new TestSuite { Sources = { @"Y`ab`c\de" }, TestCases = { { "aaaabbbbabab", "cedcdcedecde" } } });
+            AssertProgram(new TestSuite { Sources = { @"Y`ab`c_e" }, TestCases = { { "aaaabbbbabab", "cecceece" } } });
+        }
+
         // Applies the transliteration to all printable ASCII characters
         private void AssertTransliteration(string source, string expectedOutput)
         {
