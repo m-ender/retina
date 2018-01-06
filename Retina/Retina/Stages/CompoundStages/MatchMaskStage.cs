@@ -6,43 +6,50 @@ using System.Text;
 using System.Threading.Tasks;
 using Retina.Configuration;
 using System.Text.RegularExpressions;
+using Retina.Extensions;
 
 namespace Retina.Stages
 {
     public class MatchMaskStage : Stage
     {
         public Stage ChildStage { get; set; }
-        public Regex Pattern { get; set; }
 
-        public MatchMaskStage(Config config, Stage childStage, Regex pattern)
+        public MatchMaskStage(Config config, Stage childStage)
             : base(config)
         {
             ChildStage = childStage;
-            Pattern = pattern;
         }
 
         public override string Execute(string input, TextWriter output)
         {
-            var builder = new StringBuilder();
+            Regex splitRegex;
 
+            if (Config.RegexParam != null)
+                splitRegex = Config.RegexParam;
+            else if (Config.StringParam != null)
+                splitRegex = new Regex(Regex.Escape(Config.StringParam));
+            else
+                splitRegex = new Regex("^.*$", RegexOptions.Multiline);
 
-            IEnumerable<Match> matches = from Match m in Pattern.Matches(input)
-                                         orderby m.Index, m.Length
-                                         select m;
+            List<Match> matches = splitRegex.Matches(input).Cast<Match>().ToList();
+            var separators = new List<string>();
 
-            int i = 0;
-            foreach (Match m in matches)
+            int lastEnd = 0;
+            foreach (var m in matches)
             {
-                builder.Append(input.Substring(i, m.Index - i));
-
-                builder.Append(ChildStage.Execute(m.Value, output));
-                
-                i = m.Index + m.Length;
+                separators.Add(input.Substring(lastEnd, m.Index - lastEnd));
+                lastEnd = m.Index + m.Length;
             }
+            separators.Add(input.Substring(lastEnd));
 
-            builder.Append(input.Substring(i));
+            IEnumerable<string> results = matches.Select((m, i) => {
+                if (Config.GetLimit(0).IsInRange(i, separators.Count))
+                    return ChildStage.Execute(m.Value, output);
+                else
+                    return m.Value;
+            });
 
-            return builder.ToString();
+            return separators.Riffle(results);
         }
     }
 }
