@@ -21,14 +21,15 @@ namespace Retina.Stages
 
             int paddingWidth = Matches.Select(m => m.Replacement.Length).Aggregate(Math.Max);
 
-            string padString;
+            string padString = Config.StringParam ?? " ";
+
             if (!Config.Reverse)
                 padString = new string(Enumerable.Range(0, paddingWidth).Select(
-                    i => Config.PadString[i % Config.PadString.Length]
+                    i => padString[i % padString.Length]
                 ).ToArray());
             else
                 padString = new string(Enumerable.Range(0, paddingWidth).Reverse().Select(
-                    i => Config.PadString[Config.PadString.Length - 1 - i % Config.PadString.Length]
+                    i => padString[padString.Length - 1 - i % padString.Length]
                 ).ToArray());
 
             var paddedMatches = Matches.Select(m =>

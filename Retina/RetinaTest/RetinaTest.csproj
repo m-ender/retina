@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="AntiGrepStageTest.cs" />
     <Compile Include="GeneralOptionsTest.cs" />
+    <Compile Include="PerLineStageTest.cs" />
     <Compile Include="PositionStageTest.cs" />
     <Compile Include="ReplacerTest.cs" />
     <Compile Include="LimitTest.cs" />

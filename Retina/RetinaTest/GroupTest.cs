@@ -68,17 +68,6 @@ namespace RetinaTest
                 },
                 TestCases = { { "abc\ndef,ghi\n123,456,789", "1\n2\n3" } }
             });
-
-
-            AssertProgram(new TestSuite
-            {
-                Sources =
-                {
-                    ",2,%`.",
-                    "$&$&",
-                },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", "aabbcc\ndef\ngghhii\njkl\nmmnnoo" } }
-            });
         }
 
         [TestMethod]

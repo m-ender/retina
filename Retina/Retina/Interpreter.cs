@@ -138,17 +138,22 @@ namespace Retina
                         (?<remainder>.*)                    # The remainder is used as the regex (or input or substitution 
                                                             # for some configurations).
                     |
-                        (?<flag>P)                          # Padding stages take an optional character or string argument.
-                        (?<padString>
-                            ""                              # Strings are surrounded by double quotes and, these can be
+                        ""                                  # Strings are surrounded by double quotes and, these can be
                                                             # escaped inside the string by doubling them.
-                            (?<string>
-                                (?:[^""]|"""")*
-                            )
-                            ""
-                        |
-                            '(?<char>.)                     # Characters are preceded by single quotes.
-                        )?
+                        (?<stringParam>
+                            (?:[^""]|"""")*
+                        )
+                        ""
+                    |
+                        '(?<charParam>.)                    # Characters are preceded by single quotes.
+                    |
+                        /                                   # Regices are surrounded by slashes and, these can be
+                                                            # escaped inside the regex with the usual backslash.
+                        (?<regexParam>
+                            (?:[^\\/]|\\.)*
+                        )
+                        /
+                        (?<regexModifier>[a-z])*
                     |
                         (?<flag>
                             !.                              # ! marks a 2-character flag.
@@ -199,6 +204,33 @@ namespace Retina
                             limit.Negated = t.Groups["lneg"].Success;
 
                             config.Limits.Add(limit);
+                        }
+                        else if (t.Groups["stringParam"].Success)
+                        {
+                            config.StringParam = t.Groups["stringParam"].Value.Replace("\"\"", "\""); ;
+                        }
+                        else if (t.Groups["charParam"].Success)
+                        {
+                            config.StringParam = t.Groups["charParam"].Value;
+                        }
+                        else if (t.Groups["regexParam"].Success)
+                        {
+                            var regexOptions = new RegexOptions();
+                            foreach (var c in t.Groups["regexModifier"].Captures.Cast<Capture>())
+                            {
+                                switch (c.Value[0])
+                                {
+                                case 'c': regexOptions |= RegexOptions.CultureInvariant; break;
+                                case 'e': regexOptions |= RegexOptions.ECMAScript; break;
+                                case 'i': regexOptions |= RegexOptions.IgnoreCase; break;
+                                case 'm': regexOptions |= RegexOptions.Multiline; break;
+                                case 'n': regexOptions |= RegexOptions.ExplicitCapture; break;
+                                case 'r': regexOptions |= RegexOptions.RightToLeft; break;
+                                case 's': regexOptions |= RegexOptions.Singleline; break;
+                                case 'x': regexOptions |= RegexOptions.IgnorePatternWhitespace; break;
+                                }
+                            }
+                            config.RegexParam = new Regex(t.Groups["regexParam"].Value, regexOptions);
                         }
                         else if (t.Groups["listFormat"].Success)
                         {
@@ -401,11 +433,6 @@ namespace Retina
                                     mode = Modes.Reverse;
                                     break;
                                 case 'P':
-                                    if (t.Groups["padString"].Success)
-                                        if (t.Groups["char"].Success)
-                                            config.PadString = t.Groups["char"].Value;
-                                        else if (t.Groups["string"].Success)
-                                            config.PadString = t.Groups["string"].Value.Replace("\"\"", "\"");
                                     mode = Modes.Pad;
                                     break;
 

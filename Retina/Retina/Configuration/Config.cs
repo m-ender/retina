@@ -41,6 +41,8 @@ namespace Retina.Configuration
         public string ListStart { get; set; }
         public string ListSeparator { get; set; }
         public string ListEnd { get; set; }
+        public string StringParam { get; set; }
+        public Regex RegexParam { get; set; }
 
         // Configuration for Output stages
         public bool TrailingLinefeed { get; set; }
@@ -53,13 +55,10 @@ namespace Retina.Configuration
 
         // Configuration for Sort mode
         public bool SortNumerically { get; set; }
-
-        // Configuration for Pad mode
-        public string PadString { get; set; }
-
+        
         // Configuration for Transliterate mode
         public bool CyclicTransliteration { get; set; }
-        
+
         public Config()
         {
             Limits = new List<Limit>();
@@ -67,8 +66,6 @@ namespace Retina.Configuration
             ListStart = "";
             ListEnd = "";
             ListSeparator = "\n";
-
-            PadString = " ";
         }
 
         public void Inherit(Config other)
