@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
     [TestClass]
-    public class GroupTest : RetinaTestBase
+    public class GroupStageTest : RetinaTestBase
     {
         [TestMethod]
         public void TestRegexModifiers()
@@ -98,6 +99,28 @@ namespace RetinaTest
                     @"."
                 },
                 TestCases = { { "Hello, World!", "Ha,Wa!13" } }
+            });
+        }
+
+        [TestMethod]
+        public void TestRandom()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = {
+                    @"&(C`.",
+                    @"G`\w",
+                    @"O`",
+                    @"\d",
+                    @"$*!,",
+                },
+                TestCases = { { "abc\n123\n<!>", new List<string>
+                {
+                    "9",
+                    "abc\n123",
+                    "123\n<!>\nabc",
+                    "abc\n!,!!,!!!,\n<!>",
+                } } }
             });
         }
     }

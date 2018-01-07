@@ -70,7 +70,7 @@
     <Compile Include="SplitStageTest.cs" />
     <Compile Include="GrepStageTest.cs" />
     <Compile Include="DeduplicateStageTest.cs" />
-    <Compile Include="GroupTest.cs" />
+    <Compile Include="GroupStageTest.cs" />
     <Compile Include="LoopTest.cs" />
     <Compile Include="OutputStageTest.cs" />
     <Compile Include="CountStageTest.cs" />

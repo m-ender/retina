@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Retina;
 using Retina.Stages;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
@@ -46,6 +47,36 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite { Sources = { @"V, 1,3,`\w+" }, TestCases = { { "HelloWorld, shenanigans", "HrlloWoeld, ssengniaanh" } } });
             AssertProgram(new TestSuite { Sources = { @"V, ~1,3,`\w+" }, TestCases = { { "HelloWorld, shenanigans", "delooWlrlH, nhaianngess" } } });
+        }
+
+        [TestMethod]
+        public void TestRandom()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"V&`\w+" },
+                TestCases = { { "ab\ndef", new List<string>
+                {
+                    "ab\ndef", "ba\ndef",
+                    "ab\ndfe", "ba\ndfe",
+                    "ab\nedf", "ba\nedf",
+                    "ab\nefd", "ba\nefd",
+                    "ab\nfde", "ba\nfde",
+                    "ab\nfed", "ba\nfed",
+                }
+                } }
+            });
+
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"V&, ,,`\w+" },
+                TestCases = { { "abc\ndefg", new List<string>
+                {
+                    "abc\ndefg", "cba\ndefg",
+                    "abc\ngefd", "cba\ngefd",
+                }
+                } }
+            });
         }
     }
 }

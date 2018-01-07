@@ -20,7 +20,13 @@ namespace Retina.Stages
 
             IEnumerable<string> sortedMatches;
 
-            if (Config.SortNumerically)
+            if (Config.Random)
+            {
+                var matchStrings = Matches.Select(m => m.Match.Value).ToList();
+                matchStrings.Shuffle();
+                sortedMatches = matchStrings;
+            }
+            else if (Config.SortNumerically)
                 sortedMatches = from MatchContext m in Matches
                                 let numberMatch = new Regex(@"-?\d+").Match(m.Replacement)
                                 orderby numberMatch.Success ? int.Parse(numberMatch.Value) : 0

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
@@ -71,6 +72,25 @@ namespace RetinaTest
         public void TestListFormatting()
         {
             AssertProgram(new TestSuite { Sources = { @"S['[|"", ""]']!_`" }, TestCases = { { "abcd", "[a, b, c, d]" } } });
+        }
+
+        [TestMethod]
+        public void TestRandom()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"S&`(\w+)" },
+                TestCases = { { "abc,def;ghi", new List<string>
+                {
+                    "",
+                    "abc",
+                    ",",
+                    "def",
+                    ";",
+                    "ghi",
+                }
+                } }
+            });
         }
     }
 }

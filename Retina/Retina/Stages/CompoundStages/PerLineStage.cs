@@ -46,15 +46,20 @@ namespace Retina.Stages
                 lastEnd = m.Index + m.Length;
             }
             lines.Add(input.Substring(lastEnd));
-            
-            IEnumerable<string> resultLines = lines.Select((line, i) => {
-                if (Config.GetLimit(0).IsInRange(i, lines.Count))
-                    return ChildStage.Execute(line, output);
-                else
-                    return line;
-            });
 
-            return resultLines.Riffle(matches.Select(m => m.Value));
+            List<int> linesToProcess = lines.Select((_, i) => i).Where(i => Config.GetLimit(0).IsInRange(i, lines.Count)).ToList();
+            
+            if (Config.Random && linesToProcess.Count > 0)
+            {
+                var chosenLine = linesToProcess[Random.RNG.Next(linesToProcess.Count)];
+                linesToProcess = new List<int>();
+                linesToProcess.Add(chosenLine);
+            }
+
+            foreach (int i in linesToProcess)
+                lines[i] = ChildStage.Execute(lines[i], output);
+            
+            return lines.Riffle(matches.Select(m => m.Value));
         }
     }
 }

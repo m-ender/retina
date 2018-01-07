@@ -17,7 +17,6 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Random?
             // - Maybe an option to use a different line separator.
 
             var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
@@ -45,10 +44,19 @@ namespace Retina.Stages
             
             lines = lines.Where((_, i) => Config.GetLimit(1).IsInRange(i, lines.Count)).ToList();
 
-            if (Config.Reverse)
-                lines.Reverse();
+            var lineStrings = lines.Select(l => l.line).ToList();
 
-            return Config.FormatAsList(lines.Select(l => l.line));
+            if (Config.Random && lineStrings.Count > 0)
+            {
+                var chosenLine = lineStrings[Random.RNG.Next(lineStrings.Count)];
+                lineStrings = new List<string>();
+                lineStrings.Add(chosenLine);
+            }
+
+            if (Config.Reverse)
+                lineStrings.Reverse();
+
+            return Config.FormatAsList(lineStrings);
         }
     }
 }

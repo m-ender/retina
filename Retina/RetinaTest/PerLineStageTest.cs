@@ -82,16 +82,31 @@ namespace RetinaTest
         {
             AssertRandomProgram(new RandomTestSuite
             {
-                Sources = {
-                    @"@%s`.+",
-                    @"$.&",
-                },
+                Sources = { @"@%`." },
                 TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
                 {
-                    "3\n15",
-                    "7\n11",
-                    "11\n7",
-                    "15\n3",
+                    "3\n12",
+                    "6\n9",
+                    "9\n6",
+                    "12\n3",
+                }
+                } }
+            });
+        }
+
+        [TestMethod]
+        public void TestRandomLine()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"&%`." },
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                {
+                    "3\ndef\nghi\njkl\nmno",
+                    "abc\n3\nghi\njkl\nmno",
+                    "abc\ndef\n3\njkl\nmno",
+                    "abc\ndef\nghi\n3\nmno",
+                    "abc\ndef\nghi\njkl\n3",
                 }
                 } }
             });

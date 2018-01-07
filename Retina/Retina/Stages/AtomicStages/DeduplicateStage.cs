@@ -4,6 +4,8 @@ using System.IO;
 using Retina.Configuration;
 using Retina.Extensions;
 using System.Text;
+using System;
+using System.Text.RegularExpressions;
 
 namespace Retina.Stages
 {
@@ -15,27 +17,40 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Random option?
             // - Maybe a numeric parameter to keep multiple copies?
-            var stringSet = new HashSet<string>();
-            var toDelete = new HashSet<int>();
-
-            IEnumerable<MatchContext> matches = Matches;
-            if (Config.Reverse)
-                matches = matches.Reverse();
-
-            foreach(var m in matches)
+            var matchSets = new Dictionary<string, List<Match>>();
+            
+            foreach(var m in Matches)
             {
-                if (stringSet.Contains(m.Replacement))
+                string key = m.Replacement;
+                if (!matchSets.ContainsKey(key))
+                    matchSets[m.Replacement] = new List<Match>();
+
+                matchSets[m.Replacement].Add(m.Match);
+                
+            }
+
+            var toDelete = new HashSet<int>();
+            foreach (var matchSet in matchSets)
+            {
+                List<Match> matches = matchSet.Value;
+
+                if (Config.Random)
+                    matches.RemoveAt(Random.RNG.Next(matches.Count));
+                else if (Config.Reverse)
+                    matches.RemoveAt(matches.Count - 1);
+                else
+                    matches.RemoveAt(0);
+
+                foreach (var m in matches)
                 {
-                    for (int i = 0; i < m.Match.Length; ++i)
+                    for (int i = 0; i < m.Length; ++i)
                     {
-                        if (Config.GetLimit(1).IsInRange(i, m.Match.Length))
-                            toDelete.Add(i + m.Match.Index);
+                        if (Config.GetLimit(1).IsInRange(i, m.Length))
+                            toDelete.Add(i + m.Index);
                     }
                 }
-                stringSet.Add(m.Replacement);
-            };
+            }
                         
             var sortedDeletions = toDelete.ToList();
             sortedDeletions.Sort();

@@ -27,6 +27,14 @@ namespace Retina.Stages
                     if (charLimit.IsInRange(i, m.Replacement.Length))
                         charStack.Push(c);
                 });
+
+                if (Config.Random)
+                {
+                    var charList = charStack.ToList();
+                    charList.Shuffle();
+                    charStack = new Stack<char>(charList);
+                }
+
                 return new string(m.Replacement.Select(
                     (c, i) => charLimit.IsInRange(i, m.Replacement.Length) ? charStack.Pop() : c
                 ).ToArray());

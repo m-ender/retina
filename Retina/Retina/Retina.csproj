@@ -46,6 +46,7 @@
     <Compile Include="Configuration\Limit.cs" />
     <Compile Include="Configuration\Anchoring.cs" />
     <Compile Include="Configuration\UniqueMatches.cs" />
+    <Compile Include="Extensions\ListExtension.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
     <Compile Include="MatchContext.cs" />
     <Compile Include="Random.cs" />

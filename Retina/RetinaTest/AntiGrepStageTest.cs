@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
@@ -39,14 +40,41 @@ namespace RetinaTest
         [TestMethod]
         public void TestLineLimit()
         {
-            AssertProgram(new TestSuite { Sources = { @"Am, 1,`^$" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "!!!\ndef" } } });
-            AssertProgram(new TestSuite { Sources = { @"Am^, 1,`^$" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "def\n!!!" } } });
+            AssertProgram(new TestSuite { Sources = { @"Am, 1,`.+" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\nabc\n\n" } } });
+            AssertProgram(new TestSuite { Sources = { @"Am^, 1,`.+" }, TestCases = { { "\nabc\n!!!\n\ndef\n", "\n\nabc\n" } } });
         }
 
         [TestMethod]
         public void TestListFormatting()
         {
             AssertProgram(new TestSuite { Sources = { @"A['[|"", ""]']`!" }, TestCases = { { "abc\ndef\nghi", "[abc, def, ghi]" } } });
+        }
+
+        [TestMethod]
+        public void TestRandom()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"A&`[a-z]" },
+                TestCases = { { "a\nbc\ndef\n1234\nghijklmno", new List<string>
+                {
+                    "bc\ndef\n1234\nghijklmno",
+                    "a\ndef\n1234\nghijklmno",
+                    "a\nbc\n1234\nghijklmno",
+                    "a\nbc\ndef\n1234",
+                } } }
+            });
+
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"A&, 1,`[a-z]" },
+                TestCases = { { "a\nbc\ndef\n1234\nghijklmno", new List<string>
+                {
+                    "a\ndef\n1234\nghijklmno",
+                    "a\nbc\n1234\nghijklmno",
+                    "a\nbc\ndef\n1234",
+                } } }
+            });
         }
     }
 }

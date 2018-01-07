@@ -22,8 +22,16 @@ namespace Retina.Stages
         public override string Execute(string input, TextWriter output)
         {
             string result = input;
-            foreach (var stage in Stages)
-                result = stage.Execute(result, output);
+
+            if (Config.Random)
+            {
+                result = Stages[Random.RNG.Next(Stages.Count)].Execute(result, output);
+            }
+            else
+            {
+                foreach (var stage in Stages)
+                    result = stage.Execute(result, output);
+            }
 
             return result;
         }

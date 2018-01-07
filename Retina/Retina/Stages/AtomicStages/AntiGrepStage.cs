@@ -15,7 +15,6 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Random?
             // - Maybe an option to use a different line separator.
 
             var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
@@ -24,18 +23,33 @@ namespace Retina.Stages
                 start = m.Index,
                 end = m.Index + m.Length
             }).ToList();
-            
+
+            var toDelete = new HashSet<int>();
+
             foreach (var m in Matches)
             {
                 int i = 0;
                 while (i < lines.Count && lines[i].end < m.Match.Index)
                     ++i;
                 while (i < lines.Count && lines[i].start <= m.Match.Index + m.Match.Length)
-                    lines.RemoveAt(i);
+                    toDelete.Add(i++);
             }
-            
-            lines = lines.Where((_, i) => Config.GetLimit(1).IsInRange(i, lines.Count)).ToList();
 
+            var sortedDeletions = toDelete.ToList();
+            sortedDeletions.Sort();
+            sortedDeletions = sortedDeletions.Where((_, i) => Config.GetLimit(1).IsInRange(i, sortedDeletions.Count)).ToList();
+            sortedDeletions.Reverse();
+
+            if (Config.Random && sortedDeletions.Count > 0)
+            {
+                var chosenLine = sortedDeletions[Random.RNG.Next(sortedDeletions.Count)];
+                sortedDeletions = new List<int>();
+                sortedDeletions.Add(chosenLine);
+            }
+
+            foreach (int i in sortedDeletions)
+                lines.RemoveAt(i);
+            
             if (Config.Reverse)
                 lines.Reverse();
 

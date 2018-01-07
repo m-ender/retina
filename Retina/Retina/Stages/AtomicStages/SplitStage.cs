@@ -38,6 +38,13 @@ namespace Retina.Stages
             
             result = result.Where((_, i) => Config.GetLimit(1).IsInRange(i, result.Count)).ToList();
 
+            if (Config.Random && result.Count > 0)
+            {
+                var chosenResult = result[Random.RNG.Next(result.Count)];
+                result = new List<string>();
+                result.Add(chosenResult);
+            }
+
             if (Config.Reverse)
                 result.Reverse();
             

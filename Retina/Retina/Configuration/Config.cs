@@ -78,6 +78,7 @@ namespace Retina.Configuration
         {
             RegexOptions ^= other.RegexOptions;
             Limits.AddRange(other.Limits);
+            Random |= other.Random;
         }
 
         public Limit GetLimit(int i)
