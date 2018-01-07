@@ -30,8 +30,15 @@ namespace Retina.Stages
                 splitRegex = new Regex("\n");
 
             List<Match> matches = splitRegex.Matches(input).Cast<Match>().ToList();
+
+            if (Config.SingleRandomMatch && matches.Count > 0)
+            {
+                var chosenMatch = matches[Random.RNG.Next(matches.Count)];
+                matches = new List<Match>();
+                matches.Add(chosenMatch);
+            }
+
             var lines = new List<string>();
-            
             int lastEnd = 0;
             foreach (var m in matches)
             {

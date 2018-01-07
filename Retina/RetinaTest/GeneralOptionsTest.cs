@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
@@ -76,7 +77,7 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"L@`ab(12\pq" },
+                Sources = { @"L:`ab(12\pq" },
                 TestCases = {
                     { @"\w+", "ab\n12\npq" },
                     { @"\W", "(\n\\" },
@@ -255,6 +256,40 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"L|""`""""`""`." }, TestCases = { { "abcd", "a`\"`b`\"`c`\"`d" } } });
 
             AssertProgram(new TestSuite { Sources = { @"L['[|"", ""]']`." }, TestCases = { { "abcd", "[a, b, c, d]" } } });
+        }
+
+        [TestMethod]
+        public void TestRandomMatch()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"L@`.+" },
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                {
+                    "abc",
+                    "def",
+                    "ghi",
+                    "jkl",
+                    "mno",
+                } } }
+            });
+
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"L~1,2@`.+" },
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                {
+                    "abc",
+                    "jkl",
+                    "mno",
+                } } }
+            });
+            
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"L@`\d+" },
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string> { "" } } }
+            });
         }
     }
 }

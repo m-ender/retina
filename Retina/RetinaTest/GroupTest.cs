@@ -68,6 +68,18 @@ namespace RetinaTest
                 },
                 TestCases = { { "abc\ndef,ghi\n123,456,789", "1\n2\n3" } }
             });
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"%*(\`$",
+                    @"$`",
+                    @"\`$",
+                    @"$`",
+                },
+                TestCases = { { "a\nb\nc", "aa\naaaa\nbb\nbbbb\ncc\ncccc\na\nb\nc" } }
+            });
         }
 
         [TestMethod]

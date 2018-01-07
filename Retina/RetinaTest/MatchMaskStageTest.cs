@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace RetinaTest
 {
@@ -73,6 +74,27 @@ namespace RetinaTest
                     "$&$&",
                 },
                 TestCases = { { "abc\ndef\nghi\njkl\nmno", "aabbcc\ndef\ngghhii\njkl\nmmnnoo" } }
+            });
+        }
+
+        [TestMethod]
+        public void TestRandomMatch()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = {
+                    @"@_`.+",
+                    @"$&$&",
+                },
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                {
+                    "abcabc\ndef\nghi\njkl\nmno",
+                    "abc\ndefdef\nghi\njkl\nmno",
+                    "abc\ndef\nghighi\njkl\nmno",
+                    "abc\ndef\nghi\njkljkl\nmno",
+                    "abc\ndef\nghi\njkl\nmnomno",
+                }
+                } }
             });
         }
     }

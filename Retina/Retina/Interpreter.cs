@@ -455,13 +455,16 @@ namespace Retina
                                 case '&':
                                     config.Random = true;
                                     break;
+                                case '@':
+                                    config.SingleRandomMatch = true;
+                                    break;
                                 case '=':
                                     config.InvertMatches = true;
                                     break;
                                 case '^':
                                     config.Reverse = true;
                                     break;
-                                case '@':
+                                case ':':
                                     config.InputAsRegex = true;
                                     break;
                                 default:
@@ -492,7 +495,7 @@ namespace Retina
                 if (Math.Abs(patternCount) > 1)
                 {
                     if (config.InputAsRegex)
-                        throw new Exception("Can't use @ in conjunction with #.");
+                        throw new Exception("Can't use : in conjunction with #.");
 
                     config.Greedy = patternCount < 0;
                     for (int k = 1; k < Math.Abs(patternCount); ++k)

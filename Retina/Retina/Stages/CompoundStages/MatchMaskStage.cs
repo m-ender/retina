@@ -32,6 +32,20 @@ namespace Retina.Stages
                 splitRegex = new Regex("^.*$", RegexOptions.Multiline);
 
             List<Match> matches = splitRegex.Matches(input).Cast<Match>().ToList();
+            
+            Limit matchLimit = Config.GetLimit(0);
+            int matchCount = matches.Count;
+            for (int i = matchCount - 1; i >= 0; --i)
+                if (!matchLimit.IsInRange(i, matchCount))
+                    matches.RemoveAt(i);
+
+            if (Config.SingleRandomMatch && matches.Count > 0)
+            {
+                var chosenMatch = matches[Random.RNG.Next(matches.Count)];
+                matches = new List<Match>();
+                matches.Add(chosenMatch);
+            }
+
             var separators = new List<string>();
 
             int lastEnd = 0;
@@ -42,12 +56,7 @@ namespace Retina.Stages
             }
             separators.Add(input.Substring(lastEnd));
 
-            IEnumerable<string> results = matches.Select((m, i) => {
-                if (Config.GetLimit(0).IsInRange(i, separators.Count))
-                    return ChildStage.Execute(m.Value, output);
-                else
-                    return m.Value;
-            });
+            IEnumerable<string> results = matches.Select((m, i) => ChildStage.Execute(m.Value, output));
 
             return separators.Riffle(results);
         }

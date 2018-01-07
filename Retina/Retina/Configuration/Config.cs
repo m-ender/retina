@@ -12,6 +12,7 @@ namespace Retina.Configuration
 
         // General configuration        
         public List<Limit> Limits { get; set; }
+        public bool SingleRandomMatch { get; set; }
 
         // This is only relevant for stages with multiple patterns.
         // If this is true, the patterns will be chosen from greedily.

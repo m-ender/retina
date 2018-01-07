@@ -178,7 +178,7 @@ namespace Retina.Stages
             }
         }
 
-        // Apply the first limit that is common to all stage types.
+        // Apply the first limit that is common to all stage types as well as the SingleRandomMatch option.
         private void LimitMatches()
         {
             Limit matchLimit = Config.GetLimit(0);
@@ -186,6 +186,13 @@ namespace Retina.Stages
             for (int i = matchCount-1; i >= 0; --i)
                 if (!matchLimit.IsInRange(i, matchCount))
                     Matches.RemoveAt(i);
+
+            if (Config.SingleRandomMatch && Matches.Count > 0)
+            {
+                var chosenMatch = Matches[Random.RNG.Next(Matches.Count)];
+                Matches = new List<MatchContext>();
+                Matches.Add(chosenMatch);
+            }
         }
 
         // Generate matches for the segments between matches.
