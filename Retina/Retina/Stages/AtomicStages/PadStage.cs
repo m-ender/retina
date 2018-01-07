@@ -14,9 +14,6 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            // TODO:
-            // - Random option
-            
             var separators = Separators.Select(s => s.Match.Value);
 
             int paddingWidth = Matches.Select(m => m.Replacement.Length).Aggregate(Math.Max);

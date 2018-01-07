@@ -12,8 +12,6 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            // TODO:
-            // - Random option?
             var result = new List<string>();
 
             for (int i = 0; i < Separators.Count; ++i)

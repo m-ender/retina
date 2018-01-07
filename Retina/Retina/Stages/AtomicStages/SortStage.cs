@@ -15,9 +15,6 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            // TODO:
-            // - Random option
-
             IEnumerable<string> sortedMatches;
 
             if (Config.Random)

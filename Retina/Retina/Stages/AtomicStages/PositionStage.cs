@@ -12,8 +12,6 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            // TODO:
-            // - Random option
             var values = Matches.Select(m => (Config.Reverse ? m.Match.Index + m.Match.Length : m.Match.Index).ToString());
             
             return Config.FormatAsList(values);

@@ -185,10 +185,8 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Random
             // - Reverse (process matches and characters from last to first)
             // - An option to transliterate each character at most once
-            // - Alice-style transliteration
             // - figure out additional limits
 
             var mutableInput = new StringBuilder(input);
