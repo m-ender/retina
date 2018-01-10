@@ -112,9 +112,9 @@ namespace RetinaTest
                     @"G`\w",
                     @"O`",
                     @"\d",
-                    @"$*!,",
+                    @"*!,",
                 },
-                TestCases = { { "abc\n123\n<!>", new List<string>
+                TestCases = { { "abc\n123\n<!>", new string[]
                 {
                     "9",
                     "abc\n123",

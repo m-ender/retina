@@ -9,12 +9,12 @@ namespace Retina
         public Replacer Replacer { get; set; }
         public string Replacement { get; set; }
         public Regex Regex { get; set; }
-        
-        public MatchContext(Match match, Regex regex, string substitutionSource)
+                
+        public MatchContext(Match match, Regex regex, Replacer replacer)
         {
             Match = match;
             Regex = regex;
-            Replacer = new Replacer(regex, substitutionSource);
+            Replacer = replacer;
         }
     }
 }

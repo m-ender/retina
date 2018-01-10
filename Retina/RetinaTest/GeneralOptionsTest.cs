@@ -203,7 +203,7 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite
             {
-                Sources = { @"L#2$`[a-z]+", "$&$&", @"\d+", "$*" },
+                Sources = { @"L#2$`[a-z]+", "$&$&", @"\d+", "*" },
                 TestCases = { { "ab12cd21ef", "abab\n____________\ncdcd\n_____________________\nefef" } }
             });
         }
@@ -264,7 +264,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"L@`.+" },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[]
                 {
                     "abc",
                     "def",
@@ -277,7 +277,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"L~1,2@`.+" },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[]
                 {
                     "abc",
                     "jkl",
@@ -288,7 +288,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"L@`\d+" },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string> { "" } } }
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[] { "" } } }
             });
         }
     }

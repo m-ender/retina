@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -35,6 +34,8 @@ namespace Retina.Configuration
         public UniqueMatches UniqueMatches { get; set; }
         // Require the regex to cover the entire input.
         public Anchoring Anchoring { get; set; }
+        // Make matches cyclic for $[ and $] in substitutions
+        public bool CyclicMatches { get; set; }
 
         // General options which are interpreted differently by various stage types.
         public bool Reverse { get; set; }

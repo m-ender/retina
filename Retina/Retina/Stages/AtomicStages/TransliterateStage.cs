@@ -1,4 +1,5 @@
 ﻿using Retina.Configuration;
+using Retina.Replace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,10 +16,9 @@ namespace Retina.Stages
         private List<char?> From { get; set; }
         private List<char?> To { get; set; }
 
-        public TransliterateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
+        public TransliterateStage(Config config, List<string> patterns, List<string> substitutionSources, string separatorSubstitutionSource)
             : base(config)
         {
-
             var fromBuilder = new List<char?>();
             var toBuilder = new List<char?>();
 
@@ -59,8 +59,8 @@ namespace Retina.Stages
             patterns[0] = remainder.Length == 0 ? @"\A(?s:.*)\z" : remainder;
 
             RegexSources = patterns;
-            SubstitutionSources = substitutions;
-            SeparatorSubstitutionSource = separatorSubstitutionSource;
+            Replacers = substitutionSources.Select(s => new Replacer(s, Config.CyclicMatches)).ToList();
+            SeparatorReplacer = new Replacer(separatorSubstitutionSource);
         }
 
         private char ParseCharacterToken(string token)

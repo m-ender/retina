@@ -25,6 +25,8 @@ namespace Retina.Stages
 
             do
             {
+                if (Config.Random && Random.RNG.Next(2) == 0)
+                    break;
                 lastResult = result;
                 result = ChildStage.Execute(lastResult, output).ToString();
             } while (lastResult != result);

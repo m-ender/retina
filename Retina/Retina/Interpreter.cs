@@ -387,6 +387,9 @@ namespace Retina
                                 case 'w':
                                     config.Overlaps = Overlaps.OverlappingAll;
                                     break;
+                                case 'y':
+                                    config.CyclicMatches = true;
+                                    break;
 
                                 // Parse Mode
                                 case 'C':

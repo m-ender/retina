@@ -15,7 +15,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "_`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123\nabc\n<>", "123123123\nabcabcabc\n<><>" } }
             });
@@ -29,7 +29,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "',_`.",
-                    "$_$_",
+                    "$\"$\"",
                 },
                 TestCases = { { "123,abc,<>", "123,,abc,,<>" } }
             });
@@ -43,7 +43,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "\", \"_`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123, abc, <>", "123, , abc, , <>" } }
             });
@@ -57,7 +57,7 @@ namespace RetinaTest
                 Sources =
                 {
                     @"/\w+/_`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123, abc; XYZ", "123123123, abcabcabc; XYZXYZXYZ" } }
             });
@@ -86,7 +86,7 @@ namespace RetinaTest
                     @"@_`.+",
                     @"$&$&",
                 },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[]
                 {
                     "abcabc\ndef\nghi\njkl\nmno",
                     "abc\ndefdef\nghi\njkl\nmno",

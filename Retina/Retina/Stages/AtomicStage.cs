@@ -1,4 +1,5 @@
 ﻿using Retina.Configuration;
+using Retina.Replace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +15,8 @@ namespace Retina.Stages
         // these only depend on the parsed source code.
         public List<string> RegexSources { get; set; }
         public List<Regex> Regices { get; set; }
-        public List<string> SubstitutionSources { get; set; }
-        public string SeparatorSubstitutionSource { get; set; }
+        public List<Replacer> Replacers { get; set; }
+        public Replacer SeparatorReplacer { get; set; }
 
         // These get recomputed each time the stage is executed.
         public List<MatchContext> Matches { get; set; }
@@ -28,8 +29,8 @@ namespace Retina.Stages
             : this(config)
         {
             RegexSources = regexSources;
-            SubstitutionSources = substitutionSources;
-            SeparatorSubstitutionSource = separatorSubstitutionSource;
+            Replacers = substitutionSources.Select(s => new Replacer(s, Config.CyclicMatches)).ToList();
+            SeparatorReplacer = new Replacer(separatorSubstitutionSource, Config.CyclicMatches);
         }
 
         public override string Execute(string input, TextWriter output)
@@ -73,8 +74,8 @@ namespace Retina.Stages
 
 
             // Apply the corresponding substitution to each match.
-            foreach (var matchContext in Matches)
-                matchContext.Replacement = matchContext.Replacer.Process(input, matchContext.Match);
+            for (int i = 0; i < Matches.Count; ++i)
+                Matches[i].Replacement = Matches[i].Replacer.Process(input, Matches, Separators, i);
 
             string result = Process(input, output);
 
@@ -210,7 +211,7 @@ namespace Retina.Stages
                 );
                 sepMatch = sepRegex.Match(input, lastEnd);
 
-                Separators.Add(new MatchContext(sepMatch, sepRegex, SeparatorSubstitutionSource));
+                Separators.Add(new MatchContext(sepMatch, sepRegex, SeparatorReplacer));
                 lastEnd = m.Match.Index + m.Match.Length;
             }
 
@@ -222,7 +223,7 @@ namespace Retina.Stages
             );
             sepMatch = sepRegex.Match(input, lastEnd);
 
-            Separators.Add(new MatchContext(sepMatch, sepRegex, SeparatorSubstitutionSource));
+            Separators.Add(new MatchContext(sepMatch, sepRegex, SeparatorReplacer));
         }
 
         // Swap the Separators and Matches such that it seems that the Separators were actually matched.
@@ -230,10 +231,10 @@ namespace Retina.Stages
         {
             var temp = new List<MatchContext>();
             var regex = new Regex(@"\A");
-            temp.Add(new MatchContext(regex.Match(input), regex, "$&"));
+            temp.Add(new MatchContext(regex.Match(input), regex, new Replacer("$&")));
             temp.AddRange(Matches);
             regex = new Regex(@"\z");
-            temp.Add(new MatchContext(regex.Match(input), regex, "$&"));
+            temp.Add(new MatchContext(regex.Match(input), regex, new Replacer("$&")));
 
             Matches = Separators;
             Separators = temp;
@@ -275,7 +276,7 @@ namespace Retina.Stages
                     matches.Add(new MatchContext(
                         patterns[i].Match(input, startPos),
                         patterns[i],
-                        SubstitutionSources[i]
+                        Replacers[i]
                     ));
 
                 // For RTL matching, we have to pick the right-most match.
@@ -292,7 +293,7 @@ namespace Retina.Stages
             {
                 // Cycle through patterns
 
-                string substitution = SubstitutionSources[PatternIndex];
+                Replacer replacer = Replacers[PatternIndex];
 
                 if (length < 0)
                 {
@@ -307,7 +308,7 @@ namespace Retina.Stages
                         PatternIndex %= Regices.Count;
                     }
 
-                    return new MatchContext(m, pattern, substitution);
+                    return new MatchContext(m, pattern, replacer);
                 }
                 else
                 {
@@ -342,7 +343,7 @@ namespace Retina.Stages
                         PatternIndex %= Regices.Count;
                     }
 
-                    return new MatchContext(m, pattern, substitution);
+                    return new MatchContext(m, pattern, replacer);
                 }
             }
         }

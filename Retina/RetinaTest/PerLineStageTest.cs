@@ -15,7 +15,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "%`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123\nabc\n<>", "123123123\nabcabcabc\n<><>" } }
             });
@@ -29,7 +29,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "',%`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123,abc,<>", "123123123,abcabcabc,<><>" } }
             });
@@ -43,7 +43,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "\", \"%`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123, abc, <>", "123123123, abcabcabc, <><>" } }
             });
@@ -57,7 +57,7 @@ namespace RetinaTest
                 Sources =
                 {
                     @"/\W+/%`.",
-                    "$_",
+                    "$\"",
                 },
                 TestCases = { { "123, abc; XYZ", "123123123, abcabcabc; XYZXYZXYZ" } }
             });
@@ -83,7 +83,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"@%`." },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[]
                 {
                     "3\n12",
                     "6\n9",
@@ -100,7 +100,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"&%`." },
-                TestCases = { { "abc\ndef\nghi\njkl\nmno", new List<string>
+                TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[]
                 {
                     "3\ndef\nghi\njkl\nmno",
                     "abc\n3\nghi\njkl\nmno",

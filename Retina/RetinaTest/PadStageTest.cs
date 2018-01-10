@@ -25,7 +25,7 @@ namespace RetinaTest
         public void TestPadBy()
         {
             // Replacements are used to determine the padding width
-            AssertProgram(new TestSuite { Sources = { @"P$`.", "$*" }, TestCases = { { "1234", "1   2   3   4   " } } });
+            AssertProgram(new TestSuite { Sources = { @"P$`.", "*" }, TestCases = { { "1234", "1   2   3   4   " } } });
             // That also means the padding width can be shorter than some matches
             AssertProgram(new TestSuite { Sources = { @"P$`.+", "abc" }, TestCases = { { "ABC\nAB\na\nabcd\nxyz\nXYZ", "ABC\nAB \na  \nabcd\nxyz\nXYZ" } } });
         }

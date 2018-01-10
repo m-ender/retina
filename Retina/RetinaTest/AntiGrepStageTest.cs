@@ -56,7 +56,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"A&`[a-z]" },
-                TestCases = { { "a\nbc\ndef\n1234\nghijklmno", new List<string>
+                TestCases = { { "a\nbc\ndef\n1234\nghijklmno", new string[]
                 {
                     "bc\ndef\n1234\nghijklmno",
                     "a\ndef\n1234\nghijklmno",
@@ -68,7 +68,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = { @"A&, 1,`[a-z]" },
-                TestCases = { { "a\nbc\ndef\n1234\nghijklmno", new List<string>
+                TestCases = { { "a\nbc\ndef\n1234\nghijklmno", new string[]
                 {
                     "a\ndef\n1234\nghijklmno",
                     "a\nbc\n1234\nghijklmno",
