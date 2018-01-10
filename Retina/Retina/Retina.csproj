@@ -48,6 +48,7 @@
     <Compile Include="Configuration\UniqueMatches.cs" />
     <Compile Include="Extensions\ListExtension.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
+    <Compile Include="History.cs" />
     <Compile Include="MatchContext.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="Replace\Nodes\Concatenation.cs" />

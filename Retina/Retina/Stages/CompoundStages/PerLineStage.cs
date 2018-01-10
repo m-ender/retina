@@ -11,10 +11,12 @@ namespace Retina.Stages
     public class PerLineStage : Stage
     {
         public Stage ChildStage { get; set; }
+        private int HistoryIndex;
 
         public PerLineStage(Config config, Stage childStage)
             : base(config)
         {
+            HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
 
@@ -59,7 +61,10 @@ namespace Retina.Stages
             foreach (int i in linesToProcess)
                 lines[i] = ChildStage.Execute(lines[i], output);
             
-            return lines.Riffle(matches.Select(m => m.Value));
+            string result = lines.Riffle(matches.Select(m => m.Value));
+            History.RegisterResult(HistoryIndex, result);
+
+            return result;
         }
     }
 }

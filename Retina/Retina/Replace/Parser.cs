@@ -72,7 +72,7 @@ namespace Retina.Replace
                     (?<context>        # $`, $' and $_ are context elements.
                       [<>[\]]?         # Pull the value from an adjacent separator or match.
                       %?               # Stop at the nearest linefeed.
-                      [`'""]
+                      [`'=""]
                     )
                   |
                     (?<history>        # $-n, $+n are history elements.

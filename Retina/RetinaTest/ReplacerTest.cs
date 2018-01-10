@@ -124,18 +124,24 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { ".", "$`" }, TestCases = { { "abcd", "aababc" } } });
             AssertProgram(new TestSuite { Sources = { ".", "$'" }, TestCases = { { "abcd", "bcdcdd" } } });
             AssertProgram(new TestSuite { Sources = { "", "$`$'" }, TestCases = { { "abcd", "abcdaabcdbabcdcabcddabcd" } } });
-            AssertProgram(new TestSuite { Sources = { ".", "$\"" }, TestCases = { { "abcd", "abcdabcdabcdabcd" } } });
-            AssertProgram(new TestSuite { Sources = { "", "$\"" }, TestCases = { { "abcd", "abcdaabcdbabcdcabcddabcd" } } });
+            AssertProgram(new TestSuite { Sources = { ".", "$=" }, TestCases = { { "abcd", "abcdabcdabcdabcd" } } });
+            AssertProgram(new TestSuite { Sources = { "", "$=" }, TestCases = { { "abcd", "abcdaabcdbabcdcabcddabcd" } } });
+
+            // $" is a shorthand for $'$n$`
+            AssertProgram(new TestSuite { Sources = { ",", "<$\">" }, TestCases = { { "ab,cd", "ab<cd\nab>cd" } } });
         }
 
         [TestMethod]
         public void TestLineOnly()
         {
-            AssertProgram(new TestSuite { Sources = { "a", "$%\"" }, TestCases = { { "abc\nbab\naba", "abcbc\nbbabb\nabababa" } } });
+            AssertProgram(new TestSuite { Sources = { "a", "$%=" }, TestCases = { { "abc\nbab\naba", "abcbc\nbbabb\nabababa" } } });
             AssertProgram(new TestSuite { Sources = { "a", "$%`" }, TestCases = { { "abc\nbab\naba", "bc\nbbb\nbab" } } });
             AssertProgram(new TestSuite { Sources = { "a", "$%'" }, TestCases = { { "abc\nbab\naba", "bcbc\nbbb\nbab" } } });
             AssertProgram(new TestSuite { Sources = { ".", "$.%`" }, TestCases = { { "abc\ndefh\nhijlk", "012\n0123\n01234" } } });
             AssertProgram(new TestSuite { Sources = { ".", "$.%'" }, TestCases = { { "abc\ndefh\nhijlk", "210\n3210\n43210" } } });
+
+            // $%" is a shorthand for $%'$n$%`
+            AssertProgram(new TestSuite { Sources = { ",", "<$%\">" }, TestCases = { { "ab,cd\nef,gh", "ab<cd\nab>cd\nef<gh\nef>gh" } } });
         }
 
         [TestMethod]
@@ -149,9 +155,9 @@ namespace RetinaTest
         {
             AssertProgram(new TestSuite { Sources = { "(.)(.)", "${}" }, TestCases = { { "abcd", "" } } });
             AssertProgram(new TestSuite { Sources = { ".", "${`}" }, TestCases = { { "abcd", "aababc" } } });
-            AssertProgram(new TestSuite { Sources = { ".", "${\"}" }, TestCases = { { "abcd", "abcdabcdabcdabcd" } } });
+            AssertProgram(new TestSuite { Sources = { ".", "${=}" }, TestCases = { { "abcd", "abcdabcdabcdabcd" } } });
             AssertProgram(new TestSuite { Sources = { "(.)(.)(.)", "${$1}" }, TestCases = { { "2ab3cd", "ad" } } });
-            AssertProgram(new TestSuite { Sources = { ".", "${$&}" }, TestCases = { { "'`\"0", "`\"0''`\"00" } } });
+            AssertProgram(new TestSuite { Sources = { ".", "${$&}" }, TestCases = { { "'`=0", "`=0''`=00" } } });
             AssertProgram(new TestSuite { Sources = { @"(\d)(\d)(\d)", "${${$1}}" }, TestCases = { { "123,132,231,213,312,321", "1,1,1,2,1,3" } } });
         }
 
@@ -286,7 +292,7 @@ namespace RetinaTest
             // Make sure $`, $', $_, $& and $+ work:
             AssertProgram(new TestSuite { Sources = { "a", "$.`" }, TestCases = { { ";!~&a@#", ";!~&4@#" } } });
             AssertProgram(new TestSuite { Sources = { "a", "$.'" }, TestCases = { { ";!~&a@#", ";!~&2@#" } } });
-            AssertProgram(new TestSuite { Sources = { "a", "$.\"" }, TestCases = { { ";!~&a@#", ";!~&7@#" } } });
+            AssertProgram(new TestSuite { Sources = { "a", "$.=" }, TestCases = { { ";!~&a@#", ";!~&7@#" } } });
             AssertProgram(new TestSuite { Sources = { "a+", "$.&" }, TestCases = { { ";!~&aaa@#", ";!~&3@#" } } });
 
             // An entirely unmatched group should result in an empty string, not 0:
@@ -311,7 +317,7 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { "(..)+", "$#1*1" }, TestCases = { { "abcd\ndef", "11\n1f" } } });
             AssertProgram(new TestSuite { Sources = { "(?<a>.)+", "${#a}*1" }, TestCases = { { "abcd\ndef", "1111\n111" } } });
             AssertProgram(new TestSuite { Sources = { "$", " $`*1" }, TestCases = { { "12 123", "12 123 111111111111" } } });
-            AssertProgram(new TestSuite { Sources = { "$", " $\"*1" }, TestCases = { { "12 123", "12 123 111111111111" } } });
+            AssertProgram(new TestSuite { Sources = { "$", " $=*1" }, TestCases = { { "12 123", "12 123 111111111111" } } });
             AssertProgram(new TestSuite { Sources = { "^", "$'*1 " }, TestCases = { { "12 123", "111111111111 12 123" } } });
 
             AssertProgram(new TestSuite { Sources = { ".+", "$0*$" }, TestCases = { { "5", "$$$$$" } } });
@@ -393,6 +399,53 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { ".+", "$.($&$&)" }, TestCases = { { "abc\ndefg", "6\n8" } } });
             AssertProgram(new TestSuite { Sources = { ".+", "$.(**)" }, TestCases = { { "46340", "2147395600" } } });
             AssertProgram(new TestSuite { Sources = { ".+", "$.(**_abc)" }, TestCases = { { "46340", "2147395603" } } });
+        }
+
+        [TestMethod]
+        public void TestHistory()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @".+",
+                    @"$&$&",
+                    @"{*`.+",
+                    @"$&$&",
+                    @"\`^",
+                    @"$.-0$.-1$.+2$.+3$.+4",
+                    @")`^.{0,7}",
+                    @"",
+                    @"^$",
+                    @"$+0,$+1,$+2,$+3,$+4,$+5,$+6,$+7",
+                },
+                TestCases = { { "abc", "12612abcabc\n848114cabc\n636103abc\n42492bc\n00070\nabc,abcabc,,00070,,,," } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"%`.+",
+                    @"$.&",
+                    @"s`.+",
+                    @"$+0,$+1,$+2,$+3,$-0,$-1,$-2,$-3",
+                },
+                TestCases = { { "a\nbc\ndef", "a\nbc\ndef,3,1\n2\n3,,1\n2\n3,3,2,1" } }
+            });
+
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"_`.+",
+                    @"$.&",
+                    @"s`.+",
+                    @"$+0,$+1,$+2,$+3,$-0,$-1,$-2,$-3",
+                },
+                TestCases = { { "a\nbc\ndef", "a\nbc\ndef,3,1\n2\n3,,1\n2\n3,3,2,1" } }
+            });
         }
     }
 }

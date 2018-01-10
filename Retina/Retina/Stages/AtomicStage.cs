@@ -23,11 +23,14 @@ namespace Retina.Stages
         public List<MatchContext> Separators { get; set; }
         private int PatternIndex;
 
+        private int HistoryIndex;
+
         protected AtomicStage(Config config) : base(config) { }
 
         public AtomicStage(Config config, List<string> regexSources, List<string> substitutionSources, string separatorSubstitutionSource) 
             : this(config)
         {
+            HistoryIndex = History.RegisterStage();
             RegexSources = regexSources;
             Replacers = substitutionSources.Select(s => new Replacer(s, Config.CyclicMatches)).ToList();
             SeparatorReplacer = new Replacer(separatorSubstitutionSource, Config.CyclicMatches);
@@ -78,6 +81,8 @@ namespace Retina.Stages
                 Matches[i].Replacement = Matches[i].Replacer.Process(input, Matches, Separators, i);
 
             string result = Process(input, output);
+
+            History.RegisterResult(HistoryIndex, result);
 
             // Restore the first regex source, in case we're using InputAsRegex
             RegexSources[0] = tempRegexSource;

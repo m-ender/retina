@@ -14,9 +14,12 @@ namespace Retina.Stages
     {
         public Stage ChildStage { get; set; }
 
+        private int HistoryIndex;
+
         public MatchMaskStage(Config config, Stage childStage)
             : base(config)
         {
+            HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
 
@@ -58,7 +61,10 @@ namespace Retina.Stages
 
             IEnumerable<string> results = matches.Select((m, i) => ChildStage.Execute(m.Value, output));
 
-            return separators.Riffle(results);
+            string result = separators.Riffle(results);
+            History.RegisterResult(HistoryIndex, result);
+
+            return result;
         }
     }
 }

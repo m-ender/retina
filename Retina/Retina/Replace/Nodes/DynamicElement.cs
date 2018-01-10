@@ -65,12 +65,13 @@ namespace Retina.Replace.Nodes
                 |
                   (?<lineOnly>%)?   # Stop at the nearest linefeed.
                   (?<context>       # $`, $' and $_ are context elements.
-                    [`'""]
+                    [`'=""]
                   )
                 )
               |
                 (?<history>         # $-n, $+n are history elements.
-                  [-+]\d+
+                  [-+]
+                  (?<index>\d+)
                 )
               )
               \z
@@ -191,29 +192,30 @@ namespace Retina.Replace.Nodes
             {
                 bool lineOnly = parserMatch.Groups["lineOnly"].Success;
 
+                // We need these for at least two different cases, so we just compute
+                // them anyway. We could limit this based on which cases we have, but
+                // for now I prefer the cleaner code over the faster one.
+                string prefix = input.Substring(0, match.Match.Index);
+                string suffix = input.Substring(match.Match.Index + match.Match.Length);
+
+                if (lineOnly)
+                {
+                    int start = prefix.LastIndexOf('\n') + 1;
+                    prefix = prefix.Substring(start);
+
+                    int end = suffix.IndexOf('\n');
+                    if (end >= 0) suffix = suffix.Substring(0, end);
+                }
+
                 switch (parserMatch.Groups["context"].Value[0])
                 {
                 case '`':
-                    value = input.Substring(0, match.Match.Index);
-
-                    if (lineOnly)
-                    {
-                        int start = value.LastIndexOf('\n') + 1;
-                        value = value.Substring(start);
-                    }
-
+                    value = prefix;
                     break;
                 case '\'':
-                    value = input.Substring(match.Match.Index + match.Match.Length);
-
-                    if (lineOnly)
-                    {
-                        int end = value.IndexOf('\n');
-                        if (end >= 0) value = value.Substring(0, end);
-                    }
-
+                    value = suffix;
                     break;
-                case '"':
+                case '=':
                     value = input;
 
                     if (lineOnly)
@@ -223,6 +225,10 @@ namespace Retina.Replace.Nodes
                         if (end == -1) end = value.Length;
                         value = value.Substring(start, end - start);
                     }
+
+                    break;
+                case '"':
+                    value = suffix + "\n" + prefix;
                     break;
                 default:
                     throw new Exception("Unknown context element encountered.");
@@ -230,7 +236,22 @@ namespace Retina.Replace.Nodes
             }
             else if (parserMatch.Groups["history"].Success)
             {
-                throw new NotImplementedException();
+                int number = int.Parse(parserMatch.Groups["index"].Value);
+                switch (parserMatch.Groups["history"].Value[0])
+                {
+                case '-':
+                    value = History.GetMostRecentResult(number);
+                    if (value == null)
+                        return "";
+                    break;
+                case '+':
+                    value = History.GetStageResult(number);
+                    if (value == null)
+                        return "";
+                    break;
+                default:
+                    throw new Exception("Unknown history element encountered.");
+                }
             }
             else
             {

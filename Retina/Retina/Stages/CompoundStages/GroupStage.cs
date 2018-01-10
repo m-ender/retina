@@ -12,10 +12,12 @@ namespace Retina.Stages
     class GroupStage : Stage
     {
         public List<Stage> Stages { get; set; }
+        private int HistoryIndex;
 
         public GroupStage(Config config, List<Stage> stages) 
             : base(config)
         {
+            HistoryIndex = History.RegisterStage();
             Stages = stages;
         }
 
@@ -32,6 +34,8 @@ namespace Retina.Stages
                 foreach (var stage in Stages)
                     result = stage.Execute(result, output);
             }
+
+            History.RegisterResult(HistoryIndex, result);
 
             return result;
         }

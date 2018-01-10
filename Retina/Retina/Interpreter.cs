@@ -14,6 +14,8 @@ namespace Retina
 
         public Interpreter (List<string> sources)
 	    {
+            History.Initialize();
+
             // This stack is used for building the stage tree. The list on top is
             // always a list of leaf nodes that we're currently building. When we
             // reach a group, we'll push a new list onto it, because the next stages
@@ -675,6 +677,7 @@ namespace Retina
 
         public void Execute(string input, TextWriter output)
         {
+            History.Reset(input);
             StageTree.Execute(input, output);
         }
     }

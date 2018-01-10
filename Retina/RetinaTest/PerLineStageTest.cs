@@ -15,7 +15,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "%`.",
-                    "$\"",
+                    "$=",
                 },
                 TestCases = { { "123\nabc\n<>", "123123123\nabcabcabc\n<><>" } }
             });
@@ -29,7 +29,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "',%`.",
-                    "$\"",
+                    "$=",
                 },
                 TestCases = { { "123,abc,<>", "123123123,abcabcabc,<><>" } }
             });
@@ -43,7 +43,7 @@ namespace RetinaTest
                 Sources =
                 {
                     "\", \"%`.",
-                    "$\"",
+                    "$=",
                 },
                 TestCases = { { "123, abc, <>", "123123123, abcabcabc, <><>" } }
             });
@@ -57,7 +57,7 @@ namespace RetinaTest
                 Sources =
                 {
                     @"/\W+/%`.",
-                    "$\"",
+                    "$=",
                 },
                 TestCases = { { "123, abc; XYZ", "123123123, abcabcabc; XYZXYZXYZ" } }
             });
