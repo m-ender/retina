@@ -6,42 +6,32 @@ using System.Threading.Tasks;
 
 namespace Retina
 {
-    public static class History
+    public class History
     {
-        private static List<string> MostRecentResults;
-        private static List<string> StageResults;
+        private List<string> MostRecentResults;
+        private List<string> StageResults;
 
-        public static void Initialize()
+        public History()
         {
+            MostRecentResults = new List<string>();
             StageResults = new List<string>();
             StageResults.Add(null);
         }
 
-        public static void Reset(string input)
-        {
-            MostRecentResults = new List<string>();
-            MostRecentResults.Add(input);
-
-            StageResults[0] = input;
-
-            for (int i = 1; i < StageResults.Count; ++i)
-                StageResults[i] = null;
-        }
-
         // Returns an integer for the stage to use when sending in new results.
-        public static int RegisterStage()
+        public int RegisterStage()
         {
             StageResults.Add(null);
             return StageResults.Count - 1;
         }
 
-        public static void RegisterResult(int stage, string result)
+        public void RegisterResult(int stage, string result)
         {
             MostRecentResults.Add(result);
             StageResults[stage] = result;
         }
 
-        public static string GetMostRecentResult(int index)
+        public string GetMostRecentResult(int index)
         {
             if (index < MostRecentResults.Count)
                 return MostRecentResults[MostRecentResults.Count - index - 1];
@@ -49,7 +39,7 @@ namespace Retina
                 return null;
         }
 
-        public static string GetStageResult(int index)
+        public string GetStageResult(int index)
         {
             if (index < StageResults.Count)
                 return StageResults[index];

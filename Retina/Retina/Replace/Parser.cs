@@ -21,8 +21,13 @@ namespace Retina.Replace
         private List<Token> Tokens;
         private int Current;
 
-        public Parser() { }
-        public Parser(bool cyclicMatches)
+        private History History;
+
+        public Parser(History history)
+        {
+            History = history;
+        }
+        public Parser(History history, bool cyclicMatches) : this(history)
         {
             CyclicMatches = cyclicMatches;
         }
@@ -151,7 +156,7 @@ namespace Retina.Replace
                 Token op = Previous();
                 Node argument;
                 try { argument = ParseUnary(); }
-                catch (NoElementException) { argument = new DynamicElement("&", false); }
+                catch (NoElementException) { argument = new DynamicElement("&", History, false); }
 
                 switch (op.Source[1])
                 {
@@ -189,7 +194,7 @@ namespace Retina.Replace
                 // We only end up here if the parsing attempt for leftArgument failed.
                 if (Match(TokenType.Repeat))
                 {
-                    Node leftArgument = new DynamicElement("&", false);
+                    Node leftArgument = new DynamicElement("&", History, false);
                     Node rightArgument;
                     try { rightArgument = ParseUnary(); }
                     catch (NoElementException) { rightArgument = new Literal("_"); }
@@ -207,7 +212,7 @@ namespace Retina.Replace
             {
                 // Drop the leading "$".
                 string shorthand = Previous().Source.Substring(1);
-                return new DynamicElement(shorthand, CyclicMatches);
+                return new DynamicElement(shorthand, History, CyclicMatches);
             }
 
             if (Match(TokenType.Escape))
@@ -231,7 +236,7 @@ namespace Retina.Replace
                 // Consume the closing } if there is one.
                 Match(TokenType.ElementClose);
 
-                return new DynamicElement(inner, CyclicMatches);
+                return new DynamicElement(inner, History, CyclicMatches);
             }
 
             if (Match(TokenType.ConcatOpen))

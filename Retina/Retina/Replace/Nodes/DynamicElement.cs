@@ -10,15 +10,19 @@ namespace Retina.Replace.Nodes
         public Node Child { get; set; }
         private bool CyclicMatches;
 
-        public DynamicElement(Node child, bool cyclicMatches)
+        private History History;
+
+        public DynamicElement(Node child, History history, bool cyclicMatches)
         {
             Child = child;
+            History = history;
             CyclicMatches = cyclicMatches;
         }
 
-        public DynamicElement(string child, bool cyclicMatches)
+        public DynamicElement(string child, History history, bool cyclicMatches)
         {
             Child = new Literal(child);
+            History = history;
             CyclicMatches = cyclicMatches;
         }
 
@@ -236,6 +240,8 @@ namespace Retina.Replace.Nodes
             }
             else if (parserMatch.Groups["history"].Success)
             {
+                // TODO: Think about allowing $- and $+.
+
                 int number = int.Parse(parserMatch.Groups["index"].Value);
                 switch (parserMatch.Groups["history"].Value[0])
                 {

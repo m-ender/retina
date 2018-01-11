@@ -16,8 +16,8 @@ namespace Retina.Stages
         private List<char?> From { get; set; }
         private List<char?> To { get; set; }
 
-        public TransliterateStage(Config config, List<string> patterns, List<string> substitutionSources, string separatorSubstitutionSource)
-            : base(config)
+        public TransliterateStage(Config config, History history, List<string> patterns, List<string> substitutionSources, string separatorSubstitutionSource)
+            : base(config, history)
         {
             var fromBuilder = new List<char?>();
             var toBuilder = new List<char?>();
@@ -59,8 +59,8 @@ namespace Retina.Stages
             patterns[0] = remainder.Length == 0 ? @"\A(?s:.*)\z" : remainder;
 
             RegexSources = patterns;
-            Replacers = substitutionSources.Select(s => new Replacer(s, Config.CyclicMatches)).ToList();
-            SeparatorReplacer = new Replacer(separatorSubstitutionSource);
+            Replacers = substitutionSources.Select(s => new Replacer(s, History, Config.CyclicMatches)).ToList();
+            SeparatorReplacer = new Replacer(separatorSubstitutionSource, History);
         }
 
         private char ParseCharacterToken(string token)

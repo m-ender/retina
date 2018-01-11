@@ -11,11 +11,13 @@ namespace Retina.Stages
     public class PerLineStage : Stage
     {
         public Stage ChildStage { get; set; }
+        private History History;
         private int HistoryIndex;
 
-        public PerLineStage(Config config, Stage childStage)
+        public PerLineStage(Config config, History history, Stage childStage)
             : base(config)
         {
+            History = history;
             HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }

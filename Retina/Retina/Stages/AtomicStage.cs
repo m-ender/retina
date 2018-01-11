@@ -23,17 +23,20 @@ namespace Retina.Stages
         public List<MatchContext> Separators { get; set; }
         private int PatternIndex;
 
+        protected History History;
         private int HistoryIndex;
-
-        protected AtomicStage(Config config) : base(config) { }
-
-        public AtomicStage(Config config, List<string> regexSources, List<string> substitutionSources, string separatorSubstitutionSource) 
-            : this(config)
-        {
+        
+        protected AtomicStage(Config config, History history) : base(config) {
+            History = history;
             HistoryIndex = History.RegisterStage();
+        }
+
+        public AtomicStage(Config config, History history, List<string> regexSources, List<string> substitutionSources, string separatorSubstitutionSource) 
+            : this(config, history)
+        {
             RegexSources = regexSources;
-            Replacers = substitutionSources.Select(s => new Replacer(s, Config.CyclicMatches)).ToList();
-            SeparatorReplacer = new Replacer(separatorSubstitutionSource, Config.CyclicMatches);
+            Replacers = substitutionSources.Select(s => new Replacer(s, History, Config.CyclicMatches)).ToList();
+            SeparatorReplacer = new Replacer(separatorSubstitutionSource, History, Config.CyclicMatches);
         }
 
         public override string Execute(string input, TextWriter output)
@@ -236,10 +239,10 @@ namespace Retina.Stages
         {
             var temp = new List<MatchContext>();
             var regex = new Regex(@"\A");
-            temp.Add(new MatchContext(regex.Match(input), regex, new Replacer("$&")));
+            temp.Add(new MatchContext(regex.Match(input), regex, new Replacer("$&", History)));
             temp.AddRange(Matches);
             regex = new Regex(@"\z");
-            temp.Add(new MatchContext(regex.Match(input), regex, new Replacer("$&")));
+            temp.Add(new MatchContext(regex.Match(input), regex, new Replacer("$&", History)));
 
             Matches = Separators;
             Separators = temp;

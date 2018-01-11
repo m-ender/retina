@@ -12,11 +12,13 @@ namespace Retina.Stages
     class GroupStage : Stage
     {
         public List<Stage> Stages { get; set; }
+        private History History;
         private int HistoryIndex;
 
-        public GroupStage(Config config, List<Stage> stages) 
+        public GroupStage(Config config, History history, List<Stage> stages) 
             : base(config)
         {
+            History = history;
             HistoryIndex = History.RegisterStage();
             Stages = stages;
         }

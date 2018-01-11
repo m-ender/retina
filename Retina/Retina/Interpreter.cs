@@ -11,10 +11,11 @@ namespace Retina
     public class Interpreter
     {
         private Stage StageTree;
+        private History History;
 
         public Interpreter (List<string> sources)
 	    {
-            History.Initialize();
+            History = new History();
 
             // This stack is used for building the stage tree. The list on top is
             // always a list of leaf nodes that we're currently building. When we
@@ -542,40 +543,40 @@ namespace Retina
                 switch (mode)
                 {
                 case Modes.Count:
-                    stage = new CountStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new CountStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.List:
-                    stage = new ListStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new ListStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Replace:
-                    stage = new ReplaceStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new ReplaceStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Split:
-                    stage = new SplitStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new SplitStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Grep:
-                    stage = new GrepStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new GrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.AntiGrep:
-                    stage = new AntiGrepStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new AntiGrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Transliterate:
-                    stage = new TransliterateStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new TransliterateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Sort:
-                    stage = new SortStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new SortStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Deduplicate:
-                    stage = new DeduplicateStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new DeduplicateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Position:
-                    stage = new PositionStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new PositionStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Reverse:
-                    stage = new ReverseStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new ReverseStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 case Modes.Pad:
-                    stage = new PadStage(config, patterns, substitutions, separatorSubstitutionSource);
+                    stage = new PadStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -602,7 +603,7 @@ namespace Retina
                         stages.Add(stage);
 
                         InheritConfig(stages, compoundConfig);
-                        stage = new GroupStage(compoundConfig, stages);
+                        stage = new GroupStage(compoundConfig, History, stages);
 
                         if (stageStack.Count == 0)
                             stageStack.Push(new List<Stage>());
@@ -626,11 +627,11 @@ namespace Retina
                         break;
                     case '%':
                         InheritConfig(stage, compoundConfig);
-                        stage = new PerLineStage(compoundConfig, stage);
+                        stage = new PerLineStage(compoundConfig, History, stage);
                         break;
                     case '_':
                         InheritConfig(stage, compoundConfig);
-                        stage = new MatchMaskStage(compoundConfig, stage);
+                        stage = new MatchMaskStage(compoundConfig, History, stage);
                         break;
                     }
                 }
@@ -649,7 +650,7 @@ namespace Retina
                     stages.RemoveAt(stages.Count - 1);
                     stages.Add(stage);
                 }
-                StageTree = new GroupStage(new Config(), stages);
+                StageTree = new GroupStage(new Config(), History, stages);
             }
         }
 
@@ -677,7 +678,7 @@ namespace Retina
 
         public void Execute(string input, TextWriter output)
         {
-            History.Reset(input);
+            History.RegisterResult(0, input);
             StageTree.Execute(input, output);
         }
     }

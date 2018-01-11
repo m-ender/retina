@@ -11,8 +11,8 @@ namespace Retina.Stages
 {
     class DeduplicateStage : AtomicStage
     {
-        public DeduplicateStage(Config config, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
-            : base(config, patterns, substitutions, separatorSubstitutionSource) { }
+        public DeduplicateStage(Config config, History history, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
+            : base(config, history, patterns, substitutions, separatorSubstitutionSource) { }
 
         protected override string Process(string input, TextWriter output)
         {

@@ -7,14 +7,14 @@ namespace Retina.Replace
     {
         private Node ReplaceTree { get; set; }
 
-        public Replacer(string replacement)
+        public Replacer(string replacement, History history)
         {
-            ReplaceTree = new Parser().ParseReplacement(replacement);
+            ReplaceTree = new Parser(history).ParseReplacement(replacement);
         }
 
-        public Replacer(string replacement, bool cyclicMatches)
+        public Replacer(string replacement, History history, bool cyclicMatches)
         {
-            ReplaceTree = new Parser(cyclicMatches).ParseReplacement(replacement);
+            ReplaceTree = new Parser(history, cyclicMatches).ParseReplacement(replacement);
         }
 
         public string Process(string input, List<MatchContext> matches, List<MatchContext> separators, int index)

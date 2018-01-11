@@ -14,11 +14,13 @@ namespace Retina.Stages
     {
         public Stage ChildStage { get; set; }
 
+        private History History;
         private int HistoryIndex;
 
-        public MatchMaskStage(Config config, Stage childStage)
+        public MatchMaskStage(Config config, History history, Stage childStage)
             : base(config)
         {
+            History = history;
             HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
