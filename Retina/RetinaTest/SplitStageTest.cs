@@ -79,7 +79,7 @@ namespace RetinaTest
         {
             AssertRandomProgram(new RandomTestSuite
             {
-                Sources = { @"S&!_`(\w+)" },
+                Sources = { @"S?!_`(\w+)" },
                 TestCases = { { "abc,def;ghi", new string[]
                 {
                     "abc",

@@ -99,7 +99,7 @@ namespace RetinaTest
         {
             AssertRandomProgram(new RandomTestSuite
             {
-                Sources = { @"&%`." },
+                Sources = { @"?%`." },
                 TestCases = { { "abc\ndef\nghi\njkl\nmno", new string[]
                 {
                     "3\ndef\nghi\njkl\nmno",

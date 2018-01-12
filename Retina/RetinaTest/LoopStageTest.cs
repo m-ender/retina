@@ -83,7 +83,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = {
-                    @"&+`^",
+                    @"?+`^",
                     @"1"
                 },
                 TestCases = { { "", new List<Tuple<string, double>>()
@@ -102,7 +102,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = {
-                    @"&+*>`^",
+                    @"?+*>`^",
                     @"1"
                 },
                 TestCases = { { "", new List<Tuple<string, double>>()
@@ -120,7 +120,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = {
-                    @"&+`^1",
+                    @"?+`^1",
                     @""
                 },
                 TestCases = { { "11", new List<Tuple<string, double>>()

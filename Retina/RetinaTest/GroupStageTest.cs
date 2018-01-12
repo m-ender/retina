@@ -142,7 +142,7 @@ namespace RetinaTest
             AssertRandomProgram(new RandomTestSuite
             {
                 Sources = {
-                    @"&(C`.",
+                    @"?(C`.",
                     @"G`\w",
                     @"O`",
                     @"\d",

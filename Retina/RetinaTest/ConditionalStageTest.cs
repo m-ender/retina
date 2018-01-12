@@ -14,7 +14,7 @@ namespace RetinaTest
             {
                 Sources =
                 {
-                    @"/\d/?`.+",
+                    @"/\d/&`.+",
                     @"$&$&",
                 },
                 TestCases = {
@@ -31,7 +31,7 @@ namespace RetinaTest
             {
                 Sources =
                 {
-                    @"/\d/^?`.+",
+                    @"/\d/^&`.+",
                     @"$&$&",
                 },
                 TestCases = {
@@ -48,7 +48,7 @@ namespace RetinaTest
             {
                 Sources =
                 {
-                    @"&?`.+",
+                    @"?&`.+",
                     @"$&$&",
                 },
                 TestCases = {

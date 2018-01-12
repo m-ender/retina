@@ -108,7 +108,7 @@ namespace Retina
                     |
                         (?<compoundStage>                   # These options introduce a compound stage, which is wrapped around
                                                             # the current one to modify its behavior.
-                            [+%*_?]
+                            [+%*_&]
                         |
                             (?=[<>;\\])                     # Output stages can be introduced with <, >, or ; (post-print only if
                                                             # changed), and take an optional parameter \, indicating that a
@@ -458,7 +458,7 @@ namespace Retina
                                     break;
 
                                 // General configuration for atomic stages
-                                case '&':
+                                case '?':
                                     config.Random = true;
                                     break;
                                 case '@':
@@ -633,7 +633,7 @@ namespace Retina
                         InheritConfig(stage, compoundConfig);
                         stage = new MatchMaskStage(compoundConfig, History, stage);
                         break;
-                    case '?':
+                    case '&':
                         InheritConfig(stage, compoundConfig);
                         stage = new ConditionalStage(compoundConfig, stage);
                         break;

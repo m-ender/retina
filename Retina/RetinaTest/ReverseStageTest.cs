@@ -54,7 +54,7 @@ namespace RetinaTest
         {
             AssertRandomProgram(new RandomTestSuite
             {
-                Sources = { @"V&`\w+" },
+                Sources = { @"V?`\w+" },
                 TestCases = { { "ab\ndef", new string[]
                 {
                     "ab\ndef", "ba\ndef",
@@ -69,7 +69,7 @@ namespace RetinaTest
 
             AssertRandomProgram(new RandomTestSuite
             {
-                Sources = { @"V&, ,,`\w+" },
+                Sources = { @"V?, ,,`\w+" },
                 TestCases = { { "abc\ndefg", new string[]
                 {
                     "abc\ndefg", "cba\ndefg",

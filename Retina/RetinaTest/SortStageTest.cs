@@ -55,7 +55,7 @@ namespace RetinaTest
         {
             AssertRandomProgram(new RandomTestSuite
             {
-                Sources = { @"O&`\w+" },
+                Sources = { @"O?`\w+" },
                 TestCases = { { "abc\ndef\nghi", new string[]
                 {
                     "abc\ndef\nghi",
