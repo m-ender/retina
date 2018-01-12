@@ -103,6 +103,40 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestConditional()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = {
+                    @"/\d/(`.+",
+                    @"$&$&",
+                    @"T`l`L",
+                    @"^.",
+                    @"$&$&",
+                },
+                TestCases = {
+                    { "123abc", "123abc123abc" },
+                    { "defghi", "DDEFGHI" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = {
+                    @"/\d/^(`.+",
+                    @"$&$&",
+                    @"T`l`L",
+                    @"^.",
+                    @"$&$&",
+                },
+                TestCases = {
+                    { "123abc", "1123ABC" },
+                    { "defghi", "defghidefghi" },
+                }
+            });
+        }
+
+        [TestMethod]
         public void TestRandom()
         {
             AssertRandomProgram(new RandomTestSuite
