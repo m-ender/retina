@@ -72,7 +72,7 @@
     <Compile Include="GrepStageTest.cs" />
     <Compile Include="DeduplicateStageTest.cs" />
     <Compile Include="GroupStageTest.cs" />
-    <Compile Include="LoopTest.cs" />
+    <Compile Include="LoopStageTest.cs" />
     <Compile Include="OutputStageTest.cs" />
     <Compile Include="CountStageTest.cs" />
   </ItemGroup>

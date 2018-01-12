@@ -21,15 +21,25 @@ namespace Retina.Stages
         public override string Execute(string input, TextWriter output)
         {
             string result = input;
-            string lastResult;
 
-            do
+            if (Config.Random)
             {
-                if (Config.Random && Random.RNG.Next(2) == 0)
-                    break;
-                lastResult = result;
-                result = ChildStage.Execute(lastResult, output).ToString();
-            } while (lastResult != result);
+                while (true)
+                {
+                    if (Random.RNG.Next(2) == 0)
+                        break;
+                    result = ChildStage.Execute(result, output).ToString();
+                }
+            }
+            else
+            {
+                string lastResult;
+                do
+                {
+                    lastResult = result;
+                    result = ChildStage.Execute(lastResult, output).ToString();
+                } while (lastResult != result);
+            }
 
             return result;
         }
