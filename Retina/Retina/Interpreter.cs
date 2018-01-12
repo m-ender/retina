@@ -623,7 +623,7 @@ namespace Retina
                         break;
                     case '+':
                         InheritConfig(stage, compoundConfig);
-                        stage = new LoopStage(compoundConfig, stage);
+                        stage = new LoopStage(compoundConfig, History, stage);
                         break;
                     case '%':
                         InheritConfig(stage, compoundConfig);

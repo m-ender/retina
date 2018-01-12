@@ -40,6 +40,44 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestWhileLoop()
+        {
+            AssertProgram(new TestSuite { Sources = { @"/\d/+`^.", "" }, TestCases = { { "123abc", "abc" } } });
+            AssertProgram(new TestSuite { Sources = { @"/\d/+`^.", "" }, TestCases = { { "abc", "abc" } } });
+        }
+        
+        [TestMethod]
+        public void TestUntilLoop()
+        {
+            AssertProgram(new TestSuite { Sources = { @"/^\D/^+`^.", "" }, TestCases = { { "123abc", "abc" } } });
+            AssertProgram(new TestSuite { Sources = { @"/^\D/^+`^.", "" }, TestCases = { { "abc", "abc" } } });
+        }
+
+        [TestMethod]
+        public void TestExactlyNIterations()
+        {
+            AssertProgram(new TestSuite { Sources = { @"-5+*>`^", @"1" }, TestCases = { { "", "11111" } } });
+            AssertProgram(new TestSuite { Sources = { @"-3+`^.", @"" }, TestCases = { { "abcdef", "def" } } });
+        }
+
+        [TestMethod]
+        public void TestUpToNIterations()
+        {
+            AssertProgram(new TestSuite { Sources = { @"5+*>`^", @"1" }, TestCases = { { "", "1" } } });
+            AssertProgram(new TestSuite { Sources = { @"3+`^.", @"" }, TestCases = { { "abcdef", "def" } } });
+        }
+
+        [TestMethod]
+        public void TestDynamicIterations()
+        {
+            AssertProgram(new TestSuite { Sources = { "\"<$.&>\"+`^", @"1" }, TestCases = { { "abc", "111abc" } } });
+            AssertProgram(new TestSuite { Sources = { "\"<$.&>\"+*>`^", @"1" }, TestCases = { { "abc", "1abcabc" } } });
+
+            AssertProgram(new TestSuite { Sources = { "\"<-$.&>\"+`^", @"1" }, TestCases = { { "abc", "111abc" } } });
+            AssertProgram(new TestSuite { Sources = { "\"<-$.&>\"+*>`^", @"1" }, TestCases = { { "abc", "1abc1abc1abcabc" } } });
+        }
+
+        [TestMethod]
         public void TestRandom()
         {
             AssertRandomProgram(new RandomTestSuite
