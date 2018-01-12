@@ -75,6 +75,7 @@
     <Compile Include="Stages\AtomicStages\ReverseStage.cs" />
     <Compile Include="Stages\AtomicStages\SortStage.cs" />
     <Compile Include="Stages\AtomicStages\TransliterateStage.cs" />
+    <Compile Include="Stages\CompoundStages\EvalStage.cs" />
     <Compile Include="Stages\CompoundStages\ConditionalStage.cs" />
     <Compile Include="Stages\CompoundStages\DryRunStage.cs" />
     <Compile Include="Stages\CompoundStages\LoopStage.cs" />

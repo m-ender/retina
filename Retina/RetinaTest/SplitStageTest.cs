@@ -65,7 +65,7 @@ namespace RetinaTest
         public void TestOutputLimit()
         {
             AssertProgram(new TestSuite { Sources = { @"S!_, 1,-2`(\W)+" }, TestCases = { { "Hello, World!", " \nWorld" } } });
-            AssertProgram(new TestSuite { Sources = { @"S!_^, 2,`(\W)+" }, TestCases = { { "Hello, World!", "!\nWorld" } } });
+            AssertProgram(new TestSuite { Sources = { @"S^!_, 2,`(\W)+" }, TestCases = { { "Hello, World!", "!\nWorld" } } });
         }
 
         [TestMethod]

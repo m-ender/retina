@@ -23,6 +23,7 @@ namespace Retina.Stages
             if (Config.PrePrint)
             {
                 output.Write(input);
+
                 if (Config.TrailingLinefeed)
                     output.Write("\n");
 

@@ -46,7 +46,7 @@ namespace RetinaTest
         public void TestCharacterLimit()
         {
             AssertProgram(new TestSuite { Sources = { @"V, 1,3,`\w+" }, TestCases = { { "HelloWorld, shenanigans", "HrlloWoeld, ssengniaanh" } } });
-            AssertProgram(new TestSuite { Sources = { @"V, ~1,3,`\w+" }, TestCases = { { "HelloWorld, shenanigans", "delooWlrlH, nhaianngess" } } });
+            AssertProgram(new TestSuite { Sources = { @"V, ^1,3,`\w+" }, TestCases = { { "HelloWorld, shenanigans", "delooWlrlH, nhaianngess" } } });
         }
 
         [TestMethod]

@@ -40,7 +40,7 @@ namespace RetinaTest
         public void TestLineLimit()
         {
             AssertProgram(new TestSuite { Sources = { @"G, 1,`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "!!!\ndef" } } });
-            AssertProgram(new TestSuite { Sources = { @"G^, 1,`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "def\n!!!" } } });
+            AssertProgram(new TestSuite { Sources = { @"G, 1,^`." }, TestCases = { { "\nabc\n!!!\n\ndef\n", "def\n!!!" } } });
         }
 
         [TestMethod]

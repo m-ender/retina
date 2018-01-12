@@ -113,19 +113,19 @@ namespace RetinaTest
         [TestMethod]
         public void TestNegatedLimit()
         {
-            AssertProgram(new TestSuite { Sources = { @"L~3`." }, TestCases = { { "0123456789", "0\n1\n2\n4\n5\n6\n7\n8\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~10`." }, TestCases = { { "0123456789", "0\n1\n2\n3\n4\n5\n6\n7\n8\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~-4`." }, TestCases = { { "0123456789", "0\n1\n2\n3\n4\n5\n7\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^3`." }, TestCases = { { "0123456789", "0\n1\n2\n4\n5\n6\n7\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^10`." }, TestCases = { { "0123456789", "0\n1\n2\n3\n4\n5\n6\n7\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^-4`." }, TestCases = { { "0123456789", "0\n1\n2\n3\n4\n5\n7\n8\n9" } } });
 
-            AssertProgram(new TestSuite { Sources = { @"L~2,7`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~2,-3`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~-8,7`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~-8,-3`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^2,7`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^2,-3`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^-8,7`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^-8,-3`." }, TestCases = { { "0123456789", "0\n1\n8\n9" } } });
 
-            AssertProgram(new TestSuite { Sources = { @"L~1,3,8`." }, TestCases = { { "0123456789", "0\n2\n3\n5\n6\n8\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~1,-3,8`." }, TestCases = { { "0123456789", "0\n1\n3\n4\n6\n7\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~1,,8`." }, TestCases = { { "0123456789", "0\n2\n3\n4\n5\n6\n7\n9" } } });
-            AssertProgram(new TestSuite { Sources = { @"L~,,`." }, TestCases = { { "0123456789", "1\n2\n3\n4\n5\n6\n7\n8" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^1,3,8`." }, TestCases = { { "0123456789", "0\n2\n3\n5\n6\n8\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^1,-3,8`." }, TestCases = { { "0123456789", "0\n1\n3\n4\n6\n7\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^1,,8`." }, TestCases = { { "0123456789", "0\n2\n3\n4\n5\n6\n7\n9" } } });
+            AssertProgram(new TestSuite { Sources = { @"L^,,`." }, TestCases = { { "0123456789", "1\n2\n3\n4\n5\n6\n7\n8" } } });
         }
 
     }

@@ -69,7 +69,7 @@ namespace Retina
                 {
                     var configTokenizer = new Regex(@"\G(?: # Use \G to ensure that the tokens cover the entire string.
                         (?<limit>
-                            (?<lneg>~)?                     # Any limit can be negated with an optional ~.
+                            (?<lneg>\^)?                    # Any limit can be negated with an optional ^.
                             (?:
                                 (?<l3>)                     # Mark this as a 3-parameter limit and parse it as two commas
                                                             # with three optional integers. The integers cannot have unnecessary
@@ -108,7 +108,7 @@ namespace Retina
                     |
                         (?<compoundStage>                   # These options introduce a compound stage, which is wrapped around
                                                             # the current one to modify its behavior.
-                            [+%*_&]
+                            [+%*_&~]
                         |
                             (?=[<>;\\])                     # Output stages can be introduced with <, >, or ; (post-print only if
                                                             # changed), and take an optional parameter \, indicating that a
@@ -636,6 +636,10 @@ namespace Retina
                     case '&':
                         InheritConfig(stage, compoundConfig);
                         stage = new ConditionalStage(compoundConfig, stage);
+                        break;
+                    case '~':
+                        InheritConfig(stage, compoundConfig);
+                        stage = new EvalStage(compoundConfig, History, stage);
                         break;
                     }
                 }
