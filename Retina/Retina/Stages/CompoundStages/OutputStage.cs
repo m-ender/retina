@@ -41,8 +41,10 @@ namespace Retina.Stages
         {
             if (Config.Random && Random.RNG.Next(2) > 0)
                 return;
-
-            output.Write(value);
+            
+            output.Write(new string(
+                value.Where((_, i) => Config.GetLimit(0).IsInRange(i, value.Length)).ToArray()
+            ));
             output.Write(Config.StringParam);
         }
     }

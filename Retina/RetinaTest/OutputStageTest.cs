@@ -216,6 +216,16 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestCharacterLimit()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"1,2,>G`" },
+                TestCases = { { "Hello, World!", "el,Wrd" } }
+            });
+        }
+
+        [TestMethod]
         public void TestRandomOutput()
         {
             AssertRandomProgram(new RandomTestSuite
