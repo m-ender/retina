@@ -47,7 +47,6 @@ namespace Retina.Configuration
         public Regex RegexParam { get; set; }
 
         // Configuration for Output stages
-        public bool TrailingLinefeed { get; set; }
         public bool PrintOnlyIfChanged { get; set; }
         public bool PrePrint { get; set; }
 

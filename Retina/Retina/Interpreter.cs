@@ -67,10 +67,10 @@ namespace Retina
                 // Backticks indicate a leading configuration string.
                 if (pattern.Contains("`"))
                 {
-                    var configTokenizer = new Regex(@"\G(?: # Use \G to ensure that the tokens cover the entire string.
+                    var configTokenizer = new Regex(@"\G(  # Use \G to ensure that the tokens cover the entire string.
                         (?<limit>
                             (?<lneg>\^)?                    # Any limit can be negated with an optional ^.
-                            (?:
+                            (
                                 (?<l3>)                     # Mark this as a 3-parameter limit and parse it as two commas
                                                             # with three optional integers. The integers cannot have unnecessary
                                                             # leading zeros. The first two parameters cannot be zero at all.
@@ -90,7 +90,7 @@ namespace Retina
                         (?<listFormat>                      # [, | and ] followed by a character or string determines the
                                                             # start, delimiter or end of list-like output, respectively.
                             [|[\]]
-                            (?:
+                            (
                                 ""                          # Strings are surrounded by double quotes and, these can be
                                                             # escaped inside the string by doubling them.
                                 (?<string>
@@ -108,24 +108,7 @@ namespace Retina
                     |
                         (?<compoundStage>                   # These options introduce a compound stage, which is wrapped around
                                                             # the current one to modify its behavior.
-                            [+%*_&~]
-                        |
-                            (?=[<>;\\])                     # Output stages can be introduced with <, >, or ; (post-print only if
-                                                            # changed), and take an optional parameter \, indicating that a
-                                                            # trailing linefeed should be printed. \ on its own is also valid as
-                                                            # a shorthand for >\.
-                            (?<compoundOutput>
-                                (?<printOnlyIfChanged>)
-                                ;
-                                (?<trailingLF>\\)?
-                            |
-                                (?<prePrint>)
-                                <
-                                (?<trailingLF>\\)?
-                            |
-                                >?
-                                (?<trailingLF>\\)?
-                            )
+                            [+%*_&~<>;\\]
                         )
                     |
                         (?<multiPattern>                    # A # followed by an integer indicates that this stage contains
@@ -144,16 +127,18 @@ namespace Retina
                         ""                                  # Strings are surrounded by double quotes and, these can be
                                                             # escaped inside the string by doubling them.
                         (?<stringParam>
-                            (?:[^""]|"""")*
+                            ([^""]|"""")*
                         )
                         ""
                     |
                         '(?<charParam>.)                    # Characters are preceded by single quotes.
                     |
+                        (?<charParam>\n)                    # Unless it's just a linefeed.
+                    |
                         /                                   # Regices are surrounded by slashes and, these can be
                                                             # escaped inside the regex with the usual backslash.
                         (?<regexParam>
-                            (?:[^\\/]|\\.)*
+                            ([^\\/]|\\.)*
                         )
                         /
                         (?<regexModifier>[a-z])*
@@ -164,7 +149,7 @@ namespace Retina
                             .                               # All other characters are read individually and represent 
                                                             # various options.
                         )
-                    )", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+                    )", RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture | RegexOptions.Singleline);
 
                     MatchCollection tokens = configTokenizer.Matches(pattern);
                     
@@ -299,17 +284,7 @@ namespace Retina
                         }
                         else if (t.Groups["compoundStage"].Success)
                         {
-                            if (t.Groups["compoundOutput"].Success)
-                            {
-                                config.PrintOnlyIfChanged = t.Groups["printOnlyIfChanged"].Success;
-                                config.TrailingLinefeed = t.Groups["trailingLF"].Success;
-                                config.PrePrint = t.Groups["prePrint"].Success;
-                                compoundStack.Push(new Tuple<char, Config>('>', config));
-                            }
-                            else
-                            {
-                                compoundStack.Push(new Tuple<char, Config>(t.Groups["compoundStage"].Value[0], config));
-                            }
+                            compoundStack.Push(new Tuple<char, Config>(t.Groups["compoundStage"].Value[0], config));
                             config = new Config();
                             mode = i < sources.Count ? Modes.Replace : Modes.Count;
                             useSubstitution = false;
@@ -451,11 +426,6 @@ namespace Retina
                                 // Flags affecting how subsequent lines are read
                                 case '$':
                                     useSubstitution = true;
-                                    break;
-
-                                // Configuration for compound stages
-                                case '\\':
-                                    config.TrailingLinefeed = true;
                                     break;
 
                                 // General configuration for atomic stages
@@ -615,6 +585,22 @@ namespace Retina
                         
                         break;
                     case '>':
+                        InheritConfig(stage, compoundConfig);
+                        stage = new OutputStage(compoundConfig, stage);
+                        break;
+                    case '<':
+                        compoundConfig.PrePrint = true;
+                        InheritConfig(stage, compoundConfig);
+                        stage = new OutputStage(compoundConfig, stage);
+                        break;
+                    case ';':
+                        compoundConfig.PrintOnlyIfChanged = true;
+                        InheritConfig(stage, compoundConfig);
+                        stage = new OutputStage(compoundConfig, stage);
+                        break;
+                    case '\\':
+                        if (compoundConfig.StringParam == null)
+                            compoundConfig.StringParam = "\n";
                         InheritConfig(stage, compoundConfig);
                         stage = new OutputStage(compoundConfig, stage);
                         break;

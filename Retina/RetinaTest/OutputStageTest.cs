@@ -93,20 +93,7 @@ namespace RetinaTest
         [TestMethod]
         public void TestTrailingLinefeed()
         {
-            // >\
-            AssertProgram(new TestSuite
-            {
-                Sources = { @":\G`", @"G`" },
-                TestCases = { { "Hello, World!", "Hello, World!\nHello, World!" } }
-            });
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"G`", @":\G`" },
-                TestCases = { { "Hello, World!", "Hello, World!\n" } }
-            });
-
-
-            // \ as a shorthand for >\
+            // \
             AssertProgram(new TestSuite
             {
                 Sources = { @"\G`", @"G`" },
@@ -118,34 +105,46 @@ namespace RetinaTest
                 TestCases = { { "Hello, World!", "Hello, World!\n" } }
             });
 
-            // <\
+            // >
             AssertProgram(new TestSuite
             {
-                Sources = { @"<\`\W", "" },
+                Sources = { "\n>G`", @"G`" },
+                TestCases = { { "Hello, World!", "Hello, World!\nHello, World!" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"G`", "\n>G`" },
+                TestCases = { { "Hello, World!", "Hello, World!\n" } }
+            });
+
+            // <
+            AssertProgram(new TestSuite
+            {
+                Sources = { "\n<`\\W", "" },
                 TestCases = { { "Hello, World!", "Hello, World!\nHelloWorld" } }
             });
 
 
-            // ;\
+            // ;
             AssertProgram(new TestSuite
             {
-                Sources = { @"G`", @";\G`" },
+                Sources = { @"G`", "\n;G`" },
                 TestCases = { { "Hello, World!", "" } }
             });
             AssertProgram(new TestSuite
             {
-                Sources = { @"G`", @";\O`." },
+                Sources = { @"G`", "\n;O`." },
                 TestCases = { { "Hello, World!", " !,HWdellloor\n" } }
             });
 
             AssertProgram(new TestSuite
             {
-                Sources = { @";\G`", @"G`" },
+                Sources = { "\n;G`", @"G`" },
                 TestCases = { { "Hello, World!", "Hello, World!" } }
             });
             AssertProgram(new TestSuite
             {
-                Sources = { @";\O`.", @"G`" },
+                Sources = { "\n;O`.", @"G`" },
                 TestCases = { { "Hello, World!", " !,HWdellloor\n !,HWdellloor" } }
             });
         }
@@ -171,29 +170,12 @@ namespace RetinaTest
                 TestCases = { { "Hello, ", "Hello, World!" } }
             });
 
-
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"'!<\`.+", "abc" },
-                TestCases = { { "Hello, World", "Hello, World!abc" } }
-            });
             AssertProgram(new TestSuite
             {
                 Sources = { @"'!<`.+", "abc" },
                 TestCases = { { "Hello, World", "Hello, World!abc" } }
             });
-
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"'!;\G`" },
-                TestCases = { { "Hello, World", "" } }
-            });
-            AssertProgram(new TestSuite
-            {
-                Sources = { @"'!;\O`." },
-                TestCases = { { "Hello, World", " ,HWdellloor!" } }
-            });
-
+            
             AssertProgram(new TestSuite
             {
                 Sources = { @"'!;G`" },
