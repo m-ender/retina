@@ -1,10 +1,6 @@
 ﻿using Retina.Configuration;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Retina.Stages
 {
@@ -20,7 +16,17 @@ namespace Retina.Stages
 
         public override string Execute(string input, TextWriter output)
         {
-            ChildStage.Execute(input, output);
+            string result = ChildStage.Execute(input, output);
+            
+            if (Config.RegexParam != null || Config.StringParam != null)
+            {
+                var regex = Config.RegexParam ?? new Regex(Regex.Escape(Config.StringParam));
+
+                if (regex.Match(result).Success ^ Config.Reverse)
+                    return result;
+                else
+                    return input;
+            }
 
             return input;
         }
