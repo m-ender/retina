@@ -185,7 +185,6 @@ namespace Retina.Stages
         protected override string Process(string input, TextWriter output)
         {
             // TODO:
-            // - Reverse (process matches and characters from last to first)
             // - figure out additional limits
 
             var mutableInput = new StringBuilder(input);
@@ -222,8 +221,12 @@ namespace Retina.Stages
                 to = Enumerable.Range(0, from.Count / To.Count + 1).SelectMany(_ => To).ToList();
             }
 
-            for (int i = 0; i < mutableInput.Length; ++i)
+
+            for (int _i = 0; _i < mutableInput.Length; ++_i)
             {
+                // Iterate backwards with reverse option.
+                int i = Config.Reverse ?  mutableInput.Length - _i - 1 : _i;
+
                 for (int j = 0; j < transliterationCount[i]; ++j)
                 {
                     int k;
