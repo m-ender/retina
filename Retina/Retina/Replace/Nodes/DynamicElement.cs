@@ -75,7 +75,7 @@ namespace Retina.Replace.Nodes
               |
                 (?<history>         # $-n, $+n are history elements.
                   [-+]
-                  (?<index>\d+)
+                  (?<index>\d*)
                 )
               )
               \z
@@ -240,9 +240,8 @@ namespace Retina.Replace.Nodes
             }
             else if (parserMatch.Groups["history"].Success)
             {
-                // TODO: Think about allowing $- and $+.
-
-                int number = int.Parse(parserMatch.Groups["index"].Value);
+                string numberString = parserMatch.Groups["index"].Value;
+                int number = numberString == "" ? 0 : int.Parse(numberString);
                 switch (parserMatch.Groups["history"].Value[0])
                 {
                 case '-':

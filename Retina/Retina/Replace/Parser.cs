@@ -81,7 +81,7 @@ namespace Retina.Replace
                     )
                   |
                     (?<history>        # $-n, $+n are history elements.
-                      [-+]\d+
+                      [-+]\d*
                     )
                   )
                 )

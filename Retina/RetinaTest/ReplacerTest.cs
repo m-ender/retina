@@ -429,9 +429,9 @@ namespace RetinaTest
                     @"%`.+",
                     @"$.&",
                     @"s`.+",
-                    @"$+0,$+1,$+2,$+3,$-0,$-1,$-2,$-3",
+                    @"$+,$+0,$+1,$+2,$+3,$-,$-0,$-1,$-2,$-3",
                 },
-                TestCases = { { "a\nbc\ndef", "a\nbc\ndef,3,1\n2\n3,,1\n2\n3,3,2,1" } }
+                TestCases = { { "a\nbc\ndef", "a\nbc\ndef,a\nbc\ndef,3,1\n2\n3,,1\n2\n3,1\n2\n3,3,2,1" } }
             });
 
 
