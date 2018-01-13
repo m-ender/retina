@@ -50,6 +50,15 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestCustomSeparator()
+        {
+            AssertProgram(new TestSuite { Sources = { @"',G`\w," }, TestCases = { { ",abc,!!!,,def,", "abc\n!!!\ndef\n" } } });
+            AssertProgram(new TestSuite { Sources = { @""", ""G`\w, " }, TestCases = { { ", abc, !!!, , def, ", "abc\n!!!\ndef\n" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"/\W+/G`c" }, TestCases = { { ", abc, !!!, , def, ", "abc" } } });
+        }
+
+        [TestMethod]
         public void TestRandom()
         {
             AssertRandomProgram(new RandomTestSuite

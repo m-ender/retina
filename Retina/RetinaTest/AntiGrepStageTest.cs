@@ -50,6 +50,16 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"A['[|"", ""]']`!" }, TestCases = { { "abc\ndef\nghi", "[abc, def, ghi]" } } });
         }
 
+
+        [TestMethod]
+        public void TestCustomSeparator()
+        {
+            AssertProgram(new TestSuite { Sources = { @"',A`\w," }, TestCases = { { ",abc,!!!,,def,", "\n" } } });
+            AssertProgram(new TestSuite { Sources = { @""", ""A`\w, " }, TestCases = { { ", abc, !!!, , def, ", "\n" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"/\W+/A`c" }, TestCases = { { ", abc, !!!, , def, ", "\ndef\n" } } });
+        }
+
         [TestMethod]
         public void TestRandom()
         {

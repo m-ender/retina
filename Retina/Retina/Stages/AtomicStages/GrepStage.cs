@@ -16,15 +16,32 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            // TODO:
-            // - Maybe an option to use a different line separator.
+            var lines = new List<int>().Select(t => new { line = "", start = 0, end = 0 }).ToList();
 
-            var lines = new Regex(@"(?m:^).*").Matches(input).Cast<Match>().Select(m => new
             {
-                line = m.Value,
-                start = m.Index,
-                end = m.Index + m.Length
-            }).ToList();
+                int start = 0;
+                int end;
+                string line;
+
+                Regex regex;
+                if (Config.RegexParam != null)
+                    regex = Config.RegexParam;
+                else if (Config.StringParam != null)
+                    regex = new Regex(Regex.Escape(Config.StringParam));
+                else
+                    regex = new Regex(@"\n");
+
+                foreach (var m in regex.Matches(input).Cast<Match>())
+                {
+                    end = m.Index;
+                    line = input.Substring(start, end - start);
+                    lines.Add(new { line, start, end });
+                    start = m.Index + m.Length;
+                }
+                end = input.Length;
+                line = input.Substring(start, end - start);
+                lines.Add(new { line, start, end });
+            }
 
             var linesToKeep = new HashSet<int>();
 
