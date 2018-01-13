@@ -151,6 +151,62 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestCustomTerminator()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!>G`" },
+                TestCases = { { "Hello, World", "Hello, World!" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!\G`" },
+                TestCases = { { "Hello, World", "Hello, World!" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"""World!""\G`" },
+                TestCases = { { "Hello, ", "Hello, World!" } }
+            });
+
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!<\`.+", "abc" },
+                TestCases = { { "Hello, World", "Hello, World!abc" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!<`.+", "abc" },
+                TestCases = { { "Hello, World", "Hello, World!abc" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!;\G`" },
+                TestCases = { { "Hello, World", "" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!;\O`." },
+                TestCases = { { "Hello, World", " ,HWdellloor!" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!;G`" },
+                TestCases = { { "Hello, World", "" } }
+            });
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"'!;O`." },
+                TestCases = { { "Hello, World", " ,HWdellloor!" } }
+            });
+        }
+
+        [TestMethod]
         public void TestNestedOutput()
         {
             AssertProgram(new TestSuite

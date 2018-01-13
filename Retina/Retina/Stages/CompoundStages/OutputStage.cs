@@ -43,8 +43,8 @@ namespace Retina.Stages
                 return;
 
             output.Write(value);
-            if (Config.TrailingLinefeed)
-                output.Write("\n");
+            if (Config.StringParam != null || Config.TrailingLinefeed)
+                output.Write(Config.StringParam ?? "\n");
         }
     }
 }
