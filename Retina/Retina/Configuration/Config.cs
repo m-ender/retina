@@ -60,6 +60,7 @@ namespace Retina.Configuration
         
         // Configuration for Transliterate mode
         public bool CyclicTransliteration { get; set; }
+        public bool TransliterateOnce { get; set; }
 
         public Config()
         {

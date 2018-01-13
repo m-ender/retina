@@ -186,7 +186,6 @@ namespace Retina.Stages
         {
             // TODO:
             // - Reverse (process matches and characters from last to first)
-            // - An option to transliterate each character at most once
             // - figure out additional limits
 
             var mutableInput = new StringBuilder(input);
@@ -200,6 +199,13 @@ namespace Retina.Stages
                     if (Config.GetLimit(1).IsInRange(i, m.Match.Length))
                         ++transliterationCount[i + m.Match.Index];
             });
+
+            if (Config.TransliterateOnce)
+            {
+                for (int i = 0; i < transliterationCount.Length; ++i)
+                    if (transliterationCount[i] > 1)
+                        transliterationCount[i] = 1;
+            }
             
             List<char?> from;
             List<char?> to;

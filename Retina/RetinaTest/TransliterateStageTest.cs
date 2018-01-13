@@ -148,6 +148,15 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"Y`ab`c_e" }, TestCases = { { "aaaabbbbabab", "cecceece" } } });
         }
 
+        [TestMethod]
+        public void TestTransliterateOnce()
+        {
+            AssertTransliteration(@"Tv!|`!d`d`\d+", @" !""#$%&'()*+,-./1234567899:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Tw!|`!d`d`\d+", @" !""#$%&'()*+,-./1234567899:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Yv!|`!d`d`\d+", @" !""#$%&'()*+,-./1234567890:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"Yw!|`!d`d`\d+", @" !""#$%&'()*+,-./1234567890:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        }
+
         // Applies the transliteration to all printable ASCII characters
         private void AssertTransliteration(string source, string expectedOutput)
         {

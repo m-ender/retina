@@ -328,13 +328,14 @@ namespace Retina
                                 flag = t.Groups["flag"].Value[1];
                                 switch (flag)
                                 {
-                                // Mode-specific configuration
                                 case '_':
                                     config.OmitEmpty = true;
                                     break;
-                                // TODO: Conflicts with negative limits.
                                 case '-':
                                     config.OmitGroups = true;
+                                    break;
+                                case '|':
+                                    config.TransliterateOnce = true;
                                     break;
                                 default:
                                     break;
