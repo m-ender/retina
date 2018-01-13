@@ -44,6 +44,13 @@ namespace Retina.Stages
 
             string source = ChildStage.Execute(input, output);
 
+            if (Config.Reverse)
+            {
+                string temp = source;
+                source = evalInput;
+                evalInput = temp;
+            }
+
             var interpreter = new Interpreter(source.Split(new[] { '\n' }).Select(line => line.Replace('¶', '\n')).ToList());
             
             var evalOutput = new StringWriter();

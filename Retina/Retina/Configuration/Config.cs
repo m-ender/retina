@@ -82,6 +82,8 @@ namespace Retina.Configuration
             Limits.AddRange(other.Limits);
             Random |= other.Random;
             Reverse |= other.Reverse;
+            if (StringParam == null)
+                StringParam = other.StringParam;
             if (RegexParam == null)
                 RegexParam = other.RegexParam;
         }

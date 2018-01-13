@@ -37,5 +37,21 @@ namespace RetinaTest
                 TestCases = { { "", "12\n12612abcabc\n848114cabc\n636103abc\n42492bc\n00070\nabc,abcabc,,00070,,,," } }
             });
         }
+
+        [TestMethod]
+        public void TestSwapInputAndProgram()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"^",
+                    @".+$n$$&$$&",
+                    @"^~s`.+",
+                    @"abc",
+                },
+                TestCases = { { "", "abcabc" } }
+            });
+        }
     }
 }

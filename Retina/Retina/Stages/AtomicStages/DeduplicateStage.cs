@@ -16,8 +16,6 @@ namespace Retina.Stages
 
         protected override string Process(string input, TextWriter output)
         {
-            // TODO:
-            // - Maybe a numeric parameter to keep multiple copies?
             var matchSets = new Dictionary<string, List<Match>>();
             
             foreach(var m in Matches)
