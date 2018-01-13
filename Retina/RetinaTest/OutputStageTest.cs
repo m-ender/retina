@@ -176,5 +176,48 @@ namespace RetinaTest
                 TestCases = { { "Hello, World!", "Hello, World!HelloWorld" } }
             });
         }
+
+        [TestMethod]
+        public void TestRandomOutput()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { "?>`." },
+                TestCases = { { "abc", new string[] { "", "3" } } }
+            });
+        }
+
+        [TestMethod]
+        public void TestRandomPrePrint()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { "?<`." },
+                TestCases = { { "abc", new string[] { "3", "abc3" } } }
+            });
+        }
+
+        [TestMethod]
+        public void TestRandomOutputWithLinefeed()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"?\`." },
+                TestCases = { { "abc", new string[] { "", "3\n" } } }
+            });
+        }
+
+        [TestMethod]
+        public void TestRandomOutputIfChanged()
+        {
+            AssertRandomProgram(new RandomTestSuite
+            {
+                Sources = { @"?;`." },
+                TestCases = {
+                    { "abc", new string[] { "", "3" } },
+                    { "1", new string[] { "" } },
+                }
+            });
+        }
     }
 }

@@ -22,10 +22,7 @@ namespace Retina.Stages
         {
             if (Config.PrePrint)
             {
-                output.Write(input);
-
-                if (Config.TrailingLinefeed)
-                    output.Write("\n");
+                Print(input, output);
 
                 return ChildStage.Execute(input, output);
             }
@@ -34,14 +31,20 @@ namespace Retina.Stages
                 string result = ChildStage.Execute(input, output);
 
                 if (!Config.PrintOnlyIfChanged || input != result)
-                {
-                    output.Write(result);
-                    if (Config.TrailingLinefeed)
-                        output.Write("\n");
-                }
+                    Print(result, output);
 
                 return result;
             }
+        }
+
+        private void Print(string value, TextWriter output)
+        {
+            if (Config.Random && Random.RNG.Next(2) > 0)
+                return;
+
+            output.Write(value);
+            if (Config.TrailingLinefeed)
+                output.Write("\n");
         }
     }
 }
