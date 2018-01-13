@@ -95,6 +95,28 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestExecutionOrder()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    ".%>G`",
+                },
+                TestCases = { { "123\nabc\n<>", "123abc<>" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    ".^%>G`",
+                },
+                TestCases = { { "123\nabc\n<>", "<>abc123" } }
+            });
+        }
+
+        [TestMethod]
         public void TestRandomLine()
         {
             AssertRandomProgram(new RandomTestSuite

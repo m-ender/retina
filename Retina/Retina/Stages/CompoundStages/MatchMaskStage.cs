@@ -61,7 +61,13 @@ namespace Retina.Stages
             }
             separators.Add(input.Substring(lastEnd));
 
-            IEnumerable<string> results = matches.Select((m, i) => ChildStage.Execute(m.Value, output));
+            if (Config.Reverse)
+                matches.Reverse();
+
+            List<string> results = matches.Select((m, i) => ChildStage.Execute(m.Value, output)).ToList();
+
+            if (Config.Reverse)
+                results.Reverse();
 
             string result = separators.Riffle(results);
             History.RegisterResult(HistoryIndex, result);

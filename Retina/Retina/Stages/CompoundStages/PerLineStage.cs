@@ -60,6 +60,9 @@ namespace Retina.Stages
                 linesToProcess.Add(chosenLine);
             }
 
+            if (Config.Reverse)
+                linesToProcess.Reverse();
+
             foreach (int i in linesToProcess)
                 lines[i] = ChildStage.Execute(lines[i], output);
             
