@@ -192,52 +192,59 @@ namespace Retina.Stages
             var mutableInput = new StringBuilder(input);
             var toDelete = new HashSet<int>();
 
+            int[] transliterationCount = new int[input.Length];
+
+            Matches.ForEach(m =>
+            {
+                for (int i = 0; i < m.Match.Length; ++i)
+                    if (Config.GetLimit(1).IsInRange(i, m.Match.Length))
+                        ++transliterationCount[i + m.Match.Index];
+            });
+            
+            List<char?> from;
+            List<char?> to;
+
             if (!Config.CyclicTransliteration)
             {
-                Matches.ForEach(m =>
-                {
-                    for (int i = 0; i < m.Match.Length; ++i)
-                    {
-                        int iStr = i + m.Match.Index;
-
-                        int k = From.IndexOf(mutableInput[iStr]);
-                        if (k < 0 || !Config.GetLimit(1).IsInRange(i, m.Match.Length))
-                            continue;
-
-                        char? target = To[Math.Min(To.Count - 1, k)];
-                        if (target == null)
-                            toDelete.Add(iStr);
-                        else
-                            mutableInput[iStr] = (char)target;
-                    }
-                });
+                from = From;
+                to = To;
             }
             else
             {
                 int maxCharCount = input.GroupBy(c => c).Select(g => g.Count()).Aggregate(Math.Max);
-                List<char?> from = Enumerable.Range(0, maxCharCount).SelectMany(_ => From).ToList();
-                List<char?> to = Enumerable.Range(0, from.Count / To.Count + 1).SelectMany(_ => To).ToList(); 
-                Matches.ForEach(m =>
+                from = Enumerable.Range(0, maxCharCount).SelectMany(_ => From).ToList();
+                to = Enumerable.Range(0, from.Count / To.Count + 1).SelectMany(_ => To).ToList();
+            }
+
+            for (int i = 0; i < mutableInput.Length; ++i)
+            {
+                for (int j = 0; j < transliterationCount[i]; ++j)
                 {
-                    for (int i = 0; i < m.Match.Length; ++i)
+                    int k;
+                    k = from.IndexOf(mutableInput[i]);
+                    
+                    if (k < 0)
+                        break;
+
+                    char? target;
+                    if (!Config.CyclicTransliteration)
+                        target = To[Math.Min(To.Count - 1, k)];
+                    else
                     {
-                        int iStr = i + m.Match.Index;
-
-                        int k = from.IndexOf(mutableInput[iStr]);
-                        if (k < 0 || !Config.GetLimit(1).IsInRange(i, m.Match.Length))
-                            continue;
-
-                        char? target = to[k];
-                        if (target == null)
-                            toDelete.Add(iStr);
-                        else
-                            mutableInput[iStr] = (char)target;
-
+                        target = to[k];
                         // Remove this occurrence from the source list so that the next occurrence of the
                         // character uses the next mapping.
                         from[k] = null;
                     }
-                });
+
+                    if (target == null)
+                    {
+                        toDelete.Add(i);
+                        break;
+                    }
+                    else
+                        mutableInput[i] = (char)target;
+                }
             }
 
             var sortedDeletions = toDelete.ToList();
