@@ -134,6 +134,36 @@ namespace RetinaTest
                     { "defghi", "defghidefghi" },
                 }
             });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = {
+                    @"""()""(`.+",
+                    @"$&$&",
+                    @"T`l`L",
+                    @"^.",
+                    @"$&$&",
+                },
+                TestCases = {
+                    { "()abc", "()abc()abc" },
+                    { "defghi", "DDEFGHI" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources = {
+                    @"""()""^(`.+",
+                    @"$&$&",
+                    @"T`l`L",
+                    @"^.",
+                    @"$&$&",
+                },
+                TestCases = {
+                    { "()abc", "(()ABC" },
+                    { "defghi", "defghidefghi" },
+                }
+            });
         }
 
         [TestMethod]

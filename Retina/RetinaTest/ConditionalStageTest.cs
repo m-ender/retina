@@ -22,6 +22,20 @@ namespace RetinaTest
                     { "abc", "abc" },
                 }
             });
+
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"'1&`.+",
+                    @"$&$&",
+                },
+                TestCases = {
+                    { "123", "123123" },
+                    { "abc", "abc" },
+                }
+            });
         }
 
         [TestMethod]
@@ -32,6 +46,19 @@ namespace RetinaTest
                 Sources =
                 {
                     @"/\d/^&`.+",
+                    @"$&$&",
+                },
+                TestCases = {
+                    { "123", "123" },
+                    { "abc", "abcabc" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"'1^&`.+",
                     @"$&$&",
                 },
                 TestCases = {

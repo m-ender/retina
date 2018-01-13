@@ -26,7 +26,12 @@ namespace Retina.Stages
                 return Random.RNG.Next(2) > 0 ? ChildStage.Execute(input, output) : input;
             }
 
-            var regex = Config.RegexParam ?? new Regex("");
+            Regex regex;
+
+            if (Config.RegexParam != null || Config.StringParam != null)
+                regex = Config.RegexParam ?? new Regex(Regex.Escape(Config.StringParam));
+            else
+                regex = new Regex("");
             
             if (regex.Match(input).Success ^ Config.Reverse)
                 return ChildStage.Execute(input, output);

@@ -31,9 +31,11 @@ namespace Retina.Stages
             {
                 result = Stages[Random.RNG.Next(Stages.Count)].Execute(result, output);
             }
-            else if (Config.RegexParam != null)
+            else if (Config.RegexParam != null || Config.StringParam != null)
             {
-                if (Config.RegexParam.Match(input).Success ^ Config.Reverse)
+                Regex regex = Config.RegexParam ?? new Regex(Regex.Escape(Config.StringParam));
+
+                if (regex.Match(input).Success ^ Config.Reverse)
                     result = Stages[0].Execute(result, output);
                 else
                     for (int i = 1; i < Stages.Count; ++i)
