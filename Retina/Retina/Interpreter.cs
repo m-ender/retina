@@ -417,6 +417,9 @@ namespace Retina
                                 case 'P':
                                     mode = Modes.Pad;
                                     break;
+                                case 'K':
+                                    mode = Modes.Constant;
+                                    break;
 
                                 // Global configuration
                                 case '.':
@@ -455,104 +458,112 @@ namespace Retina
                         throw new Exception("Source contains only escaped backticks.");
                 }
 
-                if (mode == Modes.Replace)
-                    useSubstitution = true;
-                
                 Stage stage = null;
-                var patterns = new List<string>();
-                var substitutions = new List<string>();
 
-                patterns.Add(pattern);
-
-                string substitution = "$&";
-                if (!config.InvertMatches && useSubstitution)
-                    substitution = i < sources.Count ? sources[i++] : "";
-                substitutions.Add(substitution);
-
-                if (Math.Abs(patternCount) > 1)
+                if (mode == Modes.Constant)
                 {
-                    if (config.InputAsRegex)
-                        throw new Exception("Can't use : in conjunction with #.");
-
-                    config.Greedy = patternCount < 0;
-                    for (int k = 1; k < Math.Abs(patternCount); ++k)
-                    {
-                        if (i == sources.Count)
-                            throw new Exception("Not enough lines to reach pattern count");
-
-                        patterns.Add(sources[i++]);
-
-                        substitution = "$&";
-                        if (!config.InvertMatches && useSubstitution)
-                            substitution = i < sources.Count ? sources[i++] : "";
-                        substitutions.Add(substitution);
-                    }
+                    stage = new ConstantStage(config, pattern);
                 }
-
-                string separatorSubstitutionSource = "$&";
-
-                if (config.InvertMatches && useSubstitution)
-                    separatorSubstitutionSource = i < sources.Count ? sources[i++] : "";
-
-                if (!config.InvertMatches
-                 && patternCount == 1 
-                 && patterns[0] == "")
+                else
                 {
+                    if (mode == Modes.Replace)
+                        useSubstitution = true;
+
+                    var patterns = new List<string>();
+                    var substitutions = new List<string>();
+
+                    patterns.Add(pattern);
+
+                    string substitution = "$&";
+                    if (!config.InvertMatches && useSubstitution)
+                        substitution = i < sources.Count ? sources[i++] : "";
+                    substitutions.Add(substitution);
+
+                    if (Math.Abs(patternCount) > 1)
+                    {
+                        if (config.InputAsRegex)
+                            throw new Exception("Can't use : in conjunction with #.");
+
+                        config.Greedy = patternCount < 0;
+                        for (int k = 1; k < Math.Abs(patternCount); ++k)
+                        {
+                            if (i == sources.Count)
+                                throw new Exception("Not enough lines to reach pattern count");
+
+                            patterns.Add(sources[i++]);
+
+                            substitution = "$&";
+                            if (!config.InvertMatches && useSubstitution)
+                                substitution = i < sources.Count ? sources[i++] : "";
+                            substitutions.Add(substitution);
+                        }
+                    }
+
+                    string separatorSubstitutionSource = "$&";
+
+                    if (config.InvertMatches && useSubstitution)
+                        separatorSubstitutionSource = i < sources.Count ? sources[i++] : "";
+
+                    if (!config.InvertMatches
+                     && patternCount == 1
+                     && patterns[0] == "")
+                    {
+                        switch (mode)
+                        {
+                        case Modes.Deduplicate:
+                        case Modes.Sort:
+                        case Modes.Reverse:
+                            patterns[0] = "(?m:^.*$)";
+                            break;
+                        case Modes.Transliterate:
+                            patterns[0] = @"\A(?s:.*)\z";
+                            break;
+                        }
+                    }
+
                     switch (mode)
                     {
-                    case Modes.Deduplicate:
-                    case Modes.Sort:
-                    case Modes.Reverse:
-                        patterns[0] = "(?m:^.*$)";
+                    case Modes.Count:
+                        stage = new CountStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.List:
+                        stage = new ListStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Replace:
+                        stage = new ReplaceStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Split:
+                        stage = new SplitStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Grep:
+                        stage = new GrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.AntiGrep:
+                        stage = new AntiGrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Transliterate:
-                        patterns[0] = @"\A(?s:.*)\z";
+                        stage = new TransliterateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
                         break;
+                    case Modes.Sort:
+                        stage = new SortStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Deduplicate:
+                        stage = new DeduplicateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Position:
+                        stage = new PositionStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Reverse:
+                        stage = new ReverseStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    case Modes.Pad:
+                        stage = new PadStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        break;
+                    default:
+                        throw new NotImplementedException();
                     }
                 }
 
-                switch (mode)
-                {
-                case Modes.Count:
-                    stage = new CountStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.List:
-                    stage = new ListStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Replace:
-                    stage = new ReplaceStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Split:
-                    stage = new SplitStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Grep:
-                    stage = new GrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.AntiGrep:
-                    stage = new AntiGrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Transliterate:
-                    stage = new TransliterateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Sort:
-                    stage = new SortStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Deduplicate:
-                    stage = new DeduplicateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Position:
-                    stage = new PositionStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Reverse:
-                    stage = new ReverseStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                case Modes.Pad:
-                    stage = new PadStage(config, History, patterns, substitutions, separatorSubstitutionSource);
-                    break;
-                default:
-                    throw new NotImplementedException();
-                }
-                                
                 while (compoundStack.Count > 0 
                     || i >= sources.Count && stageStack.Count > 1)
                 {

@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="AntiGrepStageTest.cs" />
     <Compile Include="DryRunStageTest.cs" />
+    <Compile Include="ConstantStageTest.cs" />
     <Compile Include="EvalStageTest.cs" />
     <Compile Include="GeneralOptionsTest.cs" />
     <Compile Include="MatchMaskStageTest.cs" />
