@@ -5,6 +5,7 @@ using System.IO;
 using Retina.Configuration;
 using Retina.Extensions;
 using System.Text.RegularExpressions;
+using System.Numerics;
 
 namespace Retina.Stages
 {
@@ -26,7 +27,7 @@ namespace Retina.Stages
             else if (Config.SortNumerically)
                 sortedMatches = from MatchContext m in Matches
                                 let numberMatch = new Regex(@"-?\d+").Match(m.Replacement)
-                                orderby numberMatch.Success ? int.Parse(numberMatch.Value) : 0
+                                orderby numberMatch.Success ? BigInteger.Parse(numberMatch.Value) : 0
                                 select m.Match.Value;
             else
                 sortedMatches = Matches.OrderBy(m => m.Replacement, StringComparer.Ordinal).Select(m => m.Match.Value);
