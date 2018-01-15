@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Retina.Replace.Nodes
 {
@@ -18,9 +19,9 @@ namespace Retina.Replace.Nodes
             return String.Concat(Children.Select(c => c.GetString(input, matches, separators, index)));
         }
 
-        public override int GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
+        public override BigInteger GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
         {
-            return Children.Select(c => c.GetLength(input, matches, separators, index)).Sum();
+            return Children.Select(c => c.GetLength(input, matches, separators, index)).Aggregate((cur, sum) => sum + cur);
         }
     }
 }

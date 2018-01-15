@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Retina.Replace.Nodes
 {
@@ -17,7 +18,7 @@ namespace Retina.Replace.Nodes
             return Child.GetLength(input, matches, separators, index).ToString();
         }
 
-        public override int GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
+        public override BigInteger GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
         {
             return Child.GetLength(input, matches, separators, index).ToString().Length;
         }

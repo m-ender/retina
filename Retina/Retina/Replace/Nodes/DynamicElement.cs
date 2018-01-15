@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace Retina.Replace.Nodes
@@ -31,7 +32,7 @@ namespace Retina.Replace.Nodes
             return ResolveChild(input, matches, separators, index);
         }
 
-        public override int GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
+        public override BigInteger GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
         {
             return ResolveChild(input, matches, separators, index).Length;
         }

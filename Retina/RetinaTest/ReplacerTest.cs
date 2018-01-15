@@ -343,6 +343,9 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { ".+", "5**" }, TestCases = { { "3!", "_______________" } } });
             AssertProgram(new TestSuite { Sources = { ".+", "*5*" }, TestCases = { { "3!", "_______________" } } });
             AssertProgram(new TestSuite { Sources = { ".+", "$.(**)" }, TestCases = { { "25", "625" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$.(**)" }, TestCases = { { "46330", "2146468900" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$.(**)" }, TestCases = { { "65526", "4293656676" } } });
+            AssertProgram(new TestSuite { Sources = { ".+", "$.(**)" }, TestCases = { { "123123123", "15159303417273129" } } });
         }
 
         [TestMethod]

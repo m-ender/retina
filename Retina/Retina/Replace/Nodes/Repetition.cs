@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -31,15 +32,15 @@ namespace Retina.Replace.Nodes
             return String.Concat(Enumerable.Repeat(value, count));
         }
 
-        public override int GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
+        public override BigInteger GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
         {
             string source = Count.GetString(input, matches, separators, index);
             var countPattern = new Regex(@"\d+");
             var countMatch = countPattern.Match(source);
-            int count;
-            count = countMatch.Success ? int.Parse(countMatch.Value) : 0;
+            BigInteger count;
+            count = countMatch.Success ? BigInteger.Parse(countMatch.Value) : 0;
 
-            int valueLength = Value.GetLength(input, matches, separators, index);
+            BigInteger valueLength = Value.GetLength(input, matches, separators, index);
 
             return count * valueLength;
         }
