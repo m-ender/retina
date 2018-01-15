@@ -78,6 +78,7 @@ namespace Retina.Stages
                 case 'r': return '\r';
                 case 't': return '\t';
                 case 'v': return '\v';
+                case '\n': return '¶';
 
                 // Any other character is treated as a literal.
                 default: return token[1];

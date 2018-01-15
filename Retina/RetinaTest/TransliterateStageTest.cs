@@ -35,6 +35,7 @@ namespace RetinaTest
         public void TestEscapeSequences()
         {
             AssertProgram(new TestSuite { Sources = { @"T`\a\b\f\n`\r\t\v\" }, TestCases = { { "\a\b\f\n\r\t\v\\", "\r\t\v\\\r\t\v\\" } } });
+            AssertProgram(new TestSuite { Sources = { "T`\\\n\n`\n\\\n" }, TestCases = { { "\n¶", "¶\n" } } });
             AssertProgram(new TestSuite { Sources = { @"T`\A\``\`B" }, TestCases = { { "AB`BA", "`BBB`" } } });
             AssertProgram(new TestSuite { Sources = { @"T`a\-z`012" }, TestCases = { { "abc-xyz", "0bc1xy2" } } });
         }
