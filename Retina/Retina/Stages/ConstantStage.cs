@@ -16,7 +16,16 @@ namespace Retina.Stages
 
         public override string Execute(string input, TextWriter output)
         {
-            return Result;
+            Regex conditionalRegex;
+
+            if (Config.RegexParam != null)
+                conditionalRegex = Config.RegexParam;
+            else if (Config.StringParam != null)
+                conditionalRegex = new Regex(Regex.Escape(Config.StringParam));
+            else
+                conditionalRegex = new Regex("");
+            
+            return conditionalRegex.Match(input).Success ? Result : input;
         }
     }
 }

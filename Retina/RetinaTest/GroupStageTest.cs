@@ -28,6 +28,44 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestNestedCompoundStages()
+        {
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"\(`.+",
+                    @"$&$&",
+                    @"*)T`l`L",
+                },
+                TestCases = { { "abc", "ABCABC\nabc" } }
+            });
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"\(`^\w",
+                    @"",
+                    @"}G`",
+                },
+                TestCases = { { "abc!", "bc!\nc!\n!\n!\n!" } }
+            });
+
+
+            AssertProgram(new TestSuite
+            {
+                Sources =
+                {
+                    @"{`^\w",
+                    @"",
+                    @"\)G`",
+                },
+                TestCases = { { "abc!", "!\n" } }
+            });
+        }
+
+        [TestMethod]
         public void TestImplicitParentheses()
         {
             AssertProgram(new TestSuite

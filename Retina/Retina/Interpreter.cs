@@ -323,28 +323,28 @@ namespace Retina
                                 {
                                 // Parse RegexOptions
                                 case 'c':
-                                    config.RegexOptions |= RegexOptions.CultureInvariant;
+                                    config.RegexOptions ^= RegexOptions.CultureInvariant;
                                     break;
                                 case 'e':
-                                    config.RegexOptions |= RegexOptions.ECMAScript;
+                                    config.RegexOptions ^= RegexOptions.ECMAScript;
                                     break;
                                 case 'i':
-                                    config.RegexOptions |= RegexOptions.IgnoreCase;
+                                    config.RegexOptions ^= RegexOptions.IgnoreCase;
                                     break;
                                 case 'm':
-                                    config.RegexOptions |= RegexOptions.Multiline;
+                                    config.RegexOptions ^= RegexOptions.Multiline;
                                     break;
                                 case 'n':
-                                    config.RegexOptions |= RegexOptions.ExplicitCapture;
+                                    config.RegexOptions ^= RegexOptions.ExplicitCapture;
                                     break;
                                 case 'r':
-                                    config.RegexOptions |= RegexOptions.RightToLeft;
+                                    config.RegexOptions ^= RegexOptions.RightToLeft;
                                     break;
                                 case 's':
-                                    config.RegexOptions |= RegexOptions.Singleline;
+                                    config.RegexOptions ^= RegexOptions.Singleline;
                                     break;
                                 case 'x':
-                                    config.RegexOptions |= RegexOptions.IgnorePatternWhitespace;
+                                    config.RegexOptions ^= RegexOptions.IgnorePatternWhitespace;
                                     break;
 
                                 // Parse custom regex modifiers
