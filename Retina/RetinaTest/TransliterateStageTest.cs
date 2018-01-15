@@ -64,6 +64,8 @@ namespace RetinaTest
             AssertTransliteration(@"T`h`A-P", @" !""#$%&'()*+,-./ABCDEFGHIJ:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`KLMNOPghijklmnopqrstuvwxyz{|}~");
             AssertTransliteration(@"T`L`a-z", @" !""#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
             AssertTransliteration(@"T`l`A-Z", @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~");
+            AssertTransliteration(@"T`V`d", @" !""#$%&'()*+,-./0123456789:;<=>?@0BCD1FGH2JKLMN3PQRST4VWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+            AssertTransliteration(@"T`v`d", @" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`0bcd1fgh2jklmn3pqrst4vwxyz{|}~");
             AssertTransliteration(@"T`p`!-~ ", @"!""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ");
             AssertTransliteration(@"T`E`a-e", @" !""#$%&'()*+,-./a1b3c5d7e9:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
             AssertTransliteration(@"T`O`a-e", @" !""#$%&'()*+,-./0a2b4c6d8e:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~");

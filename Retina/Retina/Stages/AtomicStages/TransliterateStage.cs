@@ -99,7 +99,7 @@ namespace Retina.Stages
                     -                    #     A hyphen to denote a custom range.
                     (?<end>[^\\`]|\\.)   #     A non-backslash or an escaped sequence.
                   |                      #   or:
-                    (?<class>[dEOHhLlwpo]) #     A built-in character class.
+                    (?<class>[dEOHhLlVvwpo]) #     A built-in character class.
                   )                      #   Priority is given to custom ranges, such that the built-in classes can 
                                          #   appear as the first character in a range without needing escaping.
                 )
@@ -136,6 +136,8 @@ namespace Retina.Stages
                         case 'h': range.Append("0123456789abcdef"); break;
                         case 'L': range.Append("ABCDEFGHIJKLMNOPQRSTUVWXYZ"); break;
                         case 'l': range.Append("abcdefghijklmnopqrstuvwxyz"); break;
+                        case 'V': range.Append("AEIOU"); break;
+                        case 'v': range.Append("aeiou"); break;
                         case 'w': range.Append("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"); break;
                         // Printable ASCII
                         case 'p': range.Append(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"); break;
