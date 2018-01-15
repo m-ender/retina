@@ -7,28 +7,34 @@ namespace Retina.Stages
     public class DryRunStage : Stage
     {
         public Stage ChildStage { get; set; }
+        private History History;
+        private int HistoryIndex;
 
-        public DryRunStage(Config config, Stage childStage)
+        public DryRunStage(Config config, History history, Stage childStage)
             : base(config)
         {
+            History = history;
+            HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
 
         public override string Execute(string input, TextWriter output)
         {
             string result = ChildStage.Execute(input, output);
-            
+
             if (Config.RegexParam != null || Config.StringParam != null)
             {
                 var regex = Config.RegexParam ?? new Regex(Regex.Escape(Config.StringParam));
 
-                if (regex.Match(result).Success ^ Config.Reverse)
-                    return result;
-                else
-                    return input;
+                if (!(regex.Match(result).Success ^ Config.Reverse))
+                    result = input;
             }
+            else
+                result = input;
 
-            return input;
+            History.RegisterResult(HistoryIndex, result);
+
+            return result;
         }
     }
 }

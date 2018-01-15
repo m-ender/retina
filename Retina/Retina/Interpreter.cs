@@ -462,7 +462,7 @@ namespace Retina
 
                 if (mode == Modes.Constant)
                 {
-                    stage = new ConstantStage(config, pattern);
+                    stage = new ConstantStage(config, History, pattern);
                 }
                 else
                 {
@@ -617,7 +617,7 @@ namespace Retina
                         break;
                     case '*':
                         InheritConfig(stage, compoundConfig);
-                        stage = new DryRunStage(compoundConfig, stage);
+                        stage = new DryRunStage(compoundConfig, History, stage);
                         break;
                     case '+':
                         InheritConfig(stage, compoundConfig);
@@ -633,7 +633,7 @@ namespace Retina
                         break;
                     case '&':
                         InheritConfig(stage, compoundConfig);
-                        stage = new ConditionalStage(compoundConfig, stage);
+                        stage = new ConditionalStage(compoundConfig, History, stage);
                         break;
                     case '~':
                         InheritConfig(stage, compoundConfig);
