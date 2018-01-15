@@ -68,7 +68,7 @@ namespace Retina.Replace.Nodes
                   )
                 |
                   (?<lineOnly>%)?   # Stop at the nearest linefeed.
-                  (?<context>       # $`, $' and $_ are context elements.
+                  (?<context>       # $`, $', $= and $"" are context elements.
                     [`'=""]
                   )
                 )
@@ -220,16 +220,7 @@ namespace Retina.Replace.Nodes
                     value = suffix;
                     break;
                 case '=':
-                    value = input;
-
-                    if (lineOnly)
-                    {
-                        int start = value.LastIndexOf('\n', match.Match.Index) + 1;
-                        int end = value.IndexOf('\n', match.Match.Index + match.Match.Length);
-                        if (end == -1) end = value.Length;
-                        value = value.Substring(start, end - start);
-                    }
-
+                    value = prefix + match.Match.Value + suffix;
                     break;
                 case '"':
                     value = suffix + "\n" + prefix;

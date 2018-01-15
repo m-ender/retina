@@ -47,7 +47,7 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"L-6,6`." }, TestCases = { { "0123456789", "4\n5\n6" } } });
             AssertProgram(new TestSuite { Sources = { @"L-5,5`." }, TestCases = { { "0123456789", "5" } } });
             AssertProgram(new TestSuite { Sources = { @"L-4,5`." }, TestCases = { { "0123456789", "" } } });
-            
+
             // -,-
             AssertProgram(new TestSuite { Sources = { @"L-5,-3`." }, TestCases = { { "0123456789", "5\n6\n7" } } });
             AssertProgram(new TestSuite { Sources = { @"L-7,-7`." }, TestCases = { { "0123456789", "3" } } });
@@ -74,7 +74,7 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"L1,-3,8`." }, TestCases = { { "0123456789", "2\n5\n8" } } });
             AssertProgram(new TestSuite { Sources = { @"L1,3,11`." }, TestCases = { { "0123456789", "1\n4\n7" } } });
             AssertProgram(new TestSuite { Sources = { @"L1,-3,11`." }, TestCases = { { "0123456789", "2\n5\n8" } } });
-            
+
             // +,,-
             AssertProgram(new TestSuite { Sources = { @"L1,3,-2`." }, TestCases = { { "0123456789", "1\n4\n7" } } });
             AssertProgram(new TestSuite { Sources = { @"L1,-3,-2`." }, TestCases = { { "0123456789", "2\n5\n8" } } });
@@ -127,6 +127,5 @@ namespace RetinaTest
             AssertProgram(new TestSuite { Sources = { @"L^1,,8`." }, TestCases = { { "0123456789", "0\n2\n3\n4\n5\n6\n7\n9" } } });
             AssertProgram(new TestSuite { Sources = { @"L^,,`." }, TestCases = { { "0123456789", "1\n2\n3\n4\n5\n6\n7\n8" } } });
         }
-
     }
 }
