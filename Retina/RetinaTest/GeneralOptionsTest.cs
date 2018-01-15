@@ -50,6 +50,15 @@ namespace RetinaTest
                     { "a123b", "" },
                 }
             });
+            
+            AssertProgram(new TestSuite
+            {
+                Sources = { @"L:a`123" },
+                TestCases = {
+                    { @"\d", "" },
+                    { @"\d{3}", "123" },
+                }
+            });
         }
 
         [TestMethod]

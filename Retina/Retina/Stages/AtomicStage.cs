@@ -37,16 +37,6 @@ namespace Retina.Stages
             RegexSources = regexSources;
             Replacers = substitutionSources.Select(s => new Replacer(s, History, Config.CyclicMatches)).ToList();
             SeparatorReplacer = new Replacer(separatorSubstitutionSource, History, Config.CyclicMatches);
-            
-            switch (Config.Anchoring)
-            {
-            case Anchoring.String:
-                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"\A", s, @"\z"));
-                break;
-            case Anchoring.Line:
-                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"(?m:^)", s, @"(?m:$)"));
-                break;
-            }
         }
 
         public override string Execute(string input, TextWriter output)
@@ -55,13 +45,23 @@ namespace Retina.Stages
             Separators = new List<MatchContext>();
 
             // We need to restore this if InputAsRegex is used.
-            string tempRegexSource = RegexSources[0];
+            var tempRegexSources = RegexSources.ToList();
 
             if (Config.InputAsRegex)
             {
                 // Swap input with first regex. There should be only one regex anyway.
                 RegexSources[0] = input;
-                input = tempRegexSource;
+                input = tempRegexSources[0];
+            }
+
+            switch (Config.Anchoring)
+            {
+            case Anchoring.String:
+                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"\A", s, @"\z"));
+                break;
+            case Anchoring.Line:
+                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"(?m:^)", s, @"(?m:$)"));
+                break;
             }
 
             Regices = RegexSources.ConvertAll(source => new Regex(source, Config.RegexOptions));
@@ -87,8 +87,8 @@ namespace Retina.Stages
 
             History.RegisterResult(HistoryIndex, result);
 
-            // Restore the first regex source, in case we're using InputAsRegex
-            RegexSources[0] = tempRegexSource;
+            // Restore the regex sources, in case we're using InputAsRegex
+            RegexSources = tempRegexSources;
 
             return result;
         }
