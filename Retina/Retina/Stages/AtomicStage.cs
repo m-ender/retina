@@ -37,6 +37,16 @@ namespace Retina.Stages
             RegexSources = regexSources;
             Replacers = substitutionSources.Select(s => new Replacer(s, History, Config.CyclicMatches)).ToList();
             SeparatorReplacer = new Replacer(separatorSubstitutionSource, History, Config.CyclicMatches);
+            
+            switch (Config.Anchoring)
+            {
+            case Anchoring.String:
+                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"\A", s, @"\z"));
+                break;
+            case Anchoring.Line:
+                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"(?m:^)", s, @"(?m:$)"));
+                break;
+            }
         }
 
         public override string Execute(string input, TextWriter output)
@@ -52,16 +62,6 @@ namespace Retina.Stages
                 // Swap input with first regex. There should be only one regex anyway.
                 RegexSources[0] = input;
                 input = tempRegexSource;
-            }
-
-            switch (Config.Anchoring)
-            {
-            case Anchoring.String:
-                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"\A", s, @"\z"));
-                break;
-            case Anchoring.Line:
-                RegexSources = RegexSources.ConvertAll(s => WrapRegex(@"(?m:^)", s, @"(?m:$)"));
-                break;
             }
 
             Regices = RegexSources.ConvertAll(source => new Regex(source, Config.RegexOptions));
