@@ -36,6 +36,16 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite
             {
+                Sources = { @"K/\d/^`)$+(" },
+                TestCases = {
+                    { "abc", ")$+(" },
+                    { "", ")$+(" },
+                    { "123\n456", "123\n456" },
+                }
+            });
+
+            AssertProgram(new TestSuite
+            {
                 Sources = { @"K'3`)$+(" },
                 TestCases = {
                     { "12", "12" },

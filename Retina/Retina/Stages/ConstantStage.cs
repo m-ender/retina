@@ -29,7 +29,7 @@ namespace Retina.Stages
             else
                 conditionalRegex = new Regex("");
             
-            string result = conditionalRegex.Match(input).Success ? Result : input;
+            string result = (conditionalRegex.Match(input).Success ^ Config.Reverse) ? Result : input;
             
             History.RegisterResult(HistoryIndex, result);
 
