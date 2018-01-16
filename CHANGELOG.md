@@ -1,3 +1,29 @@
+## 1.0.0
+
+This version is almost a complete rewrite of Retina, which generalised and added a myriad of features to the language. Therefore, this changelog will necessarily be incomplete, and you won't get around learning about the new version by reading the new documentation on the wiki. However, I've tried to collect some of the changes here to give people with experience in Retina 0.8.2 a headstart.
+
+- Semantics of atomic stages have been unified by defining a common preprocess to extract matches, separators and substitutions. Individual stages are defined in terms of the results of this preprocess. This makes many options available to all stages in a predictable way.
+- Several new stage types were added: `P` (pad), `I` (match positions), `V` (reverse), `K` (constant).
+- Sort stages were split into two stage types: `O` (regular sort) and `N` (numeric sort, formerly `O#`).
+- An alternative type of transliteration stage was added, which performs a more general, cyclic style of transliteration (`Y`).
+- Transliteration supports new character classes `V` and `v` for vowels, as well as an escape sequence for pilcrows.
+- `M`atch stages were split into two types, `C`ount (formerly `M`) and `L`ist (formerly `M!`). `C` is the new default type for a stage on the last line of a program.
+- The options `%` (per-line), `*` (dry run), `+` (loop) and output have been redefined as compound stages which form a wrapper around their child stage. This makes it easier to combine them and to reason about their interactions.
+- Output was changed from `:` to `>`, and three alternative output stages exist as `<`, `;` and `\`.
+- Several other compound stages were added for additional control flow, `&` (conditional), `~` (eval!), `_` (match mask, a generalised inverse to per-line stages).
+- Existing compound stages were generalised with various options. For example, `+` can now represent various types of loops depending on its configuration, groups can select between its child stages based on a condition and `%` can use a custom line separator.
+- Limit syntax was reworked completely. Limits are now similar to Python's indexing expressions (although they use commas instead of colons and have somewhat different semantics).
+- Some stages can now be given strings or even regexes as options.
+- Every stage can now optionally include a substitution (although a few don't make use of them).
+- Stages can have multiple regexes (and corresponding substitutions).
+- Stages can process the non-matches (called separators) instead of the matches in a string.
+- It is now possible to find every substring that matches a given regex (not just one match per starting position).
+- Substitution syntax was reworked completely and is now its own powerful minilanguage. The most important change for users familiar with previous version is that repetition is now *just* `*`, and `$*` is used to escape a literal asterisk. However, there are now also unary operators to perform simple string transformations right there in the substitution string, substitution elements can be selected dynamically and multiple substitution elements can be grouped together to be passed to operators as a single operand. It's even possible to access information from adjacent matches or separators inside a substitution pattern. Also, pilcrows are now escapable in substitution patterns.
+- Options to introduce randomness were added wherever it made sense, so it's possible to pick random matches, shuffle lists of matches and characters, or pick one of multiple stages to execute at random, among other things.
+- All intermediate stage results are now recorded in a *history*, which can be accessed in substitution patterns, to refer back to earlier strings. In a way, this lets you create variables by generating the desired string inside a dry run and then referring back to it using the history.
+- Stages with list-like output (`L`ist, `S`plit, Pos`I`tions, `G`rep and `A`ntiGrep) can now configure the prefix, delimiters and suffix of the list format.
+- And some more which I probably forgot about...
+
 ## 0.8.2
 
 - New stage type: Deduplicate (`D`).
