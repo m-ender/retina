@@ -1,10 +1,12 @@
 # Retina
 
-Retina is a regex-based recreational programming language. Its main feature is taking some text via standard input and repeatedly applying regex operations to it (e.g. matching, splitting, and most of all replacing). Under the hood, it uses .NET's regex engine, which means that both the .NET flavour and the ECMAScript flavour are available.
+Retina is a regex-based recreational programming language. Every program works by reading a (finite) string from standard input, transforming it via a series of regex operations (e.g. counting matches, filtering lines, and most of all substituting). Retina was built on top of [.NET's regex engine](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expressions), but provides its own, more powerful substitution syntax.
 
-Retina was mainly developed for [Code golf](https://en.wikipedia.org/wiki/Code_golf) which may explain its very terse configuration syntax and some weird design decisions.
+Retina was mainly developed for [code golf](https://en.wikipedia.org/wiki/Code_golf) which may explain its very terse configuration syntax and some weird design decisions.
 
 ## Running Retina
+
+The easiest way to try out Retina is to use it right in your browser at [Try It Online!](https://tio.run/#retina1)
 
 There is an up-to-date .NET binary of Retina in the root directory of the repository. Alternatively, you can build it yourself from the C# sources. The code requires .NET 4.5. I do not regularly test Retina with Mono, but previous versions have worked without problems.
 
