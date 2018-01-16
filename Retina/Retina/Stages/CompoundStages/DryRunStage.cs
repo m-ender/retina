@@ -14,7 +14,8 @@ namespace Retina.Stages
             : base(config)
         {
             History = history;
-            HistoryIndex = History.RegisterStage();
+            if (Config.RegexParam != null || Config.StringParam != null)
+                HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
 
@@ -28,13 +29,13 @@ namespace Retina.Stages
 
                 if (!(regex.Match(result).Success ^ Config.Reverse))
                     result = input;
+
+                History.RegisterResult(HistoryIndex, result);
+
+                return result;
             }
             else
-                result = input;
-
-            History.RegisterResult(HistoryIndex, result);
-
-            return result;
+                return input;
         }
     }
 }
