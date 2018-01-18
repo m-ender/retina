@@ -449,6 +449,26 @@ namespace RetinaTest
                 },
                 TestCases = { { "a\nbc\ndef", "a\nbc\ndef,3,1\n2\n3,,1\n2\n3,3,2,1" } }
             });
+
+            // Ensure result log gets activated by dynamic elements:
+            AssertProgram(new TestSuite { Sources = { "^", @"${1*-}" }, TestCases = { { "abc", "abcabc" } } });
+
+            // Ensure result log gets activated by substitutions given as string options:
+            AssertProgram(new TestSuite { Sources = { "\"<$.->\"+`^", @"1" }, TestCases = { { "abc", "111abc" } } });
+
+            // Test result log limit
+            AssertProgram(new TestSuite { Sources = { "!#`.+", @"$-" }, TestCases = { { "abc", "" } } });
+            AssertProgram(new TestSuite {
+                Sources = {
+                    "!#3G`",
+                    "G`",
+                    "G`",
+                    "G`",
+                    ".+",
+                    @"$-0,$-1,$-2,$-3,$-4"
+                },
+                TestCases = { { "abc", "abc,abc,abc,," } }
+            });
         }
     }
 }

@@ -23,6 +23,8 @@ namespace Retina.Stages
             History = history;
             ChildStage = childStage;
 
+            //History.ActivateLog();
+
             string replacement = Config.StringParam ?? "$&";
             Replacer = new Replacer(replacement, History);
         }

@@ -8,14 +8,16 @@ namespace Retina
 {
     public class History
     {
-        private List<string> MostRecentResults;
+        private List<string> ResultLog;
         private List<string> StageResults;
         private bool LogActive;
+        private int LogLimit;
 
         public History()
         {
             LogActive = false;
-            MostRecentResults = new List<string>();
+            LogLimit = -1;
+            ResultLog = new List<string>();
             StageResults = new List<string>();
             StageResults.Add(null);
         }
@@ -34,15 +36,19 @@ namespace Retina
 
         public void RegisterResult(int stage, string result)
         {
-            if (LogActive)
-                MostRecentResults.Add(result);
+            if (LogActive && LogLimit != 0)
+            {
+                while (LogLimit > 0 && ResultLog.Count >= LogLimit)
+                    ResultLog.RemoveAt(0);
+                ResultLog.Add(result);
+            }
             StageResults[stage] = result;
         }
 
         public string GetMostRecentResult(int index)
         {
-            if (index < MostRecentResults.Count)
-                return MostRecentResults[MostRecentResults.Count - index - 1];
+            if (index < ResultLog.Count)
+                return ResultLog[ResultLog.Count - index - 1];
             else
                 return null;
         }
@@ -53,6 +59,11 @@ namespace Retina
                 return StageResults[index];
             else
                 return null;
+        }
+
+        public void LimitLog(int logLimit)
+        {
+            LogLimit = logLimit;
         }
     }
 }

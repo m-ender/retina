@@ -45,6 +45,9 @@ namespace Retina
             // in an output stage or not.
             var silent = false;
 
+            // A global option that limits the number of entries in the result log.
+            int logLimit = -1;
+
             int i = 0;
             while (i < sources.Count)
             {
@@ -144,7 +147,12 @@ namespace Retina
                         (?<regexModifier>[a-z])*
                     |
                         (?<flag>
-                            !.                              # ! marks a 2-character flag.
+                            !                               # ! marks a multi-character flag.
+                            (
+                                [#]\d*                      # !#n limits the number of entries in the result log.
+                            |
+                                .
+                            )
                         |
                             .                               # All other characters are read individually and represent 
                                                             # various options.
@@ -311,6 +319,10 @@ namespace Retina
                                     break;
                                 case '|':
                                     config.TransliterateOnce = true;
+                                    break;
+                                case '#':
+                                    string param = t.Groups["flag"].Value.Substring(2);
+                                    logLimit = param == "" ? 0 : int.Parse(param);
                                     break;
                                 default:
                                     break;
@@ -658,6 +670,9 @@ namespace Retina
                 }
                 StageTree = new GroupStage(new Config(), History, stages);
             }
+
+            if (logLimit > -1)
+                History.LimitLog(logLimit);
         }
 
         private static void InheritConfig(IList<Stage> stages, Config config)
