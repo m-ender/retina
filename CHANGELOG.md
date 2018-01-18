@@ -1,3 +1,12 @@
+## 1.0.1
+
+This version adds more fine-grained control over the history.
+
+- The running result log isn't active unless at least one substitution in the program uses a `$-n` shorthand element (including `$-`) or a dynamic element `${…}`.
+- The running result log's size can be limited with a new global flag `!#n`, where `n` indicates the number of entries. `!#` can be used for `!#0` to turn off the result log completely (this can be necessary if you need to use a dynamic element in a program that is supposed to run indefinitely without running out of memory).
+- The `!,` option toggles whether any particular stage registers with the history (although it's still impossible to register output stages and dry run stages without conditional).
+- The `!.` flag defaults all subsequent stages to *not* registering with the history (individual stages can be registered with `!.`). Using `!.` again, changes the default to registering again.
+
 ## 1.0.0
 
 This version is almost a complete rewrite of Retina, which generalised and added a myriad of features to the language. Therefore, this changelog will necessarily be incomplete, and you won't get around learning about the new version by reading the new documentation on the wiki. However, I've tried to collect some of the changes here to give people with experience in Retina 0.8.2 a headstart.
