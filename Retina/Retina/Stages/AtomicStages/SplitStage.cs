@@ -7,8 +7,8 @@ namespace Retina.Stages
 {
     class SplitStage : AtomicStage
     {
-        public SplitStage(Config config, History history, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
-            : base(config, history, patterns, substitutions, separatorSubstitutionSource) { }
+        public SplitStage(Config config, History history, bool registerByDefault, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
+            : base(config, history, registerByDefault, patterns, substitutions, separatorSubstitutionSource) { }
 
         protected override string Process(string input, TextWriter output)
         {

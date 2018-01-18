@@ -14,16 +14,19 @@ namespace Retina.Stages
     {
         public Stage ChildStage { get; set; }
         private History History;
+        private int HistoryIndex;
+        private bool RegisterWithHistory;
 
         private Replacer Replacer;
 
-        public EvalStage(Config config, History history, Stage childStage)
+        public EvalStage(Config config, History history, bool registerByDefault, Stage childStage)
             : base(config)
         {
             History = history;
+            RegisterWithHistory = registerByDefault ^ Config.RegisterToggle;
+            if (RegisterWithHistory)
+                HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
-
-            //History.ActivateLog();
 
             string replacement = Config.StringParam ?? "$&";
             Replacer = new Replacer(replacement, History);
@@ -59,7 +62,12 @@ namespace Retina.Stages
             var evalOutput = new StringWriter();
             interpreter.Execute(evalInput, evalOutput);
 
-            return evalOutput.ToString();
+            string result = evalOutput.ToString();
+
+            if (RegisterWithHistory)
+                History.RegisterResult(HistoryIndex, result);
+
+            return result;
         }
     }
 }

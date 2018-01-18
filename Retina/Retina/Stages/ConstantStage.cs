@@ -9,13 +9,16 @@ namespace Retina.Stages
         private string Result { get; set; }
         private History History;
         private int HistoryIndex;
+        private bool RegisterWithHistory;
 
-        public ConstantStage(Config config, History history, string result)
+        public ConstantStage(Config config, History history, bool registerByDefault, string result)
             : base(config)
         {
             Result = result;
             History = history;
-            HistoryIndex = History.RegisterStage();
+            RegisterWithHistory = registerByDefault ^ Config.RegisterToggle;
+            if (RegisterWithHistory)
+                HistoryIndex = History.RegisterStage();
         }
 
         public override string Execute(string input, TextWriter output)
@@ -30,8 +33,9 @@ namespace Retina.Stages
                 conditionalRegex = new Regex("");
             
             string result = (conditionalRegex.Match(input).Success ^ Config.Reverse) ? Result : input;
-            
-            History.RegisterResult(HistoryIndex, result);
+
+            if (RegisterWithHistory)
+                History.RegisterResult(HistoryIndex, result);
 
             return result;
         }

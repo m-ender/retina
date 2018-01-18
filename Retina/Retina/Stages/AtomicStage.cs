@@ -24,15 +24,18 @@ namespace Retina.Stages
         private int PatternIndex;
 
         protected History History;
+        private bool RegisterWithHistory;
         private int HistoryIndex;
         
-        protected AtomicStage(Config config, History history) : base(config) {
+        protected AtomicStage(Config config, History history, bool registerByDefault) : base(config) {
             History = history;
-            HistoryIndex = History.RegisterStage();
+            RegisterWithHistory = registerByDefault ^ Config.RegisterToggle;
+            if (RegisterWithHistory)
+                HistoryIndex = History.RegisterStage();
         }
 
-        public AtomicStage(Config config, History history, List<string> regexSources, List<string> substitutionSources, string separatorSubstitutionSource) 
-            : this(config, history)
+        public AtomicStage(Config config, History history, bool registerByDefault, List<string> regexSources, List<string> substitutionSources, string separatorSubstitutionSource) 
+            : this(config, history, registerByDefault)
         {
             RegexSources = regexSources;
             Replacers = substitutionSources.Select(s => new Replacer(s, History, Config.CyclicMatches)).ToList();
@@ -85,7 +88,8 @@ namespace Retina.Stages
 
             string result = Process(input, output);
 
-            History.RegisterResult(HistoryIndex, result);
+            if (RegisterWithHistory)
+                History.RegisterResult(HistoryIndex, result);
 
             // Restore the regex sources, in case we're using InputAsRegex
             RegexSources = tempRegexSources;

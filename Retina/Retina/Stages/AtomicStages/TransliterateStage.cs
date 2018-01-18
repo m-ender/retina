@@ -16,8 +16,8 @@ namespace Retina.Stages
         private List<char?> From { get; set; }
         private List<char?> To { get; set; }
 
-        public TransliterateStage(Config config, History history, List<string> patterns, List<string> substitutionSources, string separatorSubstitutionSource)
-            : base(config, history)
+        public TransliterateStage(Config config, History history, bool registerByDefault, List<string> patterns, List<string> substitutionSources, string separatorSubstitutionSource)
+            : base(config, history, registerByDefault)
         {
             var fromBuilder = new List<char?>();
             var toBuilder = new List<char?>();

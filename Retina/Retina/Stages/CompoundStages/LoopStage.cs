@@ -14,13 +14,18 @@ namespace Retina.Stages
     {
         public Stage ChildStage { get; set; }
         private History History;
+        private int HistoryIndex;
+        private bool RegisterWithHistory;
 
         private Replacer Replacer;
 
-        public LoopStage(Config config, History history, Stage childStage)
+        public LoopStage(Config config, History history, bool registerByDefault, Stage childStage)
             : base(config)
         {
             History = history;
+            RegisterWithHistory = registerByDefault ^ Config.RegisterToggle;
+            if (RegisterWithHistory)
+                HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
 
             if (Config.StringParam != null)
@@ -98,6 +103,9 @@ namespace Retina.Stages
                     } while (lastResult != result);
                 }
             }
+
+            if (RegisterWithHistory)
+                History.RegisterResult(HistoryIndex, result);
 
             return result;
         }

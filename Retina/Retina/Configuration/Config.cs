@@ -13,6 +13,10 @@ namespace Retina.Configuration
         public List<Limit> Limits { get; set; }
         public bool SingleRandomMatch { get; set; }
 
+        // Indicates whether the stage registers with the history, but
+        // this is a toggle relative to the stage's default.
+        public bool RegisterToggle { get; set; }
+
         // This is only relevant for stages with multiple patterns.
         // If this is true, the patterns will be chosen from greedily.
         // If this is false, the patterns will be cycled through instead.

@@ -11,8 +11,8 @@ namespace Retina.Stages
 {
     class GrepStage : AtomicStage
     {
-        public GrepStage(Config config, History history, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
-            : base(config, history, patterns, substitutions, separatorSubstitutionSource) { }
+        public GrepStage(Config config, History history, bool registerByDefault, List<string> patterns, List<string> substitutions, string separatorSubstitutionSource)
+            : base(config, history, registerByDefault, patterns, substitutions, separatorSubstitutionSource) { }
 
         protected override string Process(string input, TextWriter output)
         {

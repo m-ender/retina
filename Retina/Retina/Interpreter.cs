@@ -48,6 +48,10 @@ namespace Retina
             // A global option that limits the number of entries in the result log.
             int logLimit = -1;
 
+            // A global option which indicates whether stages register with the
+            // history by default.
+            var registerByDefault = true;
+
             int i = 0;
             while (i < sources.Count)
             {
@@ -324,6 +328,12 @@ namespace Retina
                                     string param = t.Groups["flag"].Value.Substring(2);
                                     logLimit = param == "" ? 0 : int.Parse(param);
                                     break;
+                                case '.':
+                                    registerByDefault = !registerByDefault;
+                                    break;
+                                case ',':
+                                    config.RegisterToggle = !config.RegisterToggle;
+                                    break;
                                 default:
                                     break;
                                 }
@@ -474,7 +484,7 @@ namespace Retina
 
                 if (mode == Modes.Constant)
                 {
-                    stage = new ConstantStage(config, History, pattern);
+                    stage = new ConstantStage(config, History, registerByDefault, pattern);
                 }
                 else
                 {
@@ -536,40 +546,40 @@ namespace Retina
                     switch (mode)
                     {
                     case Modes.Count:
-                        stage = new CountStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new CountStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.List:
-                        stage = new ListStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new ListStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Replace:
-                        stage = new ReplaceStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new ReplaceStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Split:
-                        stage = new SplitStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new SplitStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Grep:
-                        stage = new GrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new GrepStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.AntiGrep:
-                        stage = new AntiGrepStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new AntiGrepStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Transliterate:
-                        stage = new TransliterateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new TransliterateStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Sort:
-                        stage = new SortStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new SortStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Deduplicate:
-                        stage = new DeduplicateStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new DeduplicateStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Position:
-                        stage = new PositionStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new PositionStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Reverse:
-                        stage = new ReverseStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new ReverseStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     case Modes.Pad:
-                        stage = new PadStage(config, History, patterns, substitutions, separatorSubstitutionSource);
+                        stage = new PadStage(config, History, registerByDefault, patterns, substitutions, separatorSubstitutionSource);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -629,27 +639,27 @@ namespace Retina
                         break;
                     case '*':
                         InheritConfig(stage, compoundConfig);
-                        stage = new DryRunStage(compoundConfig, History, stage);
+                        stage = new DryRunStage(compoundConfig, History, registerByDefault, stage);
                         break;
                     case '+':
                         InheritConfig(stage, compoundConfig);
-                        stage = new LoopStage(compoundConfig, History, stage);
+                        stage = new LoopStage(compoundConfig, History, registerByDefault, stage);
                         break;
                     case '%':
                         InheritConfig(stage, compoundConfig);
-                        stage = new PerLineStage(compoundConfig, History, stage);
+                        stage = new PerLineStage(compoundConfig, History, registerByDefault, stage);
                         break;
                     case '_':
                         InheritConfig(stage, compoundConfig);
-                        stage = new MatchMaskStage(compoundConfig, History, stage);
+                        stage = new MatchMaskStage(compoundConfig, History, registerByDefault, stage);
                         break;
                     case '&':
                         InheritConfig(stage, compoundConfig);
-                        stage = new ConditionalStage(compoundConfig, History, stage);
+                        stage = new ConditionalStage(compoundConfig, History, registerByDefault, stage);
                         break;
                     case '~':
                         InheritConfig(stage, compoundConfig);
-                        stage = new EvalStage(compoundConfig, History, stage);
+                        stage = new EvalStage(compoundConfig, History, registerByDefault, stage);
                         break;
                     }
                 }

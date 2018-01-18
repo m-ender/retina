@@ -13,12 +13,15 @@ namespace Retina.Stages
         public Stage ChildStage { get; set; }
         private History History;
         private int HistoryIndex;
+        private bool RegisterWithHistory;
 
-        public PerLineStage(Config config, History history, Stage childStage)
+        public PerLineStage(Config config, History history, bool registerByDefault, Stage childStage)
             : base(config)
         {
             History = history;
-            HistoryIndex = History.RegisterStage();
+            RegisterWithHistory = registerByDefault ^ Config.RegisterToggle;
+            if (RegisterWithHistory)
+                HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
 
@@ -67,7 +70,9 @@ namespace Retina.Stages
                 lines[i] = ChildStage.Execute(lines[i], output);
             
             string result = lines.Riffle(matches.Select(m => m.Value));
-            History.RegisterResult(HistoryIndex, result);
+
+            if (RegisterWithHistory)
+                History.RegisterResult(HistoryIndex, result);
 
             return result;
         }

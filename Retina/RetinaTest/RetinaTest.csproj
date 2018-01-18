@@ -60,6 +60,7 @@
     <Compile Include="ConditionalStageTest.cs" />
     <Compile Include="PerLineStageTest.cs" />
     <Compile Include="PositionStageTest.cs" />
+    <Compile Include="HistoryTest.cs" />
     <Compile Include="ReplacerTest.cs" />
     <Compile Include="LimitTest.cs" />
     <Compile Include="RetinaTestBase.cs" />

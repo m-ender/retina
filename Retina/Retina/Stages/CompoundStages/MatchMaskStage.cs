@@ -16,12 +16,15 @@ namespace Retina.Stages
 
         private History History;
         private int HistoryIndex;
+        private bool RegisterWithHistory;
 
-        public MatchMaskStage(Config config, History history, Stage childStage)
+        public MatchMaskStage(Config config, History history, bool registerByDefault, Stage childStage)
             : base(config)
         {
             History = history;
-            HistoryIndex = History.RegisterStage();
+            RegisterWithHistory = registerByDefault ^ Config.RegisterToggle;
+            if (RegisterWithHistory)
+                HistoryIndex = History.RegisterStage();
             ChildStage = childStage;
         }
 
@@ -70,7 +73,9 @@ namespace Retina.Stages
                 results.Reverse();
 
             string result = separators.Riffle(results);
-            History.RegisterResult(HistoryIndex, result);
+
+            if (RegisterWithHistory)
+                History.RegisterResult(HistoryIndex, result);
 
             return result;
         }
