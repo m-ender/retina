@@ -10,12 +10,19 @@ namespace Retina
     {
         private List<string> MostRecentResults;
         private List<string> StageResults;
+        private bool LogActive;
 
         public History()
         {
+            LogActive = false;
             MostRecentResults = new List<string>();
             StageResults = new List<string>();
             StageResults.Add(null);
+        }
+
+        public void ActivateLog()
+        {
+            LogActive = true;
         }
 
         // Returns an integer for the stage to use when sending in new results.
@@ -27,7 +34,8 @@ namespace Retina
 
         public void RegisterResult(int stage, string result)
         {
-            MostRecentResults.Add(result);
+            if (LogActive)
+                MostRecentResults.Add(result);
             StageResults[stage] = result;
         }
 

@@ -75,6 +75,8 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite { Sources = { "\"<-$.&>\"+`^", @"1" }, TestCases = { { "abc", "111abc" } } });
             AssertProgram(new TestSuite { Sources = { "\"<-$.&>\"+*>`^", @"1" }, TestCases = { { "abc", "1abc1abc1abcabc" } } });
+
+            AssertProgram(new TestSuite { Sources = { "\"<$.->\"+`^", @"1" }, TestCases = { { "abc", "111abc" } } });
         }
 
         [TestMethod]

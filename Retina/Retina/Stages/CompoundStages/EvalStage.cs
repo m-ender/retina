@@ -15,32 +15,33 @@ namespace Retina.Stages
         public Stage ChildStage { get; set; }
         private History History;
 
+        private Replacer Replacer;
+
         public EvalStage(Config config, History history, Stage childStage)
             : base(config)
         {
             History = history;
             ChildStage = childStage;
+
+            string replacement = Config.StringParam ?? "$&";
+            Replacer = new Replacer(replacement, History);
         }
 
         public override string Execute(string input, TextWriter output)
         {
-            string replacement = Config.StringParam ?? "$&";
-            
-            var replacer = new Replacer(replacement, History);
-            
             // A bit awkward, but we need to set up a match against the whole input
             // along with the resulting separators and everything, because that's
             // what the Replacer eats.
             var regex = new Regex(@"\A(?s:.*)\z");
             var matches = new List<MatchContext>();
-            matches.Add(new MatchContext(regex.Match(input), regex, replacer));
+            matches.Add(new MatchContext(regex.Match(input), regex, Replacer));
             var separators = new List<MatchContext>();
             var startRegex = new Regex(@"\A");
-            separators.Add(new MatchContext(startRegex.Match(input), startRegex, replacer));
+            separators.Add(new MatchContext(startRegex.Match(input), startRegex, Replacer));
             var endRegex = new Regex(@"\z");
-            separators.Add(new MatchContext(endRegex.Match(input), endRegex, replacer));
+            separators.Add(new MatchContext(endRegex.Match(input), endRegex, Replacer));
 
-            string evalInput = replacer.Process(input, matches, separators, 0);
+            string evalInput = Replacer.Process(input, matches, separators, 0);
 
             string source = ChildStage.Execute(input, output);
 

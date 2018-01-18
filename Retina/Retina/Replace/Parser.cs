@@ -65,7 +65,7 @@ namespace Retina.Replace
                   [*$)}n\n]
                 )
               |
-                (?<element>            # Shorthands for various common elements.
+                (?<shorthand>          # Shorthands for various common elements.
                   [.]?                 # An optional length modifier is always available.
                   (
                     (?<numbered>       # $n are numbered groups.
@@ -114,7 +114,7 @@ namespace Retina.Replace
                     type = TokenType.ConcatOpen;
                 else if (t.Groups["concatClose"].Success)
                     type = TokenType.ConcatClose;
-                else if (t.Groups["element"].Success)
+                else if (t.Groups["shorthand"].Success)
                     type = TokenType.Shorthand;
                 else if (t.Groups["unary"].Success)
                     type = TokenType.Unary;
@@ -212,6 +212,10 @@ namespace Retina.Replace
             {
                 // Drop the leading "$".
                 string shorthand = Previous().Source.Substring(1);
+
+                if (shorthand.StartsWith("-") || shorthand.StartsWith(".-"))
+                    History.ActivateLog();
+
                 return new DynamicElement(shorthand, History, CyclicMatches);
             }
 
@@ -235,6 +239,8 @@ namespace Retina.Replace
                 Node inner = ParseConcatenation();
                 // Consume the closing } if there is one.
                 Match(TokenType.ElementClose);
+
+                History.ActivateLog();
 
                 return new DynamicElement(inner, History, CyclicMatches);
             }
