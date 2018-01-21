@@ -99,15 +99,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Examples\2TagSystem.rgx" />
-    <None Include="Examples\2TagSystem.rpl" />
-    <None Include="Examples\Rule110.rgx" />
-    <None Include="Examples\Rule110.rpl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..
-copy $(ProjectDir)Examples $(SolutionDir)..\Examples</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
