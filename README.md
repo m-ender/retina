@@ -14,4 +14,4 @@ Source files can simply be passed as command-line arguments. For details of ways
 
 ## How does it work?
 
-Full documentation of the language **[can be found in the Wiki](https://github.com/m-ender/retina/wiki/The-Language)**. It might also be worth having a look at the **[changelog](https://github.com/m-ender/retina/blob/master/CHANGELOG.md)**.
+Full documentation of the language **[can be found in the Wiki](https://github.com/m-ender/retina/wiki/The-Language)**. For a (hopefully) more accessible introduction to the language's basic features see the **[annotated example programs](https://github.com/m-ender/retina/tree/master/Examples)**. It might also be worth having a look at the **[changelog](https://github.com/m-ender/retina/blob/master/CHANGELOG.md)**.
