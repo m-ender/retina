@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Retina</RootNamespace>
     <AssemblyName>Retina</AssemblyName>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
