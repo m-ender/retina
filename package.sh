@@ -3,5 +3,5 @@ set -e
 
 cd Retina
 
-tar -zcf retina-win-x64.tar.gz Retina/bin/win-x64
-tar -zcf retina-linux-x64.tar.gz Retina/bin/linux-x64
+tar cfz retina-win-x64.tar.gz -C Retina/bin win-x64
+tar cfz retina-linux-x64.tar.gz -C Retina/bin linux-x64

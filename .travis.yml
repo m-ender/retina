@@ -24,3 +24,7 @@ deploy:
     - "Retina/retina-linux-x64.tar.gz"
   on:
     branch: master
+cache:
+  directories:
+    - '$HOME/.nuget/packages'
+    - '$HOME/.local/share/NuGet/Cache'
