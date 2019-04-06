@@ -1,3 +1,7 @@
+## 1.1.0
+
+This version switches from .NET Framework to .NET Core.
+
 ## 1.0.1
 
 This version adds more fine-grained control over the history.
