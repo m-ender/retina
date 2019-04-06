@@ -8,7 +8,7 @@ Retina was mainly developed for [code golf](https://en.wikipedia.org/wiki/Code_g
 
 The easiest way to try out Retina is to use it right in your browser at [Try It Online!](https://tio.run/#retina1)
 
-There is an up-to-date .NET binary of Retina in the root directory of the repository. Alternatively, you can build it yourself from the C# sources. The code requires .NET 4.5. I do not regularly test Retina with Mono, but previous versions have worked without problems.
+Up-to-date .NET Core binaries of Retina are provided as Github releases. Alternatively, you can build it yourself from the C# sources. The code requires .NET Core 2.2.
 
 Source files can simply be passed as command-line arguments. For details of ways to invoke Retina [see the docs](https://github.com/m-ender/retina/wiki/The-Language#basics).
 

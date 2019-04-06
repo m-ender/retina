@@ -1,0 +1,26 @@
+dist: bionic
+language: csharp
+mono: none
+dotnet: 2.2.202
+env:
+  global:
+    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+    - DOTNET_CLI_TELEMETRY_OPTOUT=true
+script:
+  - ./build.sh
+before_deploy:
+  - ./package.sh
+  - git config --local user.name "deploy robot"
+  - git config --local user.email "robot@retina.local"
+  - export TRAVIS_TAG=${TRAVIS_TAG:-v$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  - git tag $TRAVIS_TAG
+deploy:
+  provider: releases
+  api_key: "$GITHUB_TOKEN"
+  skip_cleanup: true
+  name: "$TRAVIS_TAG"
+  file: 
+    - "Retina/retina-win-x64.tar.gz"
+    - "Retina/retina-linux-x64.tar.gz"
+  on:
+    branch: master
