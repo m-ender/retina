@@ -1,17 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0393246A-EC36-4DD7-98D5-BBA94FCAA646}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Retina</RootNamespace>
     <AssemblyName>Retina</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,78 +34,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Configuration\Overlaps.cs" />
-    <Compile Include="Configuration\Limit.cs" />
-    <Compile Include="Configuration\Anchoring.cs" />
-    <Compile Include="Configuration\UniqueMatches.cs" />
-    <Compile Include="Extensions\ListExtension.cs" />
-    <Compile Include="Extensions\EnumerableExtension.cs" />
-    <Compile Include="History.cs" />
-    <Compile Include="MatchContext.cs" />
-    <Compile Include="Random.cs" />
-    <Compile Include="Replace\Nodes\Concatenation.cs" />
-    <Compile Include="Replace\Nodes\DynamicElement.cs" />
-    <Compile Include="Replace\Nodes\Length.cs" />
-    <Compile Include="Replace\Nodes\TitleCaseAll.cs" />
-    <Compile Include="Replace\Nodes\UpperCaseHead.cs" />
-    <Compile Include="Replace\Nodes\UpperCaseAll.cs" />
-    <Compile Include="Replace\Nodes\LowerCaseAll.cs" />
-    <Compile Include="Replace\Nodes\RegexEscape.cs" />
-    <Compile Include="Replace\Nodes\LowerCaseHead.cs" />
-    <Compile Include="Replace\Nodes\Reverse.cs" />
-    <Compile Include="Replace\Parser.cs" />
-    <Compile Include="Replace\Nodes\Repetition.cs" />
-    <Compile Include="Replace\Replacer.cs" />
-    <Compile Include="Replace\Nodes\Literal.cs" />
-    <Compile Include="Replace\Nodes\Node.cs" />
-    <Compile Include="Replace\Token.cs" />
-    <Compile Include="Stages\AtomicStages\DeduplicateStage.cs" />
-    <Compile Include="Stages\AtomicStages\AntiGrepStage.cs" />
-    <Compile Include="Stages\AtomicStages\CountStage.cs" />
-    <Compile Include="Stages\AtomicStages\PositionStage.cs" />
-    <Compile Include="Stages\AtomicStages\PadStage.cs" />
-    <Compile Include="Stages\AtomicStages\ReverseStage.cs" />
-    <Compile Include="Stages\AtomicStages\SortStage.cs" />
-    <Compile Include="Stages\AtomicStages\TransliterateStage.cs" />
-    <Compile Include="Stages\CompoundStages\EvalStage.cs" />
-    <Compile Include="Stages\CompoundStages\ConditionalStage.cs" />
-    <Compile Include="Stages\CompoundStages\DryRunStage.cs" />
-    <Compile Include="Stages\CompoundStages\LoopStage.cs" />
-    <Compile Include="Stages\CompoundStages\MatchMaskStage.cs" />
-    <Compile Include="Stages\CompoundStages\OutputStage.cs" />
-    <Compile Include="Stages\CompoundStages\PerLineStage.cs" />
-    <Compile Include="Stages\AtomicStage.cs" />
-    <Compile Include="Stages\CompoundStages\GroupStage.cs" />
-    <Compile Include="Stages\AtomicStages\GrepStage.cs" />
-    <Compile Include="Stages\AtomicStages\ListStage.cs" />
-    <Compile Include="Configuration\Modes.cs" />
-    <Compile Include="Configuration\Config.cs" />
-    <Compile Include="Interpreter.cs" />
-    <Compile Include="Retina.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stages\AtomicStages\ReplaceStage.cs" />
-    <Compile Include="Stages\AtomicStages\SplitStage.cs" />
-    <Compile Include="Stages\ConstantStage.cs" />
-    <Compile Include="Stages\Stage.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
