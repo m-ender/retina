@@ -1,4 +1,4 @@
-## 1.1.0
+## 1.1.1
 
 This version switches from .NET Framework to .NET Core.
 
