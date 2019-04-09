@@ -18,3 +18,7 @@ Source files can simply be passed as command-line arguments. For details of ways
 ## How does it work?
 
 Full documentation of the language **[can be found in the Wiki](https://github.com/m-ender/retina/wiki/The-Language)**. For a (hopefully) more accessible introduction to the language's basic features see the **[annotated example programs](https://github.com/m-ender/retina/tree/master/Examples)**. It might also be worth having a look at the **[changelog](https://github.com/m-ender/retina/blob/master/CHANGELOG.md)**.
+
+## Using Retina
+
+If you actually go to the trouble of learning Retina's fairly obscure syntax, you'll find that it's a surprisingly effective productivity tool when it comes to transforming text documents. If [VS Code](https://code.visualstudio.com/) is your text editor of choice, you can install the [**Retinate**](https://marketplace.visualstudio.com/items?itemName=m-ender.retinate) extension, which lets you use Retina scripts as a powerful alternative to regular *Search and Replace*.
