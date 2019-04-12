@@ -227,6 +227,21 @@ namespace RetinaTest
 
             AssertProgram(new TestSuite { Sources = { @"\w+", "$;0" }, TestCases = { { "123,321,123,321", "3,2,1,0" } } });
             AssertProgram(new TestSuite { Sources = { @"\w+", "$;&" }, TestCases = { { "123,321,123,321", "3,2,1,0" } } });
+
+            // Test interaction with adjacency modifiers
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$<:&" }, TestCases = { { "123,321,123,321", "0,1,2,3" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$>:&" }, TestCases = { { "123,321,123,321", "1,2,3,4" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$[:&" }, TestCases = { { "123,321,123,321", ",0,1,2" } } });
+            AssertProgram(new TestSuite { Sources = { @"y`\w+", "$[:&" }, TestCases = { { "123,321,123,321", "3,0,1,2" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$]:&" }, TestCases = { { "123,321,123,321", "1,2,3," } } });
+            AssertProgram(new TestSuite { Sources = { @"y`\w+", "$]:&" }, TestCases = { { "123,321,123,321", "1,2,3,0" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$<;&" }, TestCases = { { "123,321,123,321", "4,3,2,1" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$>;&" }, TestCases = { { "123,321,123,321", "3,2,1,0" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$[;&" }, TestCases = { { "123,321,123,321", ",3,2,1" } } });
+            AssertProgram(new TestSuite { Sources = { @"y`\w+", "$[;&" }, TestCases = { { "123,321,123,321", "0,3,2,1" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$];&" }, TestCases = { { "123,321,123,321", "2,1,0," } } });
+            AssertProgram(new TestSuite { Sources = { @"y`\w+", "$];&" }, TestCases = { { "123,321,123,321", "2,1,0,3" } } });
         }
 
         [TestMethod]

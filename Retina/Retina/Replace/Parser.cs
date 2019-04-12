@@ -70,7 +70,7 @@ namespace Retina.Replace
                   (
                     (?<numbered>       # $n are numbered groups.
                       [<>[\]]?         # Pull the value from an adjacent separator or match.
-                      [#?]?            # Capture count or random capture.
+                      [#:;?]?          # Generic capture modifiers.
                       (?:\d+|&)        # & is an alias for 0.
                     )
                   |

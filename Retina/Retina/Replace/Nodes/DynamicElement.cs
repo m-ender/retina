@@ -49,8 +49,8 @@ namespace Retina.Replace.Nodes
                   [<>[\]]
                 )?
                 (
-                  (?<modifier>      # Capture count or random capture.
-                    [#?]
+                  (?<modifier>      # Generic capture modifier.
+                    [#:;?]
                   )?
                   (
                     (?<entireMatch> # $& and $0 refer to the entire match.
@@ -97,30 +97,50 @@ namespace Retina.Replace.Nodes
             if (parserMatch.Groups["modifier"].Success)
                 modifier = parserMatch.Groups["modifier"].Value[0];
 
+            // Will be set to false if an adjacency modifier shifts
+            // the context to a separator.
+            bool contextIsMatch = true;
             MatchContext match;
             switch (adjacent)
             {
             case '<':
                 match = separators[index];
+                contextIsMatch = false;
                 break;
             case '>':
-                match = separators[index+1];
+                ++index;
+                match = separators[index];
+                contextIsMatch = false;
                 break;
             case '[':
                 if (CyclicMatches)
-                    match = matches[(index - 1 + matches.Count) % matches.Count];
+                {
+                    index = (index - 1 + matches.Count) % matches.Count;
+                    match = matches[index];
+                }
                 else if (index == 0)
                     return "";
                 else
-                    match = matches[index - 1];
+                {
+                    --index;
+                    match = matches[index];
+                }
+
                 break;
             case ']':
                 if (CyclicMatches)
-                    match = matches[(index + 1) % matches.Count];
+                {
+                    index = (index + 1) % matches.Count;
+                    match = matches[index];
+                }
                 else if (index == matches.Count - 1)
                     return "";
                 else
-                    match = matches[index + 1];
+                {
+                    ++index;
+                    match = matches[index];
+                }
+
                 break;
             default:
                 match = matches[index];
@@ -137,6 +157,15 @@ namespace Retina.Replace.Nodes
                     // Subtract 1 to account for group 0.
                     value = (match.Regex.GetGroupNumbers().Count(i => match.Match.Groups[i].Success) - 1).ToString();
                     break;
+                case ':':
+                    value = index.ToString();
+                    break;
+                case ';':
+                    {
+                        int maxIndex = (contextIsMatch ? matches : separators).Count - 1;
+                        value = (maxIndex - index).ToString();
+                        break;
+                    }
                 case '?':
                     int[] groups = match.Regex.GetGroupNumbers();
                     // Offset by 1 to account for group 0.
