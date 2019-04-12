@@ -9,9 +9,9 @@ namespace Retina.Replace.Nodes
     public class DynamicElement : Node
     {
         public Node Child { get; set; }
-        private bool CyclicMatches;
+        private readonly bool CyclicMatches;
 
-        private History History;
+        private readonly History History;
 
         public DynamicElement(Node child, History history, bool cyclicMatches)
         {

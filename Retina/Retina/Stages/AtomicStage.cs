@@ -24,8 +24,8 @@ namespace Retina.Stages
         private int PatternIndex;
 
         protected History History;
-        private bool RegisterWithHistory;
-        private int HistoryIndex;
+        private readonly bool RegisterWithHistory;
+        private readonly int HistoryIndex;
         
         protected AtomicStage(Config config, History history, bool registerByDefault) : base(config) {
             History = history;
@@ -203,8 +203,7 @@ namespace Retina.Stages
             if (Config.SingleRandomMatch && Matches.Count > 0)
             {
                 var chosenMatch = Matches[Random.RNG.Next(Matches.Count)];
-                Matches = new List<MatchContext>();
-                Matches.Add(chosenMatch);
+                Matches = new List<MatchContext> { chosenMatch };
             }
         }
 

@@ -220,6 +220,45 @@ namespace RetinaTest
         }
 
         [TestMethod]
+        public void TestMatchIndex()
+        {
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$:0" }, TestCases = { { "123,321,123,321", "0,1,2,3" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$:&" }, TestCases = { { "123,321,123,321", "0,1,2,3" } } });
+
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$;0" }, TestCases = { { "123,321,123,321", "3,2,1,0" } } });
+            AssertProgram(new TestSuite { Sources = { @"\w+", "$;&" }, TestCases = { { "123,321,123,321", "3,2,1,0" } } });
+        }
+
+        [TestMethod]
+        public void TestCumulativeCaptureCount()
+        {
+            AssertProgram(new TestSuite { Sources = { "(.)+", "#$:1" }, TestCases = { { "abcd\ndef", "#4\n#7" } } });
+            AssertProgram(new TestSuite { Sources = { "(..)+", "#$:1" }, TestCases = { { "abcd\ndef", "#2\n#3f" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$:2" }, TestCases = { { "abcd\ndef", "44\n77" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)+(?<1>b)+", "$:1" }, TestCases = { { "aaabbcabbb", "5c9" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+", "#$;1" }, TestCases = { { "abcd\ndef", "#7\n#3" } } });
+            AssertProgram(new TestSuite { Sources = { "(..)+", "#$;1" }, TestCases = { { "abcd\ndef", "#3\n#1f" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "$;2" }, TestCases = { { "abcd\ndef", "73\n30" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)+(?<1>b)+", "$;1" }, TestCases = { { "aaabbcabbb", "9c5" } } });
+
+            // Curly braces should also work:
+            AssertProgram(new TestSuite { Sources = { "(.)+", "#${:1}" }, TestCases = { { "abcd\ndef", "#4\n#7" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "${:2}" }, TestCases = { { "abcd\ndef", "40\n70" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)+(?<1>b)+", "${:1}${:01}${:001}" }, TestCases = { { "aaabbcabbb", "555c999" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<foo>a)+(?<bar>b)+", "${:foo}${:bar}" }, TestCases = { { "aaabbcabbb", "32c45" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+", "#${;1}" }, TestCases = { { "abcd\ndef", "#7\n#3" } } });
+            AssertProgram(new TestSuite { Sources = { "()(.)*", "${;2}" }, TestCases = { { "abcd\ndef", "73\n30" } } });
+            AssertProgram(new TestSuite { Sources = { "(a)+(?<1>b)+", "${;1}${;01}${;001}" }, TestCases = { { "aaabbcabbb", "999c444" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<foo>a)+(?<bar>b)+", "${;foo}${;bar}" }, TestCases = { { "aaabbcabbb", "45c13" } } });
+
+            // $# not followed by a valid group should be removed.
+            AssertProgram(new TestSuite { Sources = { "(.)+", "$:2${:2}$:$:}" }, TestCases = { { "abcd", "$:$:}" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)+", "$:a${:b}$:{" }, TestCases = { { "abcd", "$:a$:{" } } });
+            AssertProgram(new TestSuite { Sources = { "(.)+", "$:2${:2}$:$:}" }, TestCases = { { "abcd", "$;$;}" } } });
+            AssertProgram(new TestSuite { Sources = { "(?<a>.)+", "$:a${:b}$:{" }, TestCases = { { "abcd", "$;a$;{" } } });
+        }
+
+        [TestMethod]
         public void TestRandomCapture()
         {
             AssertRandomProgram(new RandomTestSuite
@@ -234,7 +273,6 @@ namespace RetinaTest
                 TestCases = { { "ab\ncde", new string[] { "a\nc", "a\nd", "a\ne", "b\nc", "b\nd", "b\ne" } } }
             });
         }
-
 
         [TestMethod]
         public void TestRandomGroup()
