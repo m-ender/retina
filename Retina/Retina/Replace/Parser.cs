@@ -16,12 +16,12 @@ namespace Retina.Replace
             public ParserError(string message, Exception innerException) : base(message, innerException) { }
         }
 
-        private bool CyclicMatches;
+        private readonly bool CyclicMatches;
 
         private List<Token> Tokens;
         private int Current;
 
-        private History History;
+        private readonly History History;
 
         public Parser(History history)
         {
@@ -70,7 +70,7 @@ namespace Retina.Replace
                   (
                     (?<numbered>       # $n are numbered groups.
                       [<>[\]]?         # Pull the value from an adjacent separator or match.
-                      [#?]?            # Capture count or random capture.
+                      [#:;?]?          # Generic capture modifiers.
                       (?:\d+|&)        # & is an alias for 0.
                     )
                   |

@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Substitution syntax: added `$:&` and `$;&` to generate the match's index from the left and right, respectively. `<>[]` modifiers can be (ab)used for some off-by-one shenanigans.
+
 ## 1.1.1
 
 This version switches from .NET Framework to .NET Core.
