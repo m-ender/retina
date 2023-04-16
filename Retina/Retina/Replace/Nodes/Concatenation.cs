@@ -21,7 +21,7 @@ namespace Retina.Replace.Nodes
 
         public override BigInteger GetLength(string input, List<MatchContext> matches, List<MatchContext> separators, int index)
         {
-            return Children.Select(c => c.GetLength(input, matches, separators, index)).Aggregate((cur, sum) => sum + cur);
+            return Children.Select(c => c.GetLength(input, matches, separators, index)).Aggregate(BigInteger.Zero, (cur, sum) => sum + cur);
         }
     }
 }
